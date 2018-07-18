@@ -68,34 +68,42 @@ public class DisplayItemInfo : MonoBehaviour {
         }
         //add switch/case here
         //Set fields based on the items type
-        if (item.itemType == Item.BaseType.Clothing) {
-            Clothing clothing = (Clothing)item;
-            itemExtra2.text = "Protection: " + clothing.protection;
-        } else if (item.itemType == Item.BaseType.Consumable) {
-            Consumable consumable = (Consumable)item;
-            if (consumable.healthRestored != 0 && consumable.energyRestored != 0) {
-                itemExtra2.text = "Health Restored: " + consumable.healthRestored;
-                itemExtra3.text = "Energy Restored: " + consumable.energyRestored;
-            } else if (consumable.healthRestored == 0 && consumable.energyRestored != 0) {
-                itemExtra2.text = "Energy Restored: " + consumable.energyRestored;
-                itemExtra3.text = "";
-            } else if (consumable.healthRestored != 0 && consumable.energyRestored == 0) {
-                itemExtra2.text = "Health Restored: " + consumable.healthRestored;
-                itemExtra3.text = "";
-            } else {
-                itemExtra2.text = "";
-                itemExtra3.text = "";
-            }
-        } else if (item.itemType == Item.BaseType.Key) {
-            Key key = (Key)item;
-        }else if(item.itemType == Item.BaseType.Misc) {
-            Misc key = (Misc)item;
-        } else if(item.itemType == Item.BaseType.Useable) {
-            Useable key = (Useable)item;
-        } else if (item.itemType == Item.BaseType.Weapon) {
-            Weapon weapon = (Weapon)item;
-            itemExtra2.text = "Damage: " + weapon.attackValue;
-            itemExtra3.text = "Durability: " + weapon.durability;
+        switch (item.itemType) {
+            case Item.BaseType.Clothing:
+                Clothing clothing = (Clothing)item;
+                itemExtra2.text = "Protection: " + clothing.protection;
+                break;
+            case Item.BaseType.Consumable:
+                Consumable consumable = (Consumable)item;
+                if (consumable.healthRestored != 0 && consumable.energyRestored != 0) {
+                    itemExtra2.text = "Health Restored: " + consumable.healthRestored;
+                    itemExtra3.text = "Energy Restored: " + consumable.energyRestored;
+                } else if (consumable.healthRestored == 0 && consumable.energyRestored != 0) {
+                    itemExtra2.text = "Energy Restored: " + consumable.energyRestored;
+                    itemExtra3.text = "";
+                } else if (consumable.healthRestored != 0 && consumable.energyRestored == 0) {
+                    itemExtra2.text = "Health Restored: " + consumable.healthRestored;
+                    itemExtra3.text = "";
+                } else {
+                    itemExtra2.text = "";
+                    itemExtra3.text = "";
+                }
+                break;
+            case Item.BaseType.Key:
+                Key key = (Key)item;
+                break;
+            case Item.BaseType.Misc:
+                Misc misc = (Misc)item;
+                break;
+            case Item.BaseType.Useable:
+                Useable useable = (Useable)item;
+                break;
+            case Item.BaseType.Weapon:
+                Weapon weapon = (Weapon)item;
+                itemExtra2.text = "Damage: " + weapon.attackValue;
+                itemExtra3.text = "Durability: " + weapon.durability;
+                break;
+
         }
     }
 }
