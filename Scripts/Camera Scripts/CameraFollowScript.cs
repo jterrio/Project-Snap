@@ -8,7 +8,7 @@ public class CameraFollowScript : MonoBehaviour {
 
 
     void Start() {
-        Camera.main.orthographicSize = (Screen.height / (1 * 32)) * 0.5f;
+        //Camera.main.orthographicSize = (Screen.height / (1 * 32)) * 0.25f;
         //Camera.main.orthographicSize = (Screen.height / 2);
 
     }
