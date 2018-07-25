@@ -59,12 +59,7 @@ public class NPCSpeechHolder : MonoBehaviour {
     }
 
     void Update() {
-        //debug - change color if player is in range to talk
-        if (isPlayerInRange) {
-            spriteRenderer.color = new Color(0, 0, 0);
-        } else {
-            spriteRenderer.color = defaultColor;
-        }
+       
     }
 
     //give (speech manager) the current dialogue

@@ -4,10 +4,17 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
-public class BuySellScript : MonoBehaviour, IPointerClickHandler {
+public class BuySellScript : MonoBehaviour, IPointerClickHandler, IScrollHandler {
 
     public bool isSelected;
+    public DisplayItemCount dic;
+    public int maxItemCount;
+    public int currentSelectedCount;
 
+    public void SetValues(int current, int max) {
+        currentSelectedCount = current;
+        maxItemCount = max;
+    }
 
     public void OnPointerClick(PointerEventData eventData) {
         //set the selected value bool
@@ -24,11 +31,35 @@ public class BuySellScript : MonoBehaviour, IPointerClickHandler {
 
     //changes color to reflect it being highligh
     void Highlight() {
+        if (maxItemCount != 1) {
+            dic.numberField.text = currentSelectedCount.ToString() + "/" + maxItemCount.ToString();
+        }
         transform.GetComponent<Image>().color = new Color(0, 1, 0);
     }
 
     //changes color back to normal
     void Delight() {
+        if (maxItemCount != 1) {
+            dic.numberField.text = maxItemCount.ToString();
+        }
+        currentSelectedCount = 1;
         transform.GetComponent<Image>().color = new Color(1, 1, 1);
+    }
+
+    public void OnScroll(PointerEventData eventData) {
+        if (isSelected) {
+            //update ammount we want
+            if(eventData.scrollDelta.y > 0) { //increase
+                if(currentSelectedCount < maxItemCount) {
+                    currentSelectedCount += 1;
+                }
+            } else { //decrease
+                if(currentSelectedCount > 1) {
+                    currentSelectedCount -= 1;
+                }
+            }
+            Highlight();
+            MerchantManagerScript.ins.UpdateCost(isSelected, gameObject);
+        }
     }
 }

@@ -52,6 +52,7 @@ public class SpeechManager : MonoBehaviour {
     //called when the player hits space (either to enter dialogue, skip text, or see next line)
     public void Speak(GameObject player, GameObject npc) {
         this.player = player; //set player
+        
         this.npc = npc; //set actor/npc
         if(npcSpeech == null || pInfo == null || npcInfo == null) { //get components if they are null (meaning this is the first line)
             npcSpeech = npc.GetComponent<NPCSpeechHolder>();
@@ -78,6 +79,7 @@ public class SpeechManager : MonoBehaviour {
         //checks to see if the first line of dialogue has been spoken
         if (!hasStartedTalking) {
             hasStartedTalking = true;
+            player.GetComponent<PlayerMovementScript>().CanPlayerMove = false; //disable player movement
             DoDialogue(dialogue); //prints dialogue
         } else if (!hasFinishedTalking) { //we havent finished dialogue, so finish it
             hasFinishedTalking = true;
@@ -204,8 +206,12 @@ public class SpeechManager : MonoBehaviour {
         if(npcSpeech == null) {
             return;
         }
+
         npcSpeech.ResetSetNumber();
         npcSpeech.currentLine = 0;
+        player.GetComponent<PlayerMovementScript>().CanPlayerMove = true;
+        npcInfo.InitPosition();
+        npcInfo.isTalking = false;
         npcSpeech = null;
         pInfo = null;
         npcInfo = null;
@@ -220,12 +226,51 @@ public class SpeechManager : MonoBehaviour {
         inChoice = false;
         hasStartedTalking = false;
         hasFinishedTalking = false;
+        
+    }
+
+    //for ending an item pick-up dialogue/sequence
+    public void EndSpeechItem() {
+        speechOutline.gameObject.SetActive(false);
+        choicePanel.gameObject.SetActive(false);
+        speechPanel.gameObject.SetActive(false);
+        StopCoroutine(typingCoroutine);
+        speechText.text = "";
+        nameText.text = "";
+        textToDisplay = "";
+        hasStartedTalking = false;
+        hasFinishedTalking = false;
+
     }
 
     //end the coroutine and display the full text (used for skipping dialogue)
     public void FinishSpeech() {
         StopCoroutine(typingCoroutine);
         speechText.text = textToDisplay;
+    }
+
+    public bool PickUpItem(Item item) {
+        speechOutline.gameObject.SetActive(true);
+        choicePanel.gameObject.SetActive(false);
+        speechPanel.gameObject.SetActive(true);
+        if (!hasStartedTalking) {
+            hasStartedTalking = true;
+            DoTextDialogue(item.itemName);
+            return false;
+        }else if (!hasFinishedTalking) {
+            hasFinishedTalking = true;
+            FinishSpeech();
+            return false;
+        } else {
+            EndSpeechItem();
+            return true;
+        }
+    }
+
+    void DoTextDialogue(string itemName) {
+        nameText.text = "";
+        speechText.text = itemName + " has been picked up.";
+        EnterSpeech(nameText.text, speechText.text);
     }
     
     //is what the couroutine calls

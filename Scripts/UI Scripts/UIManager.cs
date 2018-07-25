@@ -13,22 +13,36 @@ public class UIManager : MonoBehaviour {
     public RectTransform InvBackground, InvForeground, InvGridLayout, InventorySlotPrefab, InvItemInfoPanel;
     public RectTransform ChoicePanel;
     public RectTransform MerchantPanel;
+
+    public RectTransform speechOutline;
+    public RectTransform speechPanel;
+    public RectTransform talkerNamePanel;
+    public RectTransform talkerTextPanel;
+    public RectTransform choicePanel;
+    public TMPro.TextMeshProUGUI nameText;
+    public TMPro.TextMeshProUGUI speechText;
+    public string textToDisplay; //for the coroutine
+
+    public RectTransform ChestPanel, ChestPlayerPanel, ChestChestPanel, ChestPlayerGridLayout, ChestChestGridLayout, ChestItemPrefab;
+    public TMPro.TextMeshProUGUI chestItemCountText, chestPlayerItemCountText;
+
     private float displayTimeOffset = 0.25f;
     private float displayTime;
     private bool infoIsDisplayed;
     private bool beganTimer;
 
     public GameObject player;
+    public GameObject targetChest;
     private PlayerMovementScript playerMovement;
 
 
     void Start() {
 
         //make singleton
-        if(ins == null) {
+        if (ins == null) {
             ins = this;
         } else {
-            if(ins != this) {
+            if (ins != this) {
                 Destroy(gameObject);
             }
         }
@@ -111,16 +125,17 @@ public class UIManager : MonoBehaviour {
 
     //remove every item from the inventory screen so we don't get duplicates
     public void DePopulateInventoryScreen() {
-        foreach(Transform child in InvGridLayout.transform) {
+        foreach (Transform child in InvGridLayout.transform) {
             Destroy(child.gameObject);
         }
     }
 
     //add every item in the players inventory to the screen
     public void PopulateInventoryScreen() {
-        foreach(Item item in player.GetComponent<PlayerInfo>().inventory) {
+        foreach (Inventory.InventorySlot inv in player.GetComponent<PlayerInfo>().inventory.inventory) {
             RectTransform newItem = (RectTransform)Instantiate(InventorySlotPrefab, InvGridLayout);
-            newItem.transform.GetChild(0).GetComponent<DisplayItemInInventory>().InventoryDisplay(item, newItem);
+            newItem.transform.GetChild(0).GetComponent<DisplayItemInInventory>().InventoryDisplay(inv.item, newItem);
+            newItem.transform.GetComponentInChildren<DisplayItemCount>().ItemNumber = inv.count;
         }
     }
 
@@ -163,5 +178,45 @@ public class UIManager : MonoBehaviour {
     public void KeepInfoOpen() {
         InvItemInfoPanel.gameObject.SetActive(true);
     }
+
+    //display item picked up
+    public bool DisplayItemPickup(Item item) {
+        if (!SpeechManager.ins.PickUpItem(item)) {
+            playerMovement.CanPlayerMove = false;
+            return false;
+        }
+        playerMovement.CanPlayerMove = true;
+        return true;
+    }
+
+    //close item pick up
+    public void CloseItemPickup() {
+
+    }
+
+    public void OpenChest(GameObject chest) {
+        targetChest = chest;
+        TabPanel.gameObject.SetActive(false);
+        ChestPanel.gameObject.SetActive(true);
+        playerMovement.CanPlayerMove = false;
+    }
+
+    public void CloseChest() {
+        targetChest.GetComponent<ChestScript>().CloseChest();
+        targetChest = null;
+        ChestPanel.gameObject.SetActive(false);
+        playerMovement.CanPlayerMove = true;
+        player.GetComponentInChildren<PlayerChestScript>().inChest = false;
+    }
+
+    public void UpdateChestItemCount(int current, int max) {
+        chestItemCountText.text = current.ToString() + "/" + max.ToString();
+    }
+
+    public void UpdateChestPlayerItemCount(int current, int max) {
+        chestPlayerItemCountText.text = current.ToString() + "/" + max.ToString();
+    }
+
+    
 
 }

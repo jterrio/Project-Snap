@@ -15,8 +15,15 @@ public class PlayerDoorChecker : MonoBehaviour {
         }
         if (Input.GetKeyDown(KeyCode.Space)) {
             //player has pressed space to enter the door
-            transform.parent.transform.position = target.GetComponent<UseDoorScript>().destination.transform.position; //set position equal to the door exit position
-            transform.parent.GetComponent<PlayerInfo>().direction = target.GetComponent<UseDoorScript>().directionToFace; //set direction from entering/exiting door
+            UseDoorScript useDoorScript = target.GetComponent<UseDoorScript>(); //get reference
+            useDoorScript.PlaySound();
+            if (!useDoorScript.goesToNewScene) { //door does not go to new area, so its like a house or something
+                transform.parent.transform.position = useDoorScript.destination.transform.position; //set position equal to the door exit position
+                transform.parent.GetComponent<PlayerMovementScript>().SetDirection(useDoorScript.directionToFace); //set direction from entering/exiting door
+            } else { //door goes to new area, meaning that we are going to a new scene
+
+            }
+            
         }
 
 

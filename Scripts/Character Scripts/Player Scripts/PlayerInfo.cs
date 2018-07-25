@@ -4,11 +4,14 @@ using UnityEngine;
 
 public class PlayerInfo : CharacterInfo {
 
-    public List<Item> inventory;
+    public Inventory inventory;
     public float money;
 
     void Start() {
         direction = Direction.FRONT;
+        state = MovementState.STANDING;
+        sr = GetComponent<SpriteRenderer>();
+        canMove = true;
     }
 
 }

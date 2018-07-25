@@ -7,6 +7,10 @@ public class CharacterInfo : MonoBehaviour {
     public string characterName;
     public int characterAge;
     public Direction direction;
+    public MovementState state;
+    public Sprite[] directionSprites;
+    protected SpriteRenderer sr;
+    public bool canMove;
 
     //Direction that we are facing
     public enum Direction {
@@ -18,6 +22,30 @@ public class CharacterInfo : MonoBehaviour {
         BACKLEFT,
         LEFT,
         FRONTLEFT
+    }
+
+    //State that we are moving in, if at all
+    public enum MovementState {
+        STANDING,
+        WALKING,
+        RUNNING
+    }
+
+    public void SetSprite() {
+        switch (direction) {
+            case Direction.FRONT:
+                sr.sprite = directionSprites[0];
+                break;
+            case Direction.RIGHT:
+                sr.sprite = directionSprites[1];
+                break;
+            case Direction.BACK:
+                sr.sprite = directionSprites[2];
+                break;
+            case Direction.LEFT:
+                sr.sprite = directionSprites[3];
+                break;
+        }
     }
 
     //returns a bool depending on if we are facing another character
