@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class CharacterInfo : MonoBehaviour {
 
@@ -8,9 +9,29 @@ public class CharacterInfo : MonoBehaviour {
     public int characterAge;
     public Direction direction;
     public MovementState state;
+    public SpellInventory spellInventory;
     public Sprite[] directionSprites;
+    public Stats stats;
     protected SpriteRenderer sr;
     public bool canMove;
+    public bool isWalking = true;
+    public bool inCombat = false;
+    public List<CombatHUDAttack.Attack> spellQueue = new List<CombatHUDAttack.Attack>();
+    public Coroutine spellCastCoroutine;
+    public PolyNav.PolyNavAgent polyNav;
+
+    public float currentHealth = 100f;
+    public float maxHealth = 100f;
+    public float currentStamina = 100f;
+    public float maxStamina = 100f;
+
+    public float defaultSpeed;
+    public float defaultRunSpeed;
+    public float speed;
+    public float runSpeed;
+
+    private int progress = 0;
+
 
     //Direction that we are facing
     public enum Direction {
@@ -36,14 +57,26 @@ public class CharacterInfo : MonoBehaviour {
             case Direction.FRONT:
                 sr.sprite = directionSprites[0];
                 break;
-            case Direction.RIGHT:
+            case Direction.FRONTRIGHT:
                 sr.sprite = directionSprites[1];
                 break;
-            case Direction.BACK:
+            case Direction.RIGHT:
                 sr.sprite = directionSprites[2];
                 break;
-            case Direction.LEFT:
+            case Direction.BACKRIGHT:
                 sr.sprite = directionSprites[3];
+                break;
+            case Direction.BACK:
+                sr.sprite = directionSprites[4];
+                break;
+            case Direction.BACKLEFT:
+                sr.sprite = directionSprites[5];
+                break;
+            case Direction.LEFT:
+                sr.sprite = directionSprites[6];
+                break;
+            case Direction.FRONTLEFT:
+                sr.sprite = directionSprites[7];
                 break;
         }
     }
@@ -122,6 +155,85 @@ public class CharacterInfo : MonoBehaviour {
         return Direction.FRONT; //something has gone wrong to reach this
     }
 
+
+    public void CastSpell() {
+        spellCastCoroutine = StartCoroutine(SpellCoroutine());
+    }
+
+    IEnumerator SpellCoroutine() {
+        print("Beginning to cast spell...");
+        if (gameObject == GameManagerScript.ins.player) {
+            Image child = spellQueue[0].loggedInfo.GetComponentInChildren<Image>();
+            Toggle toggle = spellQueue[0].loggedInfo.GetComponentInChildren<Toggle>();
+            for (progress = 0; progress < (spellQueue[0].selectedSpell.castTime * 100); progress++) {
+                if (toggle.isOn) {
+                    polyNav.maxSpeed = defaultSpeed;
+                } else {
+                    polyNav.maxSpeed = 0;
+                }
+                yield return new WaitForSeconds(0.01f);
+                currentStamina -= (spellQueue[0].selectedSpell.energyToCast / (spellQueue[0].selectedSpell.castTime * 100));
+                child.fillAmount = progress / (spellQueue[0].selectedSpell.castTime * 100);
+            }
+            //exit the for loop at 99%, so set it to 1
+            child.fillAmount = 1;
+            polyNav.maxSpeed = defaultSpeed;
+            print("Spell casted!");
+            SpellManagerScript.ins.CastSpell(spellQueue[0], gameObject);
+
+            //set check if the player here
+            CombatManager.ins.combatHUDAttack.RemoveAttackFromLayout(spellQueue[0]);
+
+            spellQueue.RemoveAt(0);
+            spellCastCoroutine = null;
+        } else {
+
+        }
+
+    }
+
+    public void CancelSpell(CombatHUDAttack.Attack a) {
+        print("Spell canceled!");
+        if(spellCastCoroutine != null) {
+            StopCoroutine(spellCastCoroutine);
+            spellCastCoroutine = null;
+        }
+        if(gameObject == GameManagerScript.ins.player) {
+            CombatManager.ins.combatHUDAttack.RemoveAttackFromLayout(a);
+        }
+        if (spellQueue.Count > 0) {
+            spellQueue.Remove(a);
+        }
+    }
+
+    public void RecoverStamina() {
+        currentStamina += ( maxStamina * 0.02f);
+        if(currentStamina > maxStamina) {
+            currentStamina = maxStamina;
+        }
+    }
+
+    public void DrainStamina() {
+        currentStamina -= (maxStamina * 0.01f);
+        if(currentStamina < 0) {
+            currentStamina = 0;
+        }
+    }
+  
+    public bool IsWalking {
+        get {
+            return isWalking;
+        }
+        set {
+            isWalking = value;
+            if (isWalking) {
+                polyNav.maxSpeed = speed;
+            } else {
+                polyNav.maxSpeed = runSpeed;
+            }
+        }
+
+    }
 
 
 }

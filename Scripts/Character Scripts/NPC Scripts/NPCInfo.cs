@@ -12,6 +12,7 @@ public class NPCInfo : CharacterInfo {
     public bool isKeyNPC;
     public bool hasQuests;
 
+
     public Inventory merchantInventory;
     public float merchantMoney;
     public NPC.Faction faction;
@@ -30,9 +31,12 @@ public class NPCInfo : CharacterInfo {
 
     public GameObject stationaryPoint; //for the movementtype.stationary
     public Direction stationaryDirection; //direction to face when in the stationary mode
-    public PolyNav.PolyNavAgent polyNav;
     private Coroutine waitCoroutine;
     private Rigidbody2D rb;
+
+    public float runDistance; //distance required to be able to flee combat
+    public float FOV;
+    public float ViewDistance;
 
     void Start() {
         isTalkable = npc.isTalkable;
@@ -48,6 +52,9 @@ public class NPCInfo : CharacterInfo {
         polyNav = GetComponent<PolyNav.PolyNavAgent>();
         rb = GetComponent<Rigidbody2D>();
         InitPosition();
+
+        speed = defaultSpeed;
+        runSpeed = defaultRunSpeed;
     }
 
     public void InitPosition() {
@@ -76,17 +83,19 @@ public class NPCInfo : CharacterInfo {
 
     void Update() {
         //DO MOVEMENT FOR THE NPC BASED ON THE TYPE THEY ARE SET TO
-        switch (movementType) {
-            case NPC.MovementType.AREA:
-                AreaMovement();
+        if (!inCombat) {
+            switch (movementType) {
+                case NPC.MovementType.AREA:
+                    AreaMovement();
 
-                break;
-            case NPC.MovementType.PATROL:
-                PatrolMovement();
-                break;
-            case NPC.MovementType.STATIONARY:
-                StationaryMovement();
-                break;
+                    break;
+                case NPC.MovementType.PATROL:
+                    PatrolMovement();
+                    break;
+                case NPC.MovementType.STATIONARY:
+                    StationaryMovement();
+                    break;
+            }
         }
         SetDirection();
         SetSprite();
@@ -101,18 +110,57 @@ public class NPCInfo : CharacterInfo {
         if(polyNav.movingDirection == Vector2.zero) {
             return;
         }
-        if (Mathf.Abs(polyNav.movingDirection.x) >= Mathf.Abs(polyNav.movingDirection.y)) {
-            if (polyNav.movingDirection.x > 0) {
-                direction = Direction.RIGHT;
-            } else {
-                direction = Direction.LEFT;
-            }
-        } else {
-            if (polyNav.movingDirection.y > 0) {
-                direction = Direction.BACK;
-            } else {
-                direction = Direction.FRONT;
-            }
+        int x = 0;
+        int y = 0;
+        if(polyNav.movingDirection.x > 0) {
+            x = 1;
+        }else if(polyNav.movingDirection.x < 0) {
+            x = -1;
+        }
+        if (polyNav.movingDirection.y > 0) {
+            y = 1;
+        } else if (polyNav.movingDirection.y < 0) {
+            y = -1;
+        }
+        switch (x) {
+            case -1:
+                switch (y) {
+                    case -1:
+                        direction = Direction.FRONTLEFT;
+                        break;
+                    case 1:
+                        direction = Direction.BACKLEFT;
+                        break;
+                    case 0:
+                        direction = Direction.LEFT;
+                        break;
+                }
+                break;
+            case 1:
+                switch (y) {
+                    case -1:
+                        direction = Direction.FRONTRIGHT;
+                        break;
+                    case 1:
+                        direction = Direction.BACKRIGHT;
+                        break;
+                    case 0:
+                        direction = Direction.RIGHT;
+                        break;
+                }
+                break;
+            case 0:
+                switch (y) {
+                    case -1:
+                        direction = Direction.FRONT;
+                        break;
+                    case 1:
+                        direction = Direction.BACK;
+                        break;
+                    case 0:
+                        break;
+                }
+                break;
         }
 
 
@@ -124,6 +172,14 @@ public class NPCInfo : CharacterInfo {
         if(!isWaiting && !isMoving && !isTalking) {
             GetNewAreaPoint();
 
+        }
+    }
+
+    public void EnterCombat() {
+        polyNav.Stop();
+        inCombat = true;
+        if (waitCoroutine != null) {
+            StopCoroutine(waitCoroutine);
         }
     }
 
