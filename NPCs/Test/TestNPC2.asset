@@ -17,3 +17,5 @@ MonoBehaviour:
   isKeyNPC: 0
   isMerchant: 1
   hasQuests: 0
+  itemPool: []
+  faction: 4

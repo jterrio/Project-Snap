@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 95e70698585d2164ab824c3a0f269adb, type: 3}
+  m_Name: Earth Ring
+  m_EditorClassIdentifier: 
+  energyToCast: 50
+  spellMaterial: 02000000
+  type: 3
+  genre: 0
+  ID: 0
+  icon: {fileID: 21300000, guid: 19bbb0e77d8074a42a9e2c9de8736ec9, type: 3}
+  sprite: {fileID: 0}
+  castTime: 0
+  castSpeed: 0
+  spellObject: {fileID: 0}
+  duration: 20
+  strength: 100
+  canBlockProjectiles: 1
+  canWalkThrough: 0
+  walkThroughDamage: -1
+  radius: 10
+  isCentered: 1
+  distance: -1

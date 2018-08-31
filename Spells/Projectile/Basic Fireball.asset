@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cd18c09df9692d24a99d56291d3cba96, type: 3}
+  m_Name: Basic Fireball
+  m_EditorClassIdentifier: 
+  energyToCast: 15
+  spellMaterial: 03000000
+  type: 0
+  genre: 0
+  ID: 0
+  icon: {fileID: 21300134, guid: 166e30b01fcc8cd4f924643bddea6755, type: 3}
+  sprite: {fileID: 21300134, guid: 166e30b01fcc8cd4f924643bddea6755, type: 3}
+  castTime: 1
+  castSpeed: 0
+  spellObject: {fileID: 1482257805578246, guid: e597d907ba5579c4b9bd99157f7b3bad,
+    type: 2}
+  damage: 15
+  killChance: 5
+  doesExplode: 1
+  explosionDamage: 10
+  distance: 3
+  speed: 7.5
