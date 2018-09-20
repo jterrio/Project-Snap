@@ -219,7 +219,69 @@ public class CharacterInfo : MonoBehaviour {
             currentStamina = 0;
         }
     }
+
+    public void DrainStamina(float a) {
+        currentStamina -= a;
+        if(currentStamina < 0) {
+            currentStamina = 0;
+        }
+    }
+
+    public void RecoverStamina(float a) {
+        currentStamina += a;
+        if (currentStamina > maxStamina) {
+            currentStamina = maxStamina;
+        }
+
+    }
+
+    public void LoseHealth(float a) {
+        currentHealth -= a;
+        if(currentHealth < 0) {
+            currentHealth = 0;
+        }
+
+    }
+
+    public void TryInsta(float chance) {
+        if(currentHealth < maxHealth * 0.5f) {
+            float a = chance - GetComponent<Stats>().spirituality * 3.5f;
+            if(a > 0) {
+                float b = Random.Range(1, 100);
+                if(b <= a) { //true, insta killed
+                    print("You got got!");
+                    currentHealth = 0;
+                }
+            }
+        }
+    }
+
+
+    public void GainHealth(float a) {
+        currentHealth += a;
+        if(currentHealth > maxHealth) {
+            currentHealth = maxHealth;
+        }
+    }
+
+    public void SetHealth(float a) {
+        currentHealth = a;
+        if(currentHealth < 0) {
+            currentHealth = 0;
+        }
+        if(currentHealth > maxHealth) {
+            currentHealth = maxHealth;
+        }
+    }
+
+    public void ResetHealth() {
+        currentHealth = maxHealth;
+    }
   
+    public void ResetStamina() {
+        currentStamina = maxStamina;
+    }
+
     public bool IsWalking {
         get {
             return isWalking;

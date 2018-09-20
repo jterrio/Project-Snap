@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -17,6 +17,13 @@ public class CombatScript : MonoBehaviour {
     private Dictionary<Spell, Vector3> spellMemory = new Dictionary<Spell, Vector3>(); //keep track of spells and their last seen location
     private List<Spell> usedSpellMemory = new List<Spell>(); //keep track of spells that have been casted to know what to expect
     public List<Vector3> movementQueue = new List<Vector3>(); //queue in movements for the ai to move in a single turn, if possible
+    public GameObject debugPoint;
+    private GameObject[] testRotationPoints = new GameObject[40];
+    private float lastAngle;
+    private Vector3 lastRunAwayPosition = Vector3.zero;
+    private bool hasRunAway = false;
+    private float runAwayDistance = 0.75f;
+
 
     public int difficulty = 1;
     public bool hasAttackedRecently;
@@ -25,7 +32,35 @@ public class CombatScript : MonoBehaviour {
 
     private int rotationDirection = -1; //0 is c-c, 1 is c. If on -1, then is it not set to anything
     private Spell selectedSpell;
+    private Coroutine spellCoroutine;
+    private float progress = 0;
     public CombatState state;
+
+    private bool wallToLeft = false;
+    private bool wallToRight = false;
+
+    public class FocusTarget {
+        public GameObject focusTarget {
+            get {
+                return focusTarget;
+            }
+            set {
+                focusTarget = value;
+                
+            }
+        }
+
+        public Vector3 position {
+            get {
+                return focusTarget.transform.position;
+            }
+            set {
+                position = value;
+            }
+        }
+
+    }
+
 
     public enum CombatState {
         ATTACKING,
@@ -39,10 +74,43 @@ public class CombatScript : MonoBehaviour {
 
     void Awake() {
         npcInfo = GetComponent<NPCInfo>();
+        for (int i = 0; i < 40; i++) {
+            testRotationPoints[i] = Instantiate(debugPoint) as GameObject;
+
+        }
     }
 
     void Update() {
-        Move();
+        SetState();
+        if (state != CombatState.DYING) {
+            Move();
+            if (selectedSpell != null && progress >= 1) {
+                Cast();
+            }
+        } else {
+            Dead();
+        }
+    }
+
+
+    void Dead() {
+        GetComponent<Renderer>().material.color = new Color(0, 0, 0);
+        npcInfo.polyNav.enabled = false;
+        if(spellCoroutine != null) {
+            StopCoroutine(spellCoroutine);
+            spellCoroutine = null;
+        }
+        progress = 0;
+        selectedSpell = null;
+    }
+
+    void Cast() {
+        if (SpellStaminaCheck(selectedSpell.energyToCast * 0.25f) && IsVisible(focusTarget)) {
+            Vector3 dir = focusTarget.transform.position - transform.position;
+            SpellManagerScript.ins.CastSpell(selectedSpell, transform.position, dir, gameObject);
+            progress = 0;
+            selectedSpell = null;
+        }
 
     }
 
@@ -65,12 +133,65 @@ public class CombatScript : MonoBehaviour {
 
     public void AI(List<GameObject> charactersInCombat, bool isPlayerInCombat) {
         GetTargets(charactersInCombat);
+        CoverTest();
         SelectTarget();
-        SetState();
         GetSpell();
         SetMove();
+        TrySpell(); //add dis check; if running, cancel
         EndTurn();
     }
+
+
+    void TrySpell() {
+
+        if(selectedSpell !=null && spellCoroutine == null && progress == 0) {
+            if (SpellStaminaCheck()) {
+                spellCoroutine = StartCoroutine(SpellEnumerator());
+            }
+
+        }
+
+    }
+
+    bool SpellStaminaCheck() {
+        if(npcInfo.currentStamina <= 0) {
+            if(spellCoroutine != null) {
+                StopCoroutine(spellCoroutine);
+                spellCoroutine = null;
+            }
+            progress = 0;
+            return false;
+        }
+        return true;
+    }
+
+    bool SpellStaminaCheck(float a) {
+        if ((npcInfo.currentStamina - a) < 0) {
+            if (spellCoroutine != null) {
+                StopCoroutine(spellCoroutine);
+                spellCoroutine = null;
+            }
+            progress = 0;
+            return false;
+        }
+        return true;
+
+    }
+
+
+    IEnumerator SpellEnumerator() {
+        for (int i = 0; i < (selectedSpell.castTime * 100); i++) {
+            progress = (i / (selectedSpell.castTime * 100));
+            SpellStaminaCheck();
+
+            npcInfo.DrainStamina( ((selectedSpell.energyToCast - (selectedSpell.energyToCast * 0.25f)) / (selectedSpell.castTime * 100)));
+            //print(((selectedSpell.energyToCast - (selectedSpell.energyToCast * 0.25f)) / (selectedSpell.castTime * 100)));
+            yield return new WaitForSeconds(0.01f);
+        }
+        progress = 1;
+        spellCoroutine = null;
+    }
+
 
     void GetSpell() {
         if(selectedSpell == null && state == CombatState.ATTACKING) {
@@ -91,6 +212,50 @@ public class CombatScript : MonoBehaviour {
                 }
             }
         }
+    }
+
+    void CoverTest() {
+        //print("Target Size: " + memory.Count);
+        if(memory.Count > 0) {
+            if(targets.Count == 1) {
+                foreach(GameObject c in memory.Keys) {
+                    if (IsVisible(c)) {
+                        inCover = false;
+                        inPartialCover = true;
+                    } else {
+                        inCover = true;
+                        inPartialCover = false;
+                    }
+                }
+                
+
+            } else {
+                int count = 0;
+                foreach(GameObject c in memory.Keys) {
+                    if (!IsVisible(c)) {
+                        count += 1;
+                    }
+                }
+                if(count == memory.Count) {
+                    inCover = true;
+                    inPartialCover = false;
+                }else if(count > 0) {
+                    inCover = false;
+                    inPartialCover = true;
+                } else {
+                    inCover = false;
+                    inPartialCover = false;
+                }
+            }
+
+
+        } else {
+            inCover = true;
+            inPartialCover = true;
+        }
+
+
+
     }
 
     void GetTargets(List<GameObject> charactersInCombat) {
@@ -131,7 +296,8 @@ public class CombatScript : MonoBehaviour {
     //checks whether we can directly see them
     public bool IsVisible(GameObject target) {
         gameObject.layer = 2; //change to ignore raycast
-        RaycastHit2D hit = Physics2D.Raycast(gameObject.transform.position, target.transform.position - gameObject.transform.position, Mathf.Infinity, CombatManager.ins.characterVisibleTest);
+        Vector3 feet = new Vector3(transform.position.x, transform.position.y - 0.45f, 0);
+        RaycastHit2D hit = Physics2D.Raycast(feet, target.transform.position - feet, Mathf.Infinity, CombatManager.ins.characterVisibleTest);
         gameObject.layer = 8; //set back to npc
         //Debug.DrawRay(gameObject.transform.position, target.transform.position - gameObject.transform.position, Color.white, Mathf.Infinity);
         if(hit.collider != null) {
@@ -146,13 +312,18 @@ public class CombatScript : MonoBehaviour {
     void Move() {
         Vector3 feet = new Vector3(transform.position.x, transform.position.y - 0.45f, 0);
         if(movementQueue.Count > 0) {
-            if(Vector3.Distance(feet, movementQueue[0]) <= 0.2f) {
+            for (int i = 0; i < movementQueue.Count; i++) {
+                testRotationPoints[i].transform.position = movementQueue[i];
+                lastRunAwayPosition = feet;
+            }
+            if (Vector3.Distance(feet, movementQueue[0]) <= 0.2f) {
                 movementQueue.RemoveAt(0);
                 Move();
             } else {
                 npcInfo.polyNav.SetDestination(movementQueue[0]);
             }
         } else {
+            npcInfo.polyNav.Stop();
             return;
         }
 
@@ -161,31 +332,33 @@ public class CombatScript : MonoBehaviour {
 
 
     void SetMove() {
-        movementQueue.Clear(); //remove old points that we wanted to move to
         if (state == CombatState.ATTACKING) {
-            if(selectedSpell == null) {
+            movementQueue.Clear();
+            if (selectedSpell == null) {
                 return;
             }
             Vector3 dir = Vector3.zero;
             if (selectedSpell.type == Spell.Type.Projectile) {
                 Projectile p = selectedSpell as Projectile;
-                float disFromTarget = Vector3.Distance(focusTarget.transform.position, transform.position);
-                Vector3 directionFromTargetToAI = transform.position - focusTarget.transform.position;
-                RaycastHit2D hit = Physics2D.Raycast(focusTarget.transform.position, transform.position - focusTarget.transform.position, p.distance * 1.05f, CombatManager.ins.obstacleTest);
+                Vector3 feet = new Vector3(transform.position.x, transform.position.y - 0.45f, 0);
+                float disFromTarget = Vector3.Distance(focusTarget.transform.position, feet);
+                Vector3 directionFromTargetToAI = feet - focusTarget.transform.position;
+                RaycastHit2D hit = Physics2D.Raycast(focusTarget.transform.position, feet - focusTarget.transform.position, p.distance * 1.05f, CombatManager.ins.obstacleTest);
 
                 if (hit.collider == null) { //we have room to move back
-                    float angle = Vector2.Angle(Vector2.down, directionFromTargetToAI);
-                    if (transform.position.x < focusTarget.transform.position.x) { //we are left half of the x-axis, so add 180 since it is absolute
+                    float angle = Vector2.Angle(Vector2.right, directionFromTargetToAI);
+                    if (transform.position.y - 0.45f < focusTarget.transform.position.y) { //we are bottom half of the y-axis, so add 180 since it is absolute
                         angle = 360 - angle;
                     }
-                    print(angle);
+                    //angle = Mathf.Round(angle);
+                    //print(angle);
 
-                  
+
 
                     int counterClockwiseResult = 0;
                     int clockwiseResult = 0;
 
-                    for(int i = 0; i < 90; i++) {
+                    for (int i = 0; i < 90; i++) {
                         float counterClockwiseAngle = angle + i;
                         if (counterClockwiseAngle > 360) {
                             counterClockwiseAngle -= 360;
@@ -193,14 +366,14 @@ public class CombatScript : MonoBehaviour {
                         float x1 = focusTarget.transform.position.x + p.distance * Mathf.Cos(Mathf.Deg2Rad * counterClockwiseAngle);
                         float y1 = focusTarget.transform.position.y + p.distance * Mathf.Sin(Mathf.Deg2Rad * counterClockwiseAngle);
                         bool[] counterClockwiseTest = TryAttackPoint(x1, y1, p.distance);
-                        if(!counterClockwiseTest[0] || !counterClockwiseTest[1]) {
+                        if (!counterClockwiseTest[0] || !counterClockwiseTest[1]) {
                             break;
                         } else {
                             counterClockwiseResult += 1;
                         }
                     }
 
-                    for(int i = 0; i< 90; i++) {
+                    for (int i = 0; i < 90; i++) {
                         float clockwiseAngle = angle - 10f;
                         if (clockwiseAngle > 360) {
                             clockwiseAngle -= 360;
@@ -208,105 +381,81 @@ public class CombatScript : MonoBehaviour {
                         float x2 = focusTarget.transform.position.x + p.distance * Mathf.Cos(Mathf.Deg2Rad * clockwiseAngle);
                         float y2 = focusTarget.transform.position.y + p.distance * Mathf.Sin(Mathf.Deg2Rad * clockwiseAngle);
                         bool[] clockwiseTest = TryAttackPoint(x2, y2, p.distance);
-                        if(!clockwiseTest[0] || !clockwiseTest[1]) {
+                        if (!clockwiseTest[0] || !clockwiseTest[1]) {
                             break;
                         } else {
                             clockwiseResult += 1;
                         }
                     }
-                    print(gameObject);
-                    print("C: " + clockwiseResult);
-                    print("CC: " + counterClockwiseResult);
-                   if(rotationDirection == 0 && counterClockwiseResult <= 5) {
-                        for(int i = 0; i < counterClockwiseResult; i++) {
-                            float ccAngle = (angle + i);
-                            if (ccAngle > 360) {
-                                ccAngle -= 360;
-                            }
-                            float newX = focusTarget.transform.position.x + p.distance * Mathf.Cos(Mathf.Deg2Rad * ccAngle);
-                            float newY = focusTarget.transform.position.y + p.distance * Mathf.Sin(Mathf.Deg2Rad * ccAngle);
-                            movementQueue.Add(new Vector3(newX, newY, 0));
+                    //print(gameObject);
+                    //print("C: " + clockwiseResult);
+                    //print("CC: " + counterClockwiseResult);
+                    //set direction or give chance to change. need to change later to account for spells and such
+                    if (rotationDirection == 1) {
+                        if (Random.Range(1, 10) == 1) { //1% chance to change direction
+                            rotationDirection = 0;
                         }
-                        for(int i = 0; i < counterClockwiseResult; i++) {
-                            float cAngle = angle - i;
-                            if(cAngle < 0) {
-                                cAngle += 360;
-                            }
-                            float newX = focusTarget.transform.position.x + p.distance * (Mathf.Cos(Mathf.Deg2Rad * cAngle));
-                            float newY = focusTarget.transform.position.y + p.distance * Mathf.Sin(Mathf.Deg2Rad * cAngle);
-                            movementQueue.Add(new Vector3(newX, newY, 0));
-
-                        }
-                    }else if(rotationDirection == 1 && clockwiseResult <= 5) {
-                        for (int i = 0; i < clockwiseResult; i++) {
-                            float cAngle = (angle - i);
-                            if (cAngle < 0) {
-                                cAngle += 360;
-                            }
-                            float newX = focusTarget.transform.position.x + p.distance * Mathf.Cos(Mathf.Deg2Rad * cAngle);
-                            float newY = focusTarget.transform.position.y + p.distance * Mathf.Sin(Mathf.Deg2Rad * cAngle);
-                            movementQueue.Add(new Vector3(newX, newY, 0));
-                        }
-                        for (int i = 0; i < clockwiseResult; i++) {
-                            float ccAngle = angle + i;
-                            if (ccAngle > 360) {
-                                ccAngle -= 360;
-                            }
-                            float newX = focusTarget.transform.position.x + p.distance * (Mathf.Cos(Mathf.Deg2Rad * ccAngle));
-                            float newY = focusTarget.transform.position.y + p.distance * Mathf.Sin(Mathf.Deg2Rad * ccAngle);
-                            movementQueue.Add(new Vector3(newX, newY, 0));
-
-                        }
-                    } else {
-                        //set direction or give chance to change. need to change later to account for spells and such
-                        if (rotationDirection == 1) {
-                            if(Random.Range(1, 100) == 1) { //1% chance to change direction
-                                rotationDirection = 0;
-                            }
-                        }else if(rotationDirection == 0) {
-                            if(Random.Range(1, 100) == 1) { //1% chance to change direction
-                                rotationDirection = 1;
-                            }
-                        } else {
-                            //rotationDirection = Random.Range(0, 1); // 50% chance to pick a direction;
+                    } else if (rotationDirection == 0) {
+                        if (Random.Range(1, 10) == 1) { //1% chance to change direction
                             rotationDirection = 1;
                         }
+                    } else {
+                        if (clockwiseResult < counterClockwiseResult) {
+                            rotationDirection = 0; //go cc
+                        } else if (counterClockwiseResult > clockwiseResult) {
+                            rotationDirection = 1; // go c
+                        } else {
+                            rotationDirection = Random.Range(0, 1); //random
+                        }
+                    }
 
-                        if(rotationDirection == 1) { //clockwise
-                            for(int i = 0; i < 10; i++) {
-                                float cAngle = (angle - i);
-                                if (cAngle < 0) {
-                                    cAngle += 360;
-                                }
-                                float newX = focusTarget.transform.position.x + p.distance * Mathf.Cos(Mathf.Deg2Rad * cAngle);
-                                float newY = focusTarget.transform.position.y + p.distance * Mathf.Sin(Mathf.Deg2Rad * cAngle);
-                                movementQueue.Add(new Vector3(newX, newY, 0));
-                                Debug.DrawLine(transform.position, new Vector3(newX, newY, 0), Color.white);
+                    //go after the last point, if first, then go the direction we were told.
+                    //do check, because first may be turna round, which means first = second. So always do a check to see if have at least one point recorded.
+                    //if not, then we can just move normally, because that means we have moved, so just move the normal way and record that, if possible
+
+                    for (int i = 0; i < 40; i++) {
+                        float newAngle = angle;
+                        if (rotationDirection == 1) {
+                            if (movementQueue.Count != 0) {
+                                newAngle = lastAngle - 1;
+                            } else {
+                                newAngle -= 1;
+                            }
+                            if (newAngle < 0) {
+                                newAngle += 360;
                             }
 
-
-                        } else { //counter clockwise
-                            for(int i = 0; i< 10; i++) {
-                                float ccAngle = angle + i;
-                                if (ccAngle > 360) {
-                                    ccAngle -= 360;
-                                }
-                                float newX = focusTarget.transform.position.x + p.distance * (Mathf.Cos(Mathf.Deg2Rad * ccAngle));
-                                float newY = focusTarget.transform.position.y + p.distance * Mathf.Sin(Mathf.Deg2Rad * ccAngle);
-                                movementQueue.Add(new Vector3(newX, newY, 0));
-                                Debug.DrawLine(transform.position, new Vector3(newX, newY, 0), Color.white);
+                        } else {
+                            if (movementQueue.Count != 0) {
+                                newAngle = lastAngle + 1;
+                            } else {
+                                newAngle += 1;
                             }
-
+                            if (newAngle > 360) {
+                                newAngle -= 360;
+                            }
 
                         }
-
-
-
+                        float newX = focusTarget.transform.position.x + p.distance * Mathf.Cos(Mathf.Deg2Rad * newAngle);
+                        float newY = focusTarget.transform.position.y + p.distance * Mathf.Sin(Mathf.Deg2Rad * newAngle);
+                        bool[] turnAroundTest = TryAttackPoint(newX, newY, p.distance);
+                        if (!turnAroundTest[1]) {
+                            //
+                            if (rotationDirection == 0) {
+                                rotationDirection = 1;
+                            } else {
+                                rotationDirection = 0;
+                            }
+                            continue;
+                        } else {
+                            movementQueue.Add(new Vector3(newX, newY, 0));
+                            lastAngle = newAngle;
+                        }
 
 
                     }
 
-                    
+
 
 
 
@@ -321,6 +470,112 @@ public class CombatScript : MonoBehaviour {
             } else { //proj
 
             }
+        } else if (state == CombatState.RUNNING) {
+            int selfQuad = SetQuad(transform.position, focusTarget.transform.position);
+            Vector3 feet = new Vector3(transform.position.x, transform.position.y - 0.45f, 0);
+            Vector3 lastDirection = feet - lastRunAwayPosition;
+            float currentAngle = Vector2.Angle(Vector2.right, lastDirection);
+            currentAngle = AngleCheck(currentAngle, lastRunAwayPosition, feet);
+            List<Vector3> pointsInCover = new List<Vector3>();
+            List<Vector3> pointsTouchingCover = new List<Vector3>();
+            List<Vector3> pointsFartherAway = new List<Vector3>();
+            for(int i = 0; i <360; i++) {
+                
+                float x1 = transform.position.x + 1f * Mathf.Cos(Mathf.Deg2Rad * i);
+                float y1 = transform.position.y + 1f * Mathf.Sin(Mathf.Deg2Rad * i);
+                Vector3 point = new Vector3(x1, y1, 0);
+                RaycastHit2D hit = Physics2D.Raycast(transform.position, point - transform.position, Mathf.Infinity, CombatManager.ins.obstacleTest);
+                if(hit.collider == null) {
+                    //check distance
+                    if(Vector3.Distance(transform.position, focusTarget.transform.position) < Vector3.Distance(point, focusTarget.transform.position)) {
+                        pointsFartherAway.Add(point * 2f);
+                    }
+                    point = new Vector3(hit.point.x, hit.point.y, 0) + ((transform.position - point).normalized);
+                    RaycastHit2D hit2 = Physics2D.Raycast(point, focusTarget.transform.position - point, Mathf.Infinity, CombatManager.ins.characterVisibleTest);
+                    if(hit2.collider != null) {
+                        if (hit2.collider.gameObject.layer != 8 && hit2.collider.gameObject.layer != 9) {
+                            pointsInCover.Add(point);
+                        }
+                    }
+                } else {
+                    //check cover
+                    
+                    point = new Vector3(hit.point.x, hit.point.y, 0) + ((transform.position - point).normalized);
+                    RaycastHit2D hit2 = Physics2D.Raycast(point, focusTarget.transform.position - point, Mathf.Infinity, CombatManager.ins.characterVisibleTest);
+                    if(hit2.collider != null) {
+                        if(hit2.collider.gameObject.layer != 8 && hit2.collider.gameObject.layer != 9) {
+                            pointsInCover.Add(point);
+                        }
+                    }
+                }
+
+            }
+            if(pointsInCover.Count != 0) {
+                print("incover: " + pointsInCover.Count);
+                movementQueue.Clear();
+                int index = Random.Range(0, pointsInCover.Count - 1);
+                movementQueue.Add(pointsInCover[0]);
+            }else if(pointsFartherAway.Count != 0) {
+                print("free: " + pointsFartherAway.Count);
+                //Vector3 targetPoint = Vector3.zero;
+                while (pointsFartherAway.Count != 0) {
+                    int index = Random.Range(Mathf.FloorToInt((pointsFartherAway.Count - 1) * 0.25f),  Mathf.FloorToInt((pointsFartherAway.Count - 1) * 0.75f));
+                    if (movementQueue.Count != 0) {
+                        print("We got movement!");
+                        if (Vector3.Distance(movementQueue[0], focusTarget.transform.position) < Vector3.Distance(pointsFartherAway[index], focusTarget.transform.position) && QuadTest(selfQuad, SetQuad(pointsFartherAway[index], focusTarget.transform.position))){
+                            movementQueue.Clear();
+                            movementQueue.Add(pointsFartherAway[index]);
+                            break;
+                        } else {
+                            pointsFartherAway.RemoveAt(index);
+
+                        }
+                    } else {
+                        print("Clean Slate!");
+                        while (pointsFartherAway.Count != 0) {
+                            //print("Other: " + SetQuad(pointsFartherAway[index], focusTarget.transform.position));
+                            //print("Self " + selfQuad);
+                            //print(QuadTest(selfQuad, SetQuad(pointsFartherAway[index], focusTarget.transform.position)));
+                            //print(" ");
+                            if (QuadTest(selfQuad, SetQuad(pointsFartherAway[index], focusTarget.transform.position))) {
+                                movementQueue.Add(pointsFartherAway[index]);
+                                pointsFartherAway.Clear();
+                                break;
+                            } else {
+                                pointsFartherAway.RemoveAt(index);
+                            }
+                        }
+                    }
+                }
+            }
+
+        }else if (state == CombatState.RECHARGING) {
+            npcInfo.RecoverStamina();
+        }
+
+    }
+                
+            
+
+            
+       
+
+
+    float AngleCheck(float angle, Vector3 originObject, Vector3 targetObject) {
+        if(targetObject.y < originObject.y) {
+            return 360 - angle;
+        }
+        return angle;
+
+    }
+
+    float AngleMath(float angle) {
+        if(angle > 360) {
+            return angle - 360;
+        }else if(angle < 0) {
+            return angle + 360;
+        } else {
+            return angle;
         }
 
     }
@@ -370,23 +625,68 @@ public class CombatScript : MonoBehaviour {
     }
 
     void SetState() {
-        if (npcInfo.currentHealth <= 0) {
+        if(npcInfo.currentHealth <= 0) {
             state = CombatState.DYING;
-        } else if (npcInfo.currentStamina <= npcInfo.maxStamina * 0.25f) {
-            if (state == CombatState.ATTACKING) {
-                state = CombatState.RUNNING;
-            } else if (state == CombatState.RUNNING) {
-                //do cover check and set when appropriate
+        }
+        switch (state) {
+            case CombatState.ATTACKING:
+                if(npcInfo.currentStamina <= npcInfo.maxStamina * 0.25f) {
+                    state = CombatState.RUNNING;
+                }
+                break;
+            case CombatState.AVOIDING:
+                break;
+            case CombatState.DEFENDING:
+                break;
+            case CombatState.DYING:
+                break;
+            case CombatState.RECHARGING:
+                movementQueue.Clear();
+                if (!inCover || (memory.Count == 1 && inPartialCover)) {
+                    state = CombatState.RUNNING;
+                }
+                if(npcInfo.currentStamina >= npcInfo.maxStamina * 0.8f) {
+                    state = CombatState.ATTACKING;
+                }
+                break;
+            case CombatState.RUNNING:
+                if (inCover || npcInfo.currentStamina >= npcInfo.maxStamina * 0.8f) {
+                    state = CombatState.RECHARGING;
+                }
+                break;
+            default:
+                print("do something -michael");
+                break;
 
-            }
-
-        } else if (npcInfo.currentStamina >= npcInfo.maxStamina * 0.8f) {
-            state = CombatState.ATTACKING;
         }
 
-        //do spell check to see if we need to avoid or defend
+
+    }
+
+    int SetQuad(Vector3 target, Vector3 origin) {
+        if(target.x >= origin.x) {
+            if(target.y >= origin.y) {
+                return 1;
+            } else {
+                return 4;
+            }
 
 
+        } else {
+            if(target.y >= origin.y) {
+                return 2;
+            } else {
+                return 3;
+            }
+
+        }
+    }
+
+    bool QuadTest(int self, int test) {
+        if(Mathf.Abs(self - test) == 2) {
+            return false; //failed
+        }
+        return true;
     }
 
 }

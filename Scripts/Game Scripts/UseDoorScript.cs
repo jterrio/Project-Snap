@@ -7,14 +7,14 @@ public class UseDoorScript : MonoBehaviour {
 
     public GameObject destination;
     public CharacterInfo.Direction directionToFace;
-    public AudioClip audio;
+    public AudioClip audioToPlay;
 
     public bool goesToNewScene;
     public Scene destinationScene;
 
 
     public void PlaySound() {
-        AudioManagerScript.ins.audioSource.clip = audio;
+        AudioManagerScript.ins.audioSource.clip = audioToPlay;
         AudioManagerScript.ins.audioSource.Play();
     }
 

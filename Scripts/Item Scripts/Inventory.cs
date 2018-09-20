@@ -64,7 +64,7 @@ public class Inventory : MonoBehaviour {
 
     //remove an item to the inventory
     public int RemoveItem(Item item, int removeCount) {
-        size -= 1;
+        size -= removeCount;
         if(size < 0) {
             size = 0;
         }
@@ -110,6 +110,27 @@ public class Inventory : MonoBehaviour {
         return false;
     }
 
+    public void Transaction(PlayerInfo playerInfo, NPCInfo npcInfo, Inventory itemsToBuy, Inventory itemsToSell) {
+        //remove each item from player and give to merchant and calculate money
+        foreach (Inventory.InventorySlot inv in itemsToSell.inventory) {
+            playerInfo.inventory.RemoveItem(inv.item, inv.count);
+            npcInfo.merchantInventory.AddItemCount(inv.item, inv.count);
+            playerInfo.money += inv.count * inv.item.baseItemCost;
+            npcInfo.merchantMoney -= inv.count * inv.item.baseItemCost;
+        }
+        //this is the tricky part. need to void the transaction if the players inventory becomes full
+        foreach(Inventory.InventorySlot inv in itemsToBuy.inventory) {
+            if (!CanAddItemCount(inv.count)) {
+                continue;
+            }
+            playerInfo.inventory.AddItemCount(inv.item, inv.count);
+            npcInfo.merchantInventory.RemoveItem(inv.item, inv.count);
+            playerInfo.money -= inv.count * inv.item.baseItemCost;
+            npcInfo.merchantMoney += inv.count * inv.item.baseItemCost;
+
+        }
+    }
+
     //check to see if the passed item is in the inventory with at least the passed ammount
     public bool HasItemCountInInventory(Item item, int count) {
         foreach(InventorySlot inv in inventory) {
@@ -128,6 +149,13 @@ public class Inventory : MonoBehaviour {
 
     public bool CanAddItem() {
         if(size >= maxSize) {
+            return false;
+        }
+        return true;
+    }
+
+    public bool CanAddItemCount(int count) {
+        if(size + count >= maxSize) {
             return false;
         }
         return true;
