@@ -5,8 +5,6 @@ using UnityEngine;
 public class PlayerMovementScript : MonoBehaviour {
 
 
-    public float speed;
-    public float runSpeed;
     private Vector2 vel;
     private Rigidbody2D rb;
     private PlayerInfo pi;
@@ -25,6 +23,11 @@ public class PlayerMovementScript : MonoBehaviour {
     }
 
     void Update() {
+        if (pi.inCombat) {
+            CombatMovement();
+            return;
+        }
+
 
         if (!pi.canMove) {
             return; //disable during cutscenes or something else
@@ -40,22 +43,22 @@ public class PlayerMovementScript : MonoBehaviour {
         if (Input.GetKey(KeyCode.D)) {
             direction[1] = true;
             direction[3] = false;
-            vel = new Vector2(1 * runSpeed, vel.y);
+            vel = new Vector2(1 * pi.runSpeed, vel.y);
         }
         if (Input.GetKey(KeyCode.A)) {
             direction[3] = true;
             direction[1] = false;
-            vel = new Vector2(-1 * runSpeed, vel.y);
+            vel = new Vector2(-1 * pi.runSpeed, vel.y);
         }
         if (Input.GetKey(KeyCode.W)) {
             direction[2] = true;
             direction[0] = false;
-            vel = new Vector2(vel.x, 1 * runSpeed);
+            vel = new Vector2(vel.x, 1 * pi.runSpeed);
         }
         if (Input.GetKey(KeyCode.S)) {
             direction[0] = true;
             direction[2] = false;
-            vel = new Vector2(vel.x, -1 * runSpeed);
+            vel = new Vector2(vel.x, -1 * pi.runSpeed);
         }
         if (Input.GetKeyUp(KeyCode.D)) {
             direction[1] = false;
@@ -82,6 +85,22 @@ public class PlayerMovementScript : MonoBehaviour {
         vel = Vector2.zero;
 
         
+    }
+
+
+    void CombatMovement() {
+        if (!CombatManager.ins.combatHUDLog.HasReachedPosition()) {
+            pi.polyNav.SetDestination(CombatManager.ins.combatHUDLog.GetDestination());
+            CombatManager.ins.combatHUDLog.UpdateLineFromMovement();
+            
+        }
+        CombatManager.ins.combatHUDAttack.CheckAttacks();
+        if(pi.spellQueue.Count > 0 && pi.spellCastCoroutine == null) {
+            pi.CastSpell();
+        }
+
+
+
     }
 
     public void SetDirection(CharacterInfo.Direction newDirection) {

@@ -308,9 +308,31 @@ public class CombatScript : MonoBehaviour {
         return false;
     }
 
+    public bool IsVisible(GameObject target, Vector3 point) {
+        gameObject.layer = 2; // change to ignore raycast
+        RaycastHit2D hit = Physics2D.Raycast(point, target.transform.position - point, Mathf.Infinity, CombatManager.ins.characterVisibleTest);
+        gameObject.layer = 8; //set back to npc
+        if(hit.collider != null) {
+            if(hit.collider.gameObject == target) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public bool IsVisible(Vector3 point1, Vector3 point2) {
+        RaycastHit2D hit = Physics2D.Raycast(point1, point2 - point1, Vector3.Distance(point1, point2), CombatManager.ins.obstacleTest);
+        if(hit.collider == null) {
+            return true;
+        }
+        return false;
+
+    }
+
 
     void Move() {
         Vector3 feet = new Vector3(transform.position.x, transform.position.y - 0.45f, 0);
+        //print(Vector3.Distance(feet, movementQueue[0]));
         if(movementQueue.Count > 0) {
             for (int i = 0; i < movementQueue.Count; i++) {
                 testRotationPoints[i].transform.position = movementQueue[i];
@@ -477,77 +499,103 @@ public class CombatScript : MonoBehaviour {
             float currentAngle = Vector2.Angle(Vector2.right, lastDirection);
             currentAngle = AngleCheck(currentAngle, lastRunAwayPosition, feet);
             List<Vector3> pointsInCover = new List<Vector3>();
-            List<Vector3> pointsTouchingCover = new List<Vector3>();
-            List<Vector3> pointsFartherAway = new List<Vector3>();
-            for(int i = 0; i <360; i++) {
-                
+            List<Vector3> pointsPossibleCover = new List<Vector3>();
+            List<Vector3> pointsOpen = new List<Vector3>();
+
+            Vector3 lastPoint = Vector3.zero;
+            for (int i = 0; i < 360; i++) {
                 float x1 = transform.position.x + 1f * Mathf.Cos(Mathf.Deg2Rad * i);
                 float y1 = transform.position.y + 1f * Mathf.Sin(Mathf.Deg2Rad * i);
                 Vector3 point = new Vector3(x1, y1, 0);
-                RaycastHit2D hit = Physics2D.Raycast(transform.position, point - transform.position, Mathf.Infinity, CombatManager.ins.obstacleTest);
-                if(hit.collider == null) {
-                    //check distance
-                    if(Vector3.Distance(transform.position, focusTarget.transform.position) < Vector3.Distance(point, focusTarget.transform.position)) {
-                        pointsFartherAway.Add(point * 2f);
-                    }
-                    point = new Vector3(hit.point.x, hit.point.y, 0) + ((transform.position - point).normalized);
-                    RaycastHit2D hit2 = Physics2D.Raycast(point, focusTarget.transform.position - point, Mathf.Infinity, CombatManager.ins.characterVisibleTest);
-                    if(hit2.collider != null) {
-                        if (hit2.collider.gameObject.layer != 8 && hit2.collider.gameObject.layer != 9) {
-                            pointsInCover.Add(point);
-                        }
-                    }
-                } else {
-                    //check cover
-                    
-                    point = new Vector3(hit.point.x, hit.point.y, 0) + ((transform.position - point).normalized);
-                    RaycastHit2D hit2 = Physics2D.Raycast(point, focusTarget.transform.position - point, Mathf.Infinity, CombatManager.ins.characterVisibleTest);
-                    if(hit2.collider != null) {
-                        if(hit2.collider.gameObject.layer != 8 && hit2.collider.gameObject.layer != 9) {
-                            pointsInCover.Add(point);
-                        }
-                    }
-                }
-
-            }
-            if(pointsInCover.Count != 0) {
-                print("incover: " + pointsInCover.Count);
-                movementQueue.Clear();
-                int index = Random.Range(0, pointsInCover.Count - 1);
-                movementQueue.Add(pointsInCover[0]);
-            }else if(pointsFartherAway.Count != 0) {
-                print("free: " + pointsFartherAway.Count);
-                //Vector3 targetPoint = Vector3.zero;
-                while (pointsFartherAway.Count != 0) {
-                    int index = Random.Range(Mathf.FloorToInt((pointsFartherAway.Count - 1) * 0.25f),  Mathf.FloorToInt((pointsFartherAway.Count - 1) * 0.75f));
-                    if (movementQueue.Count != 0) {
-                        print("We got movement!");
-                        if (Vector3.Distance(movementQueue[0], focusTarget.transform.position) < Vector3.Distance(pointsFartherAway[index], focusTarget.transform.position) && QuadTest(selfQuad, SetQuad(pointsFartherAway[index], focusTarget.transform.position))){
-                            movementQueue.Clear();
-                            movementQueue.Add(pointsFartherAway[index]);
-                            break;
+                if (i == 0) { //base case
+                    lastPoint = point;
+                    RaycastHit2D hit = Physics2D.Raycast(transform.position, point - transform.position, 10f, CombatManager.ins.obstacleTest);
+                    Vector3 testPoint = new Vector3(hit.point.x, hit.point.y, 0) + new Vector3(hit.normal.x, hit.normal.y, 0);
+                    if(hit.collider != null) {
+                        if (!IsVisible(focusTarget, testPoint)) {
+                            pointsInCover.Add(testPoint);
                         } else {
-                            pointsFartherAway.RemoveAt(index);
-
+                            pointsOpen.Add(testPoint);
                         }
                     } else {
-                        print("Clean Slate!");
-                        while (pointsFartherAway.Count != 0) {
-                            //print("Other: " + SetQuad(pointsFartherAway[index], focusTarget.transform.position));
-                            //print("Self " + selfQuad);
-                            //print(QuadTest(selfQuad, SetQuad(pointsFartherAway[index], focusTarget.transform.position)));
-                            //print(" ");
-                            if (QuadTest(selfQuad, SetQuad(pointsFartherAway[index], focusTarget.transform.position))) {
-                                movementQueue.Add(pointsFartherAway[index]);
-                                pointsFartherAway.Clear();
-                                break;
+                        pointsOpen.Add(point);
+                    }
+                } else { //recursive
+                    RaycastHit2D hit = Physics2D.Raycast(transform.position, point - transform.position, 10f, CombatManager.ins.obstacleTest);
+                    Vector3 testPoint = new Vector3(hit.point.x, hit.point.y, 0) + new Vector3(hit.normal.x, hit.normal.y, 0);
+                    if (hit.collider != null) { //we hit something
+                        if (!IsVisible(focusTarget, testPoint)) {
+                            pointsInCover.Add(testPoint);
+                        } else {
+                            if (IsVisible(testPoint, lastPoint) && (Vector3.Distance(testPoint, transform.position) > Vector3.Distance(lastPoint, transform.position))) {
+                                pointsPossibleCover.Add(testPoint);
                             } else {
-                                pointsFartherAway.RemoveAt(index);
+                                pointsOpen.Add(point);
                             }
+                        }
+                    } else { //the point is out in the open
+                        testPoint = point + ((point - transform.position).normalized * 15f);
+                        if(!IsVisible(focusTarget, testPoint)) { //point is in cover
+                            pointsInCover.Add(testPoint);
+                        } else {
+
+                            if(IsVisible(testPoint, lastPoint)  &&  (Vector3.Distance(testPoint, transform.position) > Vector3.Distance(lastPoint, transform.position))) {
+                                pointsPossibleCover.Add(testPoint);
+                            } else {
+                                pointsOpen.Add(point);
+                            }
+
                         }
                     }
                 }
+                lastPoint = point;
+            } //end for loop
+
+            print("Cover: " + pointsInCover.Count);
+            print("Possible: " + pointsPossibleCover.Count);
+            print("Open: " + pointsOpen.Count);
+
+            if(pointsInCover.Count != 0) {
+                print("Selected Cover!");
+                movementQueue.Clear();
+                Vector3 selectedPoint = pointsInCover[0];
+                foreach(Vector3 p in pointsInCover) {
+                    if(p == selectedPoint) {
+                        continue;
+                    } else {
+                        if(Vector3.Distance(p, transform.position) < Vector3.Distance(selectedPoint, transform.position) && RangeTest(transform.position, selectedPoint, p, 90)) {
+                            selectedPoint = p;
+                        }
+                    }
+                }
+                movementQueue.Add(selectedPoint);
+
+            }else if(pointsPossibleCover.Count != 0) {
+                print("Selected Possible!");
+                movementQueue.Clear();
+                Vector3 selectedPoint = pointsPossibleCover[0];
+                foreach (Vector3 p in pointsPossibleCover) {
+                    if (p == selectedPoint) {
+                        continue;
+                    } else {
+                        if (Vector3.Distance(p, transform.position) < Vector3.Distance(selectedPoint, transform.position) && RangeTest(transform.position, selectedPoint, p, 90)) {
+                            selectedPoint = p;
+                        }
+                    }
+                }
+                movementQueue.Add(selectedPoint);
+
+
+            } else if(pointsOpen.Count != 0) {
+                print("Selected Open!");
+                movementQueue.Clear();
+                int index = Random.Range(0, pointsOpen.Count - 1);
+                movementQueue.Add(pointsOpen[index]);
+
+            } else {
+                npcInfo.RecoverStamina();
             }
+
 
         }else if (state == CombatState.RECHARGING) {
             npcInfo.RecoverStamina();
@@ -685,6 +733,15 @@ public class CombatScript : MonoBehaviour {
     bool QuadTest(int self, int test) {
         if(Mathf.Abs(self - test) == 2) {
             return false; //failed
+        }
+        return true;
+    }
+
+    bool RangeTest(Vector3 origin, Vector3 basePoint, Vector3 testPoint, int range) {
+        float angle = Vector3.Angle(basePoint - origin, testPoint - origin);
+        
+        if(angle > range) {
+            return false;
         }
         return true;
     }

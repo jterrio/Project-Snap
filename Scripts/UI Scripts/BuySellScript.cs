@@ -52,14 +52,15 @@ public class BuySellScript : MonoBehaviour, IPointerClickHandler, IScrollHandler
             if(eventData.scrollDelta.y > 0) { //increase
                 if(currentSelectedCount < maxItemCount) {
                     currentSelectedCount += 1;
+                    MerchantManagerScript.ins.UpdateCost(isSelected, gameObject);
                 }
             } else { //decrease
                 if(currentSelectedCount > 1) {
+                    MerchantManagerScript.ins.RemoveItem(gameObject);
                     currentSelectedCount -= 1;
                 }
             }
             Highlight();
-            MerchantManagerScript.ins.UpdateCost(isSelected, gameObject);
         }
     }
 }

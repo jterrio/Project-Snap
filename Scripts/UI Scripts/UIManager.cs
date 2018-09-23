@@ -13,14 +13,18 @@ public class UIManager : MonoBehaviour {
     public RectTransform InvBackground, InvForeground, InvGridLayout, InventorySlotPrefab, InvItemInfoPanel;
     public RectTransform ChoicePanel;
     public RectTransform MerchantPanel;
+    public RectTransform CombatHUDPanel, LogPanel_Base, LogPanel_Main, LogPanel_gridLayout, LogPanel_Attack, LogPanel_Attack_gridLayout, LogPanel_Attack_Icon_Prefab;
+    public Button ControllerPanel_MovementButton, ControllerPanel_AttackButton;
+    public RectTransform HealthandStaminaPanel;
+    public Image HealthImageFilled, StaminaImageFilled;
+    public RectTransform AITurnProgressPanel;
+    public Image AITurnProgressImage;
 
     public RectTransform speechOutline;
     public RectTransform speechPanel;
     public RectTransform talkerNamePanel;
     public RectTransform talkerTextPanel;
     public RectTransform choicePanel;
-    public TMPro.TextMeshProUGUI nameText;
-    public TMPro.TextMeshProUGUI speechText;
     public string textToDisplay; //for the coroutine
 
     public RectTransform ChestPanel, ChestPlayerPanel, ChestChestPanel, ChestPlayerGridLayout, ChestChestGridLayout, ChestItemPrefab;
@@ -46,6 +50,7 @@ public class UIManager : MonoBehaviour {
                 Destroy(gameObject);
             }
         }
+        DontDestroyOnLoad(gameObject);
 
         //set the player object and his movement script
         player = GameObject.FindGameObjectWithTag("Player");
@@ -217,6 +222,54 @@ public class UIManager : MonoBehaviour {
         chestPlayerItemCountText.text = current.ToString() + "/" + max.ToString();
     }
 
-    
+    public void EnableCombatHUD() {
+        CombatHUDPanel.gameObject.SetActive(true);
+        HealthandStaminaPanel.gameObject.SetActive(true);
+    }
+
+    public void DisableCombatHUD() {
+        CombatHUDPanel.gameObject.SetActive(false);
+        HealthandStaminaPanel.gameObject.SetActive(false);
+    }
+
+    public void HideLogPanel() {
+        LogPanel_Main.gameObject.SetActive(false);
+    }
+
+    public void ShowLogPanel() {
+        HideAttackPanel();
+        LogPanel_Main.gameObject.SetActive(true);
+    }
+
+    public void ShowAttackPanel() {
+        HideLogPanel();
+        LogPanel_Attack.gameObject.SetActive(true);
+        foreach(Transform child in LogPanel_Attack_gridLayout.transform) {
+            Destroy(child.gameObject);
+        }
+        foreach(Spell spell in GameManagerScript.ins.playerSpells.Spells()) {
+            RectTransform newSpell = Instantiate(LogPanel_Attack_Icon_Prefab, LogPanel_Attack_gridLayout);
+            newSpell.GetChild(0).GetComponent<DisplaySpellInfo>().Display(spell, newSpell);
+        }
+    }
+
+    public void HideAttackPanel() {
+        LogPanel_Attack.gameObject.SetActive(false);
+    }
+
+    public void EnableAITurnProgress() {
+        //AITurnProgressPanel.gameObject.SetActive(true);
+    }
+
+    public void DisableAITurnProgress() {
+        //AITurnProgressPanel.gameObject.SetActive(false);
+    }
+
+    public void UpdateAITurnProgress(int amount, int max) {
+        //float progress = (float)amount / (float)max;
+        //AITurnProgressImage.fillAmount = progress;
+    }
+
+
 
 }

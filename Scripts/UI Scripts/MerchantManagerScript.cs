@@ -25,6 +25,7 @@ public class MerchantManagerScript : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         //make singleton
+        
 	    if(ins == null) {
             ins = this;
         } else {
@@ -32,6 +33,7 @@ public class MerchantManagerScript : MonoBehaviour {
                 Destroy(gameObject);
             }
         }
+        DontDestroyOnLoad(gameObject);
 	}
 
     //open the shop window
@@ -106,34 +108,10 @@ public class MerchantManagerScript : MonoBehaviour {
             return; //throw error to player
         }
         //if we are here, then the transaction is possible
-       
-        player.GetComponent<PlayerInfo>().money -= totalBuyCost; //subtract buy cost
-        npc.GetComponent<NPCInfo>().merchantMoney += totalBuyCost; //add money to merchant
 
-        player.GetComponent<PlayerInfo>().money += totalSellCost; //add sell cost
-        npc.GetComponent<NPCInfo>().merchantMoney -= totalSellCost; //take money from merchant
 
         //remove items that the player bought from the npc's inventory and add them to the player's inventory
-        /*
-         * 
-         * 
-         * 
-         * 
-         * 
-         * WORK ON - DO PARTIAL TRANSACTION
-         * 
-         * 
-         * 
-         * */
-        foreach(Inventory.InventorySlot inv in itemsToBuy.inventory) {
-            npc.GetComponent<NPCInfo>().merchantInventory.RemoveItem(inv.item, inv.count);
-            player.GetComponent<PlayerInfo>().inventory.AddItemCount(inv.item, inv.count);
-        }
-        //remove items that the player sold from his inventory and add them to the npc's inventory
-        foreach(Inventory.InventorySlot inv in itemsToSell.inventory) {
-            player.GetComponent<PlayerInfo>().inventory.RemoveItem(inv.item, inv.count);
-            npc.GetComponent<NPCInfo>().merchantInventory.AddItemCount(inv.item, inv.count);
-        }
+        player.GetComponent<PlayerInfo>().inventory.Transaction(player.GetComponent<PlayerInfo>(), npc.GetComponent<NPCInfo>(), itemsToBuy, itemsToSell);
 
         itemsToBuy.ClearInventory(); //clear the items to buy
         itemsToSell.ClearInventory(); //clear the items to sell
@@ -211,10 +189,22 @@ public class MerchantManagerScript : MonoBehaviour {
         }
     }
 
+    public int RemoveItem(GameObject targetObject) {
+        int i = -1;
+        if(targetObject.transform.parent.parent.gameObject == playerItemPanel.gameObject) {
+            i = itemsToSell.RemoveItem(targetObject.GetComponentInChildren<DisplayItemInInventory>().item, 1);
+            CalculateSellCost();
+        } else {
+            i = itemsToBuy.RemoveItem(targetObject.GetComponentInChildren<DisplayItemInInventory>().item, 1);
+            CalculateBuyCost();
+        }
+        return i;
+    }
+
     //update text fields for buying and selling
     public int UpdateCost(bool isSelected, GameObject targetObject) {
         //checks to see if the item selected belonged to the player (which means we are selling)
-        int i = 0;
+        int i = -1;
         if (targetObject.transform.parent.parent.gameObject == playerItemPanel.gameObject) {
             //if we selected it, add its cost to the total sell cost and display that
             if (isSelected) {

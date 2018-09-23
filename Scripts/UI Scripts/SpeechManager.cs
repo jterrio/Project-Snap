@@ -44,6 +44,7 @@ public class SpeechManager : MonoBehaviour {
                 Destroy(gameObject);
             }
         }
+        DontDestroyOnLoad(gameObject);
         //init
         nameText = talkerNamePanel.GetComponent<TMPro.TextMeshProUGUI>();
         speechText = talkerTextPanel.GetComponent<TMPro.TextMeshProUGUI>();
