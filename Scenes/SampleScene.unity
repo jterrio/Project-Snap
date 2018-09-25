@@ -10742,6 +10742,11 @@ Prefab:
       propertyPath: _map
       value: 
       objectReference: {fileID: 279604253}
+    - target: {fileID: 114583318065831654, guid: dc0fc5471c8d19e4a88db1f7a11f2cc1,
+        type: 2}
+      propertyPath: perception
+      value: 10
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: dc0fc5471c8d19e4a88db1f7a11f2cc1, type: 2}
   m_IsPrefabAsset: 0
@@ -11100,7 +11105,7 @@ MonoBehaviour:
   polyNav: {fileID: 1254768297}
   currentHealth: 100
   maxHealth: 100
-  currentStamina: 30
+  currentStamina: 20
   maxStamina: 100
   defaultSpeed: 2.5
   defaultRunSpeed: 6
@@ -11246,7 +11251,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1254768296}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -1.04, y: 0.64, z: 0}
+  m_LocalPosition: {x: 1.16, y: -0.46, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1679086330}

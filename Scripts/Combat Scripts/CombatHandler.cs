@@ -67,13 +67,13 @@ public class CombatHandler : MonoBehaviour {
         yield return new WaitForEndOfFrame();
         foreach (GameObject c in charactersInCombat) {
             if (c.GetComponent<CombatScript>().isReady) {
+                Time.timeScale = 0f;
+                print("Turn: " + c.gameObject.name);
                 currentCharactersTurn.Add(c);
                 c.GetComponent<CombatScript>().isReady = false;
                 if(c.layer == 8) { //npc, means when need to run the AI
                     c.GetComponent<CombatScript>().AI(charactersInCombat, CombatManager.ins.GetPlayerHandler() == this.gameObject);
                 }
-                Time.timeScale = 0f;
-                //print("Turn: " + c.gameObject.name);
             }
         }
         turnCoroutine = null;
@@ -85,6 +85,7 @@ public class CombatHandler : MonoBehaviour {
             if (!c.GetComponent<CombatScript>().endTurn) {
                 continue;
             } else {
+                //print("START WAITING: " + c);
                 c.GetComponent<CombatScript>().StartWaiting();
                 charactersToRemove.Add(c);
             }

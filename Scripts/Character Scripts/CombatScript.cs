@@ -116,6 +116,7 @@ public class CombatScript : MonoBehaviour {
 
 
     public void StartWaiting() {
+        //print(gameObject + " has started waiting...");
         endTurn = false;
         turnCoroutine = StartCoroutine(TurnCoroutine());
     }
@@ -123,15 +124,20 @@ public class CombatScript : MonoBehaviour {
 
     IEnumerator TurnCoroutine() {
         float s = (0.75f - (myStats.perception * 0.025f));
+        //print(gameObject + " wait time is " + s);
         yield return new WaitForSeconds(s);
         isReady = true;
+        turnCoroutine = null;
+        //print(gameObject + " has stopped waiting!");
     }
 
     public void EndTurn() {
+        print(gameObject + " has ended their turn at " + Time.time);
         endTurn = true;
     }
 
     public void AI(List<GameObject> charactersInCombat, bool isPlayerInCombat) {
+        //print("AI STARTING!");
         GetTargets(charactersInCombat);
         CoverTest();
         SelectTarget();
@@ -527,7 +533,7 @@ public class CombatScript : MonoBehaviour {
                         if (!IsVisible(focusTarget, testPoint)) {
                             pointsInCover.Add(testPoint);
                         } else {
-                            if (IsVisible(testPoint, lastPoint) && (Vector3.Distance(testPoint, transform.position) > Vector3.Distance(lastPoint, transform.position))) {
+                            if (!IsVisible(testPoint, lastPoint) && (Vector3.Distance(testPoint, transform.position) > Vector3.Distance(lastPoint, transform.position))) {
                                 pointsPossibleCover.Add(testPoint);
                             } else {
                                 pointsOpen.Add(point);
@@ -563,7 +569,8 @@ public class CombatScript : MonoBehaviour {
                     if(p == selectedPoint) {
                         continue;
                     } else {
-                        if(Vector3.Distance(p, transform.position) < Vector3.Distance(selectedPoint, transform.position) && RangeTest(transform.position, selectedPoint, p, 90)) {
+                        if (Vector3.Distance(p, transform.position) < Vector3.Distance(selectedPoint, transform.position) && RangeTest(transform.position, selectedPoint, p, 90) && QuadTest(SetQuad(focusTarget.transform.
+                            position, p), SetQuad(focusTarget.transform.position, transform.position))) {
                             selectedPoint = p;
                         }
                     }
@@ -578,7 +585,8 @@ public class CombatScript : MonoBehaviour {
                     if (p == selectedPoint) {
                         continue;
                     } else {
-                        if (Vector3.Distance(p, transform.position) < Vector3.Distance(selectedPoint, transform.position) && RangeTest(transform.position, selectedPoint, p, 90)) {
+                        if (Vector3.Distance(p, transform.position) < Vector3.Distance(selectedPoint, transform.position) && RangeTest(transform.position, selectedPoint, p, 90) && QuadTest(SetQuad(focusTarget.transform.
+                            position, p), SetQuad(focusTarget.transform.position, transform.position))) {
                             selectedPoint = p;
                         }
                     }
