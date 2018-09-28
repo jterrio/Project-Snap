@@ -4,46 +4,42 @@ using UnityEngine;
 
 public class CombatScript : MonoBehaviour {
 
-    private NPCInfo npcInfo;
-    private Coroutine turnCoroutine;
-    public Stats myStats;
+    private NPCInfo npcInfo; //ai info
+    private Coroutine turnCoroutine; //ai's turn coroutine
+    public Stats myStats; //ai stats
 
-    public bool isReady = false;
-    public bool endTurn = false;
+    public bool isReady = false; //ready means that combat handler should give us a turn
+    public bool endTurn = false; //send to combat handler to know that we are done
 
-    public List<GameObject> targets;
-    private GameObject focusTarget;
+    public List<GameObject> targets; //list of all targets that we can currently see in combat
+    private GameObject focusTarget; //target that we are focus on; the one that the spell will be cast in relation to
     private Dictionary<GameObject, Vector3> memory = new Dictionary<GameObject, Vector3>(); //keep track of the npc's memory of last seen locations
     private Dictionary<Spell, Vector3> spellMemory = new Dictionary<Spell, Vector3>(); //keep track of spells and their last seen location
     private List<Spell> usedSpellMemory = new List<Spell>(); //keep track of spells that have been casted to know what to expect
     public List<Vector3> movementQueue = new List<Vector3>(); //queue in movements for the ai to move in a single turn, if possible
-    public GameObject debugPoint;
-    private GameObject[] testRotationPoints = new GameObject[40];
-    private float lastAngle;
-    private Vector3 lastRunAwayPosition = Vector3.zero;
-    private bool hasRunAway = false;
-    private float runAwayDistance = 0.75f;
+    public GameObject debugPoint; //points that can be instantiated for debuging purposes
+    private GameObject[] testRotationPoints = new GameObject[40]; //list of debug points for movementQueue
+    private float lastAngle; //last angle we moved from (angle tests)
+    private Vector3 lastRunAwayPosition = Vector3.zero; //last position
 
-    private Vector3 lastPosition = Vector3.zero;
-    private float stuckTimer = 0f;
-    private float stuckTimerBase = 2f;
-    private bool isStuck = false;
+    private Vector3 lastPosition = Vector3.zero; //last position, used for keeping track of being stuck
+    private float stuckTimer = 0f; //timer to keep track of when it began a thought process of being stuck
+    private float stuckTimerBase = 2f; //timer value before the ai says it is stuck
+    private bool isStuck = false; //if the ai can't move or is trying to move to impossible spot bool
 
 
-    public int difficulty = 1;
-    public bool hasAttackedRecently;
-    public bool inCover;
-    public bool inPartialCover;
+    public int difficulty = 1; //difficulty doesnt do anything (it did do something on v1 of the AI)
+    public bool hasAttackedRecently; //has attacked recently bool; used for cooldowns on casting spells
+    public bool inCover; //in cover bool
+    public bool inPartialCover; //in partial cover bool
 
-    private int rotationDirection = -1; //0 is c-c, 1 is c. If on -1, then is it not set to anything
-    private Spell selectedSpell;
-    private Coroutine spellCoroutine;
-    private float progress = 0;
-    public CombatState state;
+    private int rotationDirection = -1; //0 is counter clockwise, 1 is clockwise. If on -1, then is it not set to anything
+    private Spell selectedSpell; //spell that is being casted (or attempted to)
+    private Coroutine spellCoroutine; //coroutine for casting spell
+    private float progress = 0; //progress from 0 to 1 of the spell being cast
+    public CombatState state; //current state in combat for the ai
 
-    private bool wallToLeft = false;
-    private bool wallToRight = false;
-
+    //test class; ignore
     public class FocusTarget {
         public GameObject focusTarget {
             get {
