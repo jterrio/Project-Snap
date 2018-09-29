@@ -84,6 +84,12 @@ public class CombatScript : MonoBehaviour {
 
     //called every frame
     void Update() {
+        if (gameObject == GameManagerScript.ins.player) { //player should not be running AI update code
+            return;
+        }
+        if (!npcInfo.inCombat) { //we dont need to run the AI update code for combat if we are not in combat
+            return;
+        }
         SetState(); //get info about self and world and set the ai state accordingly
         if (state != CombatState.DYING) { //check if it isnt dead
             Move(); //move the ai every frame
