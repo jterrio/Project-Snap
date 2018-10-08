@@ -20,6 +20,14 @@ public class CombatHUDAttack : MonoBehaviour {
     private Spell spell;
     private int tempHash;
     private int count = -1;
+    public FireMode fireMode = FireMode.FREE;
+    private GameObject fireModePointObject;
+
+    public enum FireMode { //types of modes that we can fire
+        FREE, //free directional
+        POINT, //locked onto a point on the map
+        TARGET //locked onto a target
+    }
 
 
     public class Attack : CombatHUDLog.Move {
@@ -73,6 +81,9 @@ public class CombatHUDAttack : MonoBehaviour {
         }
 
         if (selectedSpell) {
+            if (Input.GetKeyDown(KeyCode.Q)) {
+                SwitchFireMode();
+            }
             SetMouse();
         }
 
@@ -163,25 +174,41 @@ public class CombatHUDAttack : MonoBehaviour {
     void SetMouse() {
         switch (spell.type) {
             case Spell.Type.Projectile:
-                Vector3 startPos = loggedAttacks[loggedAttacks.Count - 1].attackPoint;
-                Vector3 endPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                endPos = new Vector3(endPos.x, endPos.y, 0);
-                Vector3 dir = endPos - startPos;
-                endPos = startPos + dir.normalized * 1f;
-                tempAttackDirectional.transform.position = startPos;
-                Vector3[] points = new Vector3[2];
-                points[0] = startPos;
-                points[1] = endPos;
-                tempAttackDirectional.GetComponent<LineRenderer>().positionCount = 2;
-                tempAttackDirectional.GetComponent<LineRenderer>().SetPositions(points);
-                tempAttackDirectional.GetComponent<LineRenderer>().startWidth = 0.05f;
-                tempAttackDirectional.GetComponent<LineRenderer>().endWidth = 0.05f;
-                CheckDirectionalClick(dir.normalized);
+                //fireMode = FireMode.POINT; //default for projectiles
+                switch (fireMode) {
+                    case FireMode.FREE:
+                        Vector3 startPos = loggedAttacks[loggedAttacks.Count - 1].attackPoint;
+                        Vector3 endPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                        endPos = new Vector3(endPos.x, endPos.y, 0);
+                        Vector3 dir = endPos - startPos;
+                        endPos = startPos + dir.normalized * 1f;
+                        tempAttackDirectional.transform.position = startPos;
+                        Vector3[] points = new Vector3[2];
+                        points[0] = startPos;
+                        points[1] = endPos;
+                        tempAttackDirectional.GetComponent<LineRenderer>().positionCount = 2;
+                        tempAttackDirectional.GetComponent<LineRenderer>().SetPositions(points);
+                        tempAttackDirectional.GetComponent<LineRenderer>().startWidth = 0.05f;
+                        tempAttackDirectional.GetComponent<LineRenderer>().endWidth = 0.05f;
+                        CheckDirectionalClick(dir.normalized);
+                        break;
+                    case FireMode.POINT:
+                        //fireModePointObject = Instantiate(attackOnLinePrefab);
+                        Vector3 mouse = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                        fireModePointObject.transform.position = new Vector3(mouse.x, mouse.y, 0);
+                        
+                        break;
+                    case FireMode.TARGET:
+
+                        break;
+                }
                 break;
+                
         }
 
     }
 
+    //setting mouse position on movement line
     void CheckDirectionalClick(Vector3 dir) {
         if (Input.GetMouseButtonDown(0)) {
             PointerEventData pointerData = new PointerEventData(EventSystem.current);
@@ -272,7 +299,34 @@ public class CombatHUDAttack : MonoBehaviour {
         this.spell = spell;
         spellObject = parent;
         selectedSpell = true;
-        tempAttackDirectional = Instantiate(attackDirectionalPrefab);
+        switch (spell.type) {
+            case Spell.Type.Projectile:
+                fireMode = FireMode.FREE;
+                tempAttackDirectional = Instantiate(attackDirectionalPrefab);
+                break;
+        }
+    }
+
+    void SwitchFireMode() {
+        switch (fireMode) {
+            case FireMode.FREE:
+                fireMode = FireMode.POINT;
+                if(tempAttackDirectional != null) {
+                    Destroy(tempAttackDirectional);
+                    fireModePointObject = Instantiate(attackOnLinePrefab);
+                    fireModePointObject.name = "IM HERE";
+                }
+                break;
+            case FireMode.POINT:
+                fireMode = FireMode.TARGET;
+                if (fireModePointObject != null) {
+                    Destroy(fireModePointObject);
+                }
+                break;
+            case FireMode.TARGET:
+                fireMode = FireMode.FREE;
+                break;
+        }
     }
 
     public void DrawAttackPositions() {
