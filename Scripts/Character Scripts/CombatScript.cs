@@ -64,13 +64,19 @@ public class CombatScript : MonoBehaviour {
     //called every frame
     void Update() {
 <<<<<<< HEAD
+<<<<<<< HEAD
         if(npcInfo == null) { //check to see if initilization went wrong
             Awake(); //re-init
 =======
+=======
+>>>>>>> 49e5febf82876518fa4596f7a732b5b9078c0dc1
         if (gameObject == GameManagerScript.ins.player) { //player should not be running AI update code
             return;
         }
         if (!npcInfo.inCombat) { //we dont need to run the AI update code for combat if we are not in combat
+<<<<<<< HEAD
+>>>>>>> 49e5febf82876518fa4596f7a732b5b9078c0dc1
+=======
 >>>>>>> 49e5febf82876518fa4596f7a732b5b9078c0dc1
             return;
         }
