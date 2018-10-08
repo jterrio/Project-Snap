@@ -11105,7 +11105,7 @@ MonoBehaviour:
   polyNav: {fileID: 1254768297}
   currentHealth: 100
   maxHealth: 100
-  currentStamina: 20
+  currentStamina: 30
   maxStamina: 100
   defaultSpeed: 2.5
   defaultRunSpeed: 6
