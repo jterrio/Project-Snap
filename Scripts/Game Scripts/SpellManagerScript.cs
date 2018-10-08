@@ -22,7 +22,20 @@ public class SpellManagerScript : MonoBehaviour {
     public void CastSpell(CombatHUDAttack.Attack a, GameObject caster) {
         switch (a.selectedSpell.type) {
             case Spell.Type.Projectile:
-                SpellProjectileLookUp(a.selectedSpell, caster.transform.position, a.attackDirection, caster);
+                switch (a.fireMode) {
+                    case CombatHUDAttack.FireMode.FREE:
+                        SpellProjectileLookUp(a.selectedSpell, caster.transform.position, a.attackDirection, caster);
+                        break;
+                    case CombatHUDAttack.FireMode.POINT:
+                        SpellProjectileLookUp(a.selectedSpell, caster.transform.position, (a.attackPointModePoint - caster.transform.position), caster);
+                        break;
+                    case CombatHUDAttack.FireMode.TARGET:
+
+                        break;
+                    default:
+                        SpellProjectileLookUp(a.selectedSpell, caster.transform.position, a.attackDirection, caster);
+                        break;
+                }
                 break;
         }
         

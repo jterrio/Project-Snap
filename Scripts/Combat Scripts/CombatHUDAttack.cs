@@ -31,13 +31,15 @@ public class CombatHUDAttack : MonoBehaviour {
 
 
     public class Attack : CombatHUDLog.Move {
-        public Spell selectedSpell;
-        public Vector3 attackPoint;
-        public Vector3 attackDirection;
-        public GameObject attackObject;
-        public RectTransform loggedInfo;
-        public int hash;
-        public GameObject attackTarget;
+        public Spell selectedSpell; //selected spell associated with this
+        public Vector3 attackPoint; //point on the movement line for the player
+        public Vector3 attackDirection; //for FREE fire mode direction (SAVED AS DIRECTION)
+        public Vector3 attackPointModePoint; //for POINT fire mode direction (SAVED AS POINT)
+        public GameObject attackObject; //object of the spell
+        public RectTransform loggedInfo; //info in the log
+        public int hash; //random hash
+        public GameObject attackTarget; 
+        public FireMode fireMode; //fire mode of the spell
 
         void Start() {
             mt = MoveType.Attack;
@@ -64,6 +66,9 @@ public class CombatHUDAttack : MonoBehaviour {
             spell = null;
             if(tempAttackDirectional != null) {
                 Destroy(tempAttackDirectional.gameObject);
+            }
+            if(fireModePointObject != null) {
+                Destroy(fireModePointObject.gameObject);
             }
         }
     }
@@ -196,7 +201,7 @@ public class CombatHUDAttack : MonoBehaviour {
                         //fireModePointObject = Instantiate(attackOnLinePrefab);
                         Vector3 mouse = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                         fireModePointObject.transform.position = new Vector3(mouse.x, mouse.y, 0);
-                        
+                        CheckPointClick();
                         break;
                     case FireMode.TARGET:
 
@@ -208,7 +213,31 @@ public class CombatHUDAttack : MonoBehaviour {
 
     }
 
-    //setting mouse position on movement line
+
+    void CheckPointClick() {
+        if (Input.GetMouseButtonDown(0)) {
+            PointerEventData pointerData = new PointerEventData(EventSystem.current);
+            pointerData.position = Input.mousePosition;
+            List<RaycastResult> results = new List<RaycastResult>();
+            EventSystem.current.RaycastAll(pointerData, results);
+            if (results.Count > 0) {
+                if (results[0].gameObject.layer == LayerMask.NameToLayer("UI")) {
+                    return;
+                }
+            }
+            isFinished = true;
+            loggedAttacks[loggedAttacks.Count - 1].selectedSpell = spell;
+            loggedAttacks[loggedAttacks.Count - 1].fireMode = FireMode.POINT;
+            loggedAttacks[loggedAttacks.Count - 1].attackPointModePoint = fireModePointObject.transform.position;
+            AddAttackToLayout(loggedAttacks[loggedAttacks.Count - 1]);
+            UIManager.ins.ShowLogPanel();
+            ResetValues();
+            DrawAttackPositions();
+        }
+
+    }
+
+    //setting directional attack
     void CheckDirectionalClick(Vector3 dir) {
         if (Input.GetMouseButtonDown(0)) {
             PointerEventData pointerData = new PointerEventData(EventSystem.current);
@@ -222,6 +251,7 @@ public class CombatHUDAttack : MonoBehaviour {
             }
             isFinished = true;
             loggedAttacks[loggedAttacks.Count - 1].selectedSpell = spell;
+            loggedAttacks[loggedAttacks.Count - 1].fireMode = FireMode.FREE;
             loggedAttacks[loggedAttacks.Count - 1].attackDirection = dir;
             AddAttackToLayout(loggedAttacks[loggedAttacks.Count - 1]);
             UIManager.ins.ShowLogPanel();
@@ -307,6 +337,18 @@ public class CombatHUDAttack : MonoBehaviour {
         }
     }
 
+    public void UnSelectSpell(Spell spell, GameObject parent) {
+        this.spell = null;
+        spellObject = null;
+        selectedSpell = false;
+        if(tempAttackDirectional != null) {
+            Destroy(tempAttackDirectional.gameObject);
+        }
+        if(fireModePointObject != null) {
+            Destroy(fireModePointObject.gameObject);
+        }
+    }
+
     void SwitchFireMode() {
         switch (fireMode) {
             case FireMode.FREE:
@@ -314,7 +356,7 @@ public class CombatHUDAttack : MonoBehaviour {
                 if(tempAttackDirectional != null) {
                     Destroy(tempAttackDirectional);
                     fireModePointObject = Instantiate(attackOnLinePrefab);
-                    fireModePointObject.name = "IM HERE";
+                    //fireModePointObject.name = "IM HERE";
                 }
                 break;
             case FireMode.POINT:

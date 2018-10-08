@@ -25,6 +25,7 @@ public class SelectAttackScript : MonoBehaviour, IPointerClickHandler {
                 CombatManager.ins.combatHUDAttack.SelectSpell(selectedSpell, this.gameObject);
             } else { //false
                 selectedSpell = null;
+                CombatManager.ins.combatHUDAttack.UnSelectSpell(selectedSpell, this.gameObject);
                 transform.GetComponent<Image>().color = new Color(1, 1, 1);
             }
         }
