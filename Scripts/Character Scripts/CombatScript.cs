@@ -114,10 +114,18 @@ public class CombatScript : MonoBehaviour {
     //Called when a selected spell has finished its progress (= 1)
     void Cast() {
         if (SpellStaminaCheck(selectedSpell.energyToCast * 0.25f) && IsVisible(focusTarget)) { //check to see if the target is visible and if we have enough energy to finish the cast
-            Vector3 dir = focusTarget.transform.position - transform.position; //get direction to target
-            SpellManagerScript.ins.CastSpell(selectedSpell, transform.position, dir, gameObject); //send the information to the spell manager
-            progress = 0; //reset values
-            selectedSpell = null;
+            switch (selectedSpell.type) {
+                case Spell.Type.Projectile:
+                    Projectile a = selectedSpell as Projectile;
+                    //if the spell is a projectile, also check to see if target is close enough for the spell to hit, with small buffer
+                    if(Vector3.Distance(memory[focusTarget], gameObject.transform.position) <= a.distance * 0.9) {
+                        Vector3 dir = focusTarget.transform.position - transform.position; //get direction to target
+                        SpellManagerScript.ins.CastSpell(selectedSpell, transform.position, dir, gameObject); //send the information to the spell manager
+                        progress = 0; //reset values
+                        selectedSpell = null;
+                    }
+                    break;
+            }
         }
 
     }
