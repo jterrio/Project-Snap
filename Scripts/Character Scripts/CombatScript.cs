@@ -88,6 +88,7 @@ public class CombatScript : MonoBehaviour {
             Awake(); //re-init
             return;
         }
+        UpdateMemory();
         SetState(); //get info about self and world and set the ai state accordingly
         if (state != CombatState.DYING) { //check if it isnt dead
             Move(); //move the ai every frame
@@ -899,6 +900,21 @@ public class CombatScript : MonoBehaviour {
             lastPosition = transform.position;
         }
 
+    }
+
+    //Update the memory dictionary with relevant character positions visible to the AI
+    void UpdateMemory() {
+        //if we have something in memory, check
+        if(memory.Count != 0) {
+            //iterate through each character in memory
+            List<GameObject> memoryKeys = new List<GameObject>(memory.Keys);
+            foreach(GameObject c in memoryKeys) {
+                //if we can still see the character in question, we should update its position into the memory
+                if (IsVisible(c)) {
+                    memory[c] = c.transform.position;
+                }
+            }          
+        }
     }
 
 }
