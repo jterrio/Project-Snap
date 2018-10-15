@@ -22,6 +22,7 @@ public class CombatHUDAttack : MonoBehaviour {
     private int count = -1;
     public FireMode fireMode = FireMode.FREE;
     private GameObject fireModePointObject;
+    private GameObject selectedNPC;
 
     public enum FireMode { //types of modes that we can fire
         FREE, //free directional
@@ -204,7 +205,39 @@ public class CombatHUDAttack : MonoBehaviour {
                         CheckPointClick();
                         break;
                     case FireMode.TARGET:
+                        PointerEventData pointerData = new PointerEventData(EventSystem.current);
+                        pointerData.position = Input.mousePosition;
+                        List<RaycastResult> results = new List<RaycastResult>();
+                        EventSystem.current.RaycastAll(pointerData, results);
+                        if (results.Count > 0) {
+                            if (results[0].gameObject.layer == LayerMask.NameToLayer("UI")) {
+                                break;
+                            }
+                        } else {
+                            Vector2 mouse2D = new Vector2(Camera.main.ScreenToWorldPoint(Input.mousePosition).x, Camera.main.ScreenToWorldPoint(Input.mousePosition).y);
+                            RaycastHit2D hit = Physics2D.Raycast(mouse2D, Vector2.zero);
+                            if (hit.collider != null) {
+                                if (hit.collider.gameObject.layer == LayerMask.NameToLayer("NPC")) {
 
+                                    RaycastHit2D vis = Physics2D.Raycast(GameManagerScript.ins.player.transform.position, (hit.collider.gameObject.transform.position - GameManagerScript.ins.player.transform.position), Vector3.Distance(GameManagerScript.ins.player.transform.position, hit.collider.gameObject.transform.position), CombatManager.ins.characterVisibleTest);
+                                    if(vis.collider == null) {
+                                        break;
+                                    }
+
+                                    if (selectedNPC != null) {
+                                        selectedNPC.GetComponent<Renderer>().material.color = Color.white;
+                                    }
+                                    selectedNPC = hit.collider.gameObject;
+                                    selectedNPC.GetComponent<Renderer>().material.color = Color.yellow;
+                                    CheckTargetClick();
+                                }
+                            } else {
+                                if (selectedNPC != null) {
+                                    selectedNPC.GetComponent<Renderer>().material.color = Color.white;
+                                    selectedNPC = null;
+                                }
+                            }
+                        }
                         break;
                 }
                 break;
@@ -213,7 +246,35 @@ public class CombatHUDAttack : MonoBehaviour {
 
     }
 
+    //setting target attack
+    void CheckTargetClick() {
+        if(selectedNPC == null) {
+            return;
+        }
+        if (Input.GetMouseButtonDown(0)) {
+            PointerEventData pointerData = new PointerEventData(EventSystem.current);
+            pointerData.position = Input.mousePosition;
+            List<RaycastResult> results = new List<RaycastResult>();
+            EventSystem.current.RaycastAll(pointerData, results);
+            if (results.Count > 0) {
+                if (results[0].gameObject.layer == LayerMask.NameToLayer("UI")) {
+                    return;
+                }
+            }
+            isFinished = true;
+            loggedAttacks[loggedAttacks.Count - 1].selectedSpell = spell;
+            loggedAttacks[loggedAttacks.Count - 1].fireMode = FireMode.TARGET;
+            loggedAttacks[loggedAttacks.Count - 1].attackTarget = selectedNPC;
+            AddAttackToLayout(loggedAttacks[loggedAttacks.Count - 1]);
+            UIManager.ins.ShowLogPanel();
+            selectedNPC.GetComponent<Renderer>().material.color = Color.white;
+            selectedNPC = null;
+            ResetValues();
+            DrawAttackPositions();
+        }
+    }
 
+    //setting point attack
     void CheckPointClick() {
         if (Input.GetMouseButtonDown(0)) {
             PointerEventData pointerData = new PointerEventData(EventSystem.current);
@@ -367,6 +428,11 @@ public class CombatHUDAttack : MonoBehaviour {
                 break;
             case FireMode.TARGET:
                 fireMode = FireMode.FREE;
+                if(selectedNPC != null) {
+                    selectedNPC.GetComponent<Renderer>().material.color = Color.white;
+                    selectedNPC = null;
+                }
+                tempAttackDirectional = Instantiate(attackDirectionalPrefab);
                 break;
         }
     }
