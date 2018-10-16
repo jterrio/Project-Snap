@@ -19,6 +19,7 @@ public class SpellManagerScript : MonoBehaviour {
         }
 	}
 
+    //used by the player
     public void CastSpell(CombatHUDAttack.Attack a, GameObject caster) {
         switch (a.selectedSpell.type) {
             case Spell.Type.Projectile:
@@ -30,7 +31,8 @@ public class SpellManagerScript : MonoBehaviour {
                         SpellProjectileLookUp(a.selectedSpell, caster.transform.position, (a.attackPointModePoint - caster.transform.position), caster);
                         break;
                     case CombatHUDAttack.FireMode.TARGET:
-
+                        Vector3 memoryPos = CombatManager.ins.combatHUDAttack.memory[a.attackTarget];
+                        SpellProjectileLookUp(a.selectedSpell, caster.transform.position, (memoryPos - caster.transform.position), caster);
                         break;
                     default:
                         SpellProjectileLookUp(a.selectedSpell, caster.transform.position, a.attackDirection, caster);
@@ -41,6 +43,7 @@ public class SpellManagerScript : MonoBehaviour {
         
     }
 
+    //used by the ai
     public void CastSpell(Spell spell, Vector3 location, Vector3 dir, GameObject caster) {
         switch (spell.type) {
             case Spell.Type.Projectile:
