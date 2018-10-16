@@ -23,6 +23,7 @@ public class CombatHUDAttack : MonoBehaviour {
     public FireMode fireMode = FireMode.FREE;
     private GameObject fireModePointObject;
     private GameObject selectedNPC;
+    public Dictionary<GameObject, Vector3> memory = new Dictionary<GameObject, Vector3>(); //keep track of the player's memory of last seen locations
 
     public enum FireMode { //types of modes that we can fire
         FREE, //free directional
@@ -50,7 +51,7 @@ public class CombatHUDAttack : MonoBehaviour {
         }
     }
 
-
+    //reser values back to default (differs from right clicking as this happens after finished selecting everything)
     public void ResetValues() {
         CombatManager.ins.combatDrawMovePosition.ResetAttackValue();
         
@@ -80,19 +81,22 @@ public class CombatHUDAttack : MonoBehaviour {
         combatMovePosition = GetComponent<PlayerDrawCombatMovePosition>();
 	}
 
+    //called every frame
     void Update() {
-
+        UpdateMemory(); //update positions in memory
         if (!isSelected) {
             return;
         }
 
+        //if we have selected a spell, check for firemode swich call
         if (selectedSpell) {
             if (Input.GetKeyDown(KeyCode.Q)) {
                 SwitchFireMode();
             }
-            SetMouse();
+            SetMouse(); //set selectspell's firemode object accordingly
         }
 
+        //check to see if we have clicked something (something selected) and then we right click
         if (hasClicked) {
             if (Input.GetMouseButtonDown(1)) {
                 PointerEventData pointerData = new PointerEventData(EventSystem.current);
@@ -109,6 +113,7 @@ public class CombatHUDAttack : MonoBehaviour {
             return;
         } //hasclicked
 
+        //if we have clicked something in the ui or not
         if (Input.GetMouseButtonDown(0)) {
             PointerEventData pointerData = new PointerEventData(EventSystem.current);
             pointerData.position = Input.mousePosition;
@@ -127,13 +132,14 @@ public class CombatHUDAttack : MonoBehaviour {
 
     }
 
-
+    //add to the menu log
     public void AddAttackToLayout(Attack a) {
         a.loggedInfo = (RectTransform)Instantiate(combatHUDLog.logPrefab, combatHUDLog.gridlayout);
         a.loggedInfo.GetComponent<TMPro.TextMeshProUGUI>().text = a.ReturnMsg();
         a.loggedInfo.GetComponentInChildren<CancelSpellScript>().parent = a;
     }
 
+    //remove from the menu log
     public void RemoveAttackFromLayout(Attack a) {
         foreach(Transform child in combatHUDLog.gridlayout) {
             if(child == a.loggedInfo.transform) {
@@ -144,6 +150,7 @@ public class CombatHUDAttack : MonoBehaviour {
         }
     }
 
+    //dont know
     void MouseClick() {
         if(tempAttack != null) {
             hasClicked = true;
@@ -158,6 +165,8 @@ public class CombatHUDAttack : MonoBehaviour {
         }
     }
 
+
+    //reset values
     void RightClick() {
         UIManager.ins.ShowLogPanel();
         hasClicked = false;
@@ -166,6 +175,11 @@ public class CombatHUDAttack : MonoBehaviour {
         if (selectedSpell) {
             selectedSpell = false;
             Destroy(tempAttackDirectional.gameObject);
+            Destroy(fireModePointObject);
+            if(selectedNPC != null) {
+                selectedNPC.GetComponent<Renderer>().material.color = Color.white;
+                selectedNPC = null;
+            }
         }
         if (loggedAttacks.Count == 0) {
             return;
@@ -177,6 +191,7 @@ public class CombatHUDAttack : MonoBehaviour {
         loggedAttacks.Remove(loggedAttacks[loggedAttacks.Count - 1]);
     }
 
+    //set the firemode object positions accordingly
     void SetMouse() {
         switch (spell.type) {
             case Spell.Type.Projectile:
@@ -219,8 +234,7 @@ public class CombatHUDAttack : MonoBehaviour {
                             if (hit.collider != null) {
                                 if (hit.collider.gameObject.layer == LayerMask.NameToLayer("NPC")) {
 
-                                    RaycastHit2D vis = Physics2D.Raycast(GameManagerScript.ins.player.transform.position, (hit.collider.gameObject.transform.position - GameManagerScript.ins.player.transform.position), Vector3.Distance(GameManagerScript.ins.player.transform.position, hit.collider.gameObject.transform.position), CombatManager.ins.characterVisibleTest);
-                                    if(vis.collider == null) {
+                                    if (!IsVisible(hit.collider.gameObject)) {
                                         break;
                                     }
 
@@ -266,12 +280,48 @@ public class CombatHUDAttack : MonoBehaviour {
             loggedAttacks[loggedAttacks.Count - 1].fireMode = FireMode.TARGET;
             loggedAttacks[loggedAttacks.Count - 1].attackTarget = selectedNPC;
             AddAttackToLayout(loggedAttacks[loggedAttacks.Count - 1]);
+            MemoryAdd(selectedNPC);
             UIManager.ins.ShowLogPanel();
             selectedNPC.GetComponent<Renderer>().material.color = Color.white;
             selectedNPC = null;
             ResetValues();
             DrawAttackPositions();
         }
+    }
+
+    //update each object in memory
+    void UpdateMemory() {
+        List<GameObject> characters = new List<GameObject>(memory.Keys);
+        foreach(GameObject c in characters) {
+            if (IsVisible(c)) {
+                memory[c] = c.transform.position;
+            }
+        }
+    }
+
+    //add or update to memory
+    void MemoryAdd(GameObject c) {
+        if (memory.ContainsKey(c)) {
+            memory[c] = c.transform.position;
+        } else {
+            memory.Add(c, c.transform.position);
+        }
+    }
+
+    //checks whether we can directly see them
+    public bool IsVisible(GameObject target) {
+        int oldLayer = gameObject.layer;
+        gameObject.layer = 2; //change to ignore raycast
+        Vector3 feet = new Vector3(transform.position.x, transform.position.y - 0.45f, 0);
+        RaycastHit2D hit = Physics2D.Raycast(feet, target.transform.position - feet, Mathf.Infinity, CombatManager.ins.characterVisibleTest); //raycast
+        //Debug.DrawRay(gameObject.transform.position, target.transform.position - gameObject.transform.position, Color.white, Mathf.Infinity);
+        gameObject.layer = oldLayer; //Set layer back to normal
+        if (hit.collider != null) {
+            if (hit.collider.gameObject == target) {
+                return true;
+            }
+        }
+        return false;
     }
 
     //setting point attack
@@ -321,7 +371,7 @@ public class CombatHUDAttack : MonoBehaviour {
         }
     }
 
-
+    //for line detection for the attack
     Vector3 CalculateMousePosition() {
         Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         mousePosition = new Vector3(mousePosition.x, mousePosition.y, 0);

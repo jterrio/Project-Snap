@@ -31,8 +31,8 @@ public class SpellManagerScript : MonoBehaviour {
                         SpellProjectileLookUp(a.selectedSpell, caster.transform.position, (a.attackPointModePoint - caster.transform.position), caster);
                         break;
                     case CombatHUDAttack.FireMode.TARGET:
-                        //Vector3 memoryPos = GameManagerScript.ins.player.GetComponent<CombatScript>().memory[a.attackTarget];
-                        SpellProjectileLookUp(a.selectedSpell, caster.transform.position, (a.attackTarget.transform.position - caster.transform.position), caster);
+                        Vector3 memoryPos = CombatManager.ins.combatHUDAttack.memory[a.attackTarget];
+                        SpellProjectileLookUp(a.selectedSpell, caster.transform.position, (memoryPos - caster.transform.position), caster);
                         break;
                     default:
                         SpellProjectileLookUp(a.selectedSpell, caster.transform.position, a.attackDirection, caster);
