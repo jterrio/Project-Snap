@@ -162,7 +162,7 @@ public class CharacterInfo : MonoBehaviour {
 
     IEnumerator SpellCoroutine() {
         print("Beginning to cast spell...");
-        if (gameObject == GameManagerScript.ins.player) {
+        if (gameObject == GameManagerScript.ins.player && spellQueue.Count > 0) {
             Image child = spellQueue[0].loggedInfo.GetComponentInChildren<Image>();
             Toggle toggle = spellQueue[0].loggedInfo.GetComponentInChildren<Toggle>();
             for (progress = 0; progress < (spellQueue[0].selectedSpell.castTime * 100); progress++) {
