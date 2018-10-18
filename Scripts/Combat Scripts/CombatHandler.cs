@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CombatHandler : MonoBehaviour {
 
-    public List<GameObject> charactersInCombat;
+    public List<GameObject> charactersInCombat; //list of all characters participating, actively
     public List<GameObject> currentCharactersTurn;
     public List<GameObject> charactersJoinLate;
     public List<GameObject> charactersChecked;
@@ -41,6 +41,12 @@ public class CombatHandler : MonoBehaviour {
 	}
 
     void Update() {
+        RemoveDeadCharacters();
+        RemoveFarCharacters();
+        if (CanEndCombat()) {
+            print("Combat's over boys!");
+            EndCombat();
+        }
         if (turnCoroutine == null && Time.timeScale != 0f) {
             turnCoroutine = StartCoroutine(TurnCheck());
         } else if (Time.timeScale == 0f) {
@@ -61,6 +67,60 @@ public class CombatHandler : MonoBehaviour {
         }
     }
 
+    void RemoveDeadCharacters() {
+        List<GameObject> toDelete = new List<GameObject>();
+        foreach(GameObject c in charactersInCombat) {
+            if(c == null) {
+                toDelete.Add(c);
+            }
+        }
+        foreach(GameObject d in toDelete) {
+            charactersInCombat.Remove(d);
+        }
+    }
+
+    void RemoveFarCharacters() {
+
+    }
+
+
+    void EndCombat() {
+        foreach(GameObject c in charactersInCombat) {
+            if(c == GameManagerScript.ins.player) {
+                c.GetComponent<PlayerInfo>().LeaveCombat();
+            } else {
+                c.GetComponent<NPCInfo>().LeaveCombat();
+            }
+        }
+        Time.timeScale = 1f;
+        Destroy(this.gameObject);
+    }
+
+    //CHANGE AFTER MAKING A FACTION MANAGER
+    bool CanEndCombat() {
+        foreach(GameObject c in charactersInCombat) {
+            foreach(GameObject d in charactersInCombat) {
+                if(d != GameManagerScript.ins.player) {
+                    if(c != GameManagerScript.ins.player) {
+                        //both characters are AI
+                        if(d.GetComponent<NPCInfo>().faction != c.GetComponent<NPCInfo>().faction) {
+                            return false;
+                        }
+                    } else {
+                        if(d.GetComponent<Stats>().attitude <= -30) {
+                            return false;
+                        }
+                    }
+
+
+                }
+                
+            }
+        }
+
+
+        return true;
+    }
 
 
     IEnumerator TurnCheck() {
