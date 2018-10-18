@@ -32,13 +32,25 @@ public class CombatManager : MonoBehaviour {
 	}
 
     void Update() {
+        RemoveHandlers(); //remove destroyed combat handlers
         if(playerCombatHandler == null) {
             return; //we dont need to worry about merging handlers if the player is not in combat
         }
-        CheckRange();
+        CheckRange(); //see if we need to merge
     }
 
 
+    //remove handlers that were destroyed, meaning that combat ended for them
+    void RemoveHandlers() {
+        List<GameObject> handlers = new List<GameObject>(allCombatHandlers);
+        foreach(GameObject handler in handlers) {
+            if(handler == null) {
+                allCombatHandlers.Remove(handler);
+            }
+        }
+    }
+
+    //check range of handlers to the player's and see if they need to merge with it
     void CheckRange() {
         foreach (GameObject handler in allCombatHandlers) {
             if (handler == playerCombatHandler) {
