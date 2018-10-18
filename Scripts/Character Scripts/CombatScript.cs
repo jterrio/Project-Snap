@@ -62,6 +62,24 @@ public class CombatScript : MonoBehaviour {
 
     }
 
+    public void AIEndCombat() {
+        targets.Clear();
+        focusTarget = null;
+        movementQueue.Clear();
+        memory.Clear();
+        spellMemory.Clear();
+        isReady = false;
+        endTurn = false;
+        usedSpellMemory.Clear();
+        lastPosition = Vector3.zero;
+        selectedSpell = null;
+        progress = 0;
+        state = CombatState.ATTACKING;
+        if(spellCoroutine != null) {
+            StopCoroutine(spellCoroutine);
+        }
+    }
+
 
     public enum CombatState {
         ATTACKING, //ai is seeking to be aggresive
@@ -69,7 +87,8 @@ public class CombatScript : MonoBehaviour {
         DEFENDING, //ai is trying to defend itself
         RECHARGING, //ai is in cover and is recharging stamina
         AVOIDING, //ai is running from an active threat, with intent to stay in the fight
-        DYING //ai is dead; hp = 0
+        DYING, //ai is dead; hp = 0; animation needs to play
+        DEAD //animation for dying is done
     }
 
     //called for init
@@ -707,6 +726,11 @@ public class CombatScript : MonoBehaviour {
                 break;
             case CombatState.DYING: //dying
                 //do nothing, you are dead!
+                movementQueue.Clear();
+                break;
+            case CombatState.DEAD: //dead
+                //do nothing, you are dead!
+                movementQueue.Clear();
                 break;
             default:
                 print("idk");
@@ -787,7 +811,7 @@ public class CombatScript : MonoBehaviour {
 
     //Set the state of the ai given self and world state
     void SetState() {
-        if(npcInfo.currentHealth <= 0) { //if we are no health, we are dead
+        if(npcInfo.currentHealth <= 0 && state != CombatState.DYING && state != CombatState.DEAD) { //if we are no health, we are dead
             state = CombatState.DYING;
         }
         //check what to do given our current state
@@ -805,6 +829,8 @@ public class CombatScript : MonoBehaviour {
             case CombatState.DEFENDING:
                 break;
             case CombatState.DYING:
+                //PLAY ANIMATION FOR DYING
+                state = CombatState.DEAD;
                 break;
             case CombatState.RECHARGING:
                 //check to see if we need to not be recharging
@@ -828,6 +854,10 @@ public class CombatScript : MonoBehaviour {
                 if (inCover || npcInfo.currentStamina >= npcInfo.maxStamina * 0.8f) {
                     state = CombatState.RECHARGING;
                 }
+                break;
+            case CombatState.DEAD:
+                print("I have died!");
+                Destroy(gameObject);
                 break;
             default:
                 //nothing of note here in the default case
