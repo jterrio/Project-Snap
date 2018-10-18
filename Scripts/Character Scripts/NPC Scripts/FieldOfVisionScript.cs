@@ -17,6 +17,15 @@ public class FieldOfVisionScript : MonoBehaviour {
         player = GameManagerScript.ins.player;
 	}
 
+    public bool NeedToCheck {
+        set {
+            needToCheck = value;
+        }
+        get {
+            return needToCheck;
+        }
+    }
+
     void Update() {
         if (!needToCheck) {
             return;
