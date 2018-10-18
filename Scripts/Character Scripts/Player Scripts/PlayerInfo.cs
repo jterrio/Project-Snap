@@ -37,7 +37,8 @@ public class PlayerInfo : CharacterInfo {
         inCombat = false;
         polyNav.enabled = false;
         spellQueue.Clear();
-        CombatManager.ins.combatHUDAttack.loggedAttacks.Clear();
+        CombatManager.ins.combatHUDAttack.RemoveAllAttacks();
+        CombatManager.ins.combatHUDAttack.ResetValues();
         CombatManager.ins.combatHUDLog.RemoveAllMovement();
         if (spellCastCoroutine != null) {
             StopCoroutine(spellCastCoroutine);
