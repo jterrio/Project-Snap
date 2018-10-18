@@ -191,6 +191,7 @@ public class NPCInfo : CharacterInfo {
             StopCoroutine(spellCastCoroutine);
         }
         GetComponent<CombatScript>().AIEndCombat();
+        GetComponentInChildren<FieldOfVisionScript>().NeedToCheck = true;
     }
 
     public void Talk() {
