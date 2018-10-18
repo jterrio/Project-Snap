@@ -36,6 +36,12 @@ public class PlayerInfo : CharacterInfo {
         canMove = true;
         inCombat = false;
         polyNav.enabled = false;
+        spellQueue.Clear();
+        CombatManager.ins.combatHUDAttack.loggedAttacks.Clear();
+        CombatManager.ins.combatHUDLog.RemoveAllMovement();
+        if (spellCastCoroutine != null) {
+            StopCoroutine(spellCastCoroutine);
+        }
         UIManager.ins.DisableCombatHUD();
     }
 
