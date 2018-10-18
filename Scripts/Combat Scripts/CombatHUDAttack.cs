@@ -515,12 +515,10 @@ public class CombatHUDAttack : MonoBehaviour {
     }
 
     public void RemoveAllAttacks() {
-        foreach(Attack a in loggedAttacks) {
-            if (a.attackObject != null) {
-                Destroy(a.attackObject);
-            }
+        List<Attack> att = new List<Attack>(loggedAttacks);
+        foreach(Attack a in att) {
+            RemoveAttackFromLayout(a);
         }
-        loggedAttacks.Clear();
     }
 
 
