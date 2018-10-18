@@ -135,7 +135,7 @@ public class CombatHUDAttack : MonoBehaviour {
     //add to the menu log
     public void AddAttackToLayout(Attack a) {
         a.loggedInfo = (RectTransform)Instantiate(combatHUDLog.logPrefab, combatHUDLog.gridlayout);
-        a.loggedInfo.GetComponent<TMPro.TextMeshProUGUI>().text = a.ReturnMsg();
+        a.loggedInfo.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = a.ReturnMsg();
         a.loggedInfo.GetComponentInChildren<CancelSpellScript>().parent = a;
     }
 
