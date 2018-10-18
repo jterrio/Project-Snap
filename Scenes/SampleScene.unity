@@ -14444,6 +14444,7 @@ MonoBehaviour:
     type: 2}
   attackDirectionalPrefab: {fileID: 1172517834701624, guid: 178122fdcfb957b4393a4a1107722fbf,
     type: 2}
+  fireMode: 0
 --- !u!1 &1635220151
 GameObject:
   m_ObjectHideFlags: 0

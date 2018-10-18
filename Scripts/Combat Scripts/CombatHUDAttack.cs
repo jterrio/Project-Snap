@@ -514,6 +514,13 @@ public class CombatHUDAttack : MonoBehaviour {
         }
     }
 
+    public void RemoveAllAttacks() {
+        List<Attack> att = new List<Attack>(loggedAttacks);
+        foreach(Attack a in att) {
+            RemoveAttackFromLayout(a);
+        }
+    }
+
 
 
 

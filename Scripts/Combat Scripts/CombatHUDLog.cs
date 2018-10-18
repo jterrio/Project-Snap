@@ -140,6 +140,13 @@ public class CombatHUDLog : MonoBehaviour {
         }
     }
 
+    public void RemoveAllMovement() {
+        foreach(Movement m in loggedMoves) {
+            Destroy(m.path.gameObject);
+        }
+        loggedMoves.Clear();
+    }
+
     public void RemoveFirstLogMovementPosition() {
         Destroy(loggedMoves[0].path.gameObject);
         loggedMoves.RemoveAt(0);

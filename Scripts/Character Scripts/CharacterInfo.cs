@@ -297,5 +297,26 @@ public class CharacterInfo : MonoBehaviour {
 
     }
 
+    public bool DoHate(GameObject other) {
+        if(gameObject == GameManagerScript.ins.player) {
+            if(other.GetComponent<Stats>().attitude <= -30) {
+                return true;
+            }
+        } else if (other == GameManagerScript.ins.player){
+            if (GetComponent<Stats>().attitude <= -30) {
+                return true;
+            }
+        } else {
+            if(GetComponent<NPCInfo>().faction != other.GetComponent<NPCInfo>().faction) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    public bool DoLike(GameObject other) {
+        return !DoHate(other);
+    }
 
 }
