@@ -183,6 +183,16 @@ public class NPCInfo : CharacterInfo {
         }
     }
 
+    public void LeaveCombat() {
+        polyNav.Stop();
+        inCombat = false;
+        spellQueue.Clear();
+        if(spellCastCoroutine != null) {
+            StopCoroutine(spellCastCoroutine);
+        }
+        GetComponent<CombatScript>().AIEndCombat();
+    }
+
     public void Talk() {
         isTalking = true;
         isMoving = false;
