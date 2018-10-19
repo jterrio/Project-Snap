@@ -25,6 +25,8 @@ public class PlayerMovementScript : MonoBehaviour {
     void Update() {
         if (pi.inCombat) {
             CombatMovement();
+            pi.SetDirection();
+            pi.SetSprite();
             return;
         }
 
