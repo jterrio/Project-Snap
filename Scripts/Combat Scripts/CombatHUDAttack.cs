@@ -135,7 +135,7 @@ public class CombatHUDAttack : MonoBehaviour {
     //add to the menu log
     public void AddAttackToLayout(Attack a) {
         a.loggedInfo = (RectTransform)Instantiate(combatHUDLog.logPrefab, combatHUDLog.gridlayout);
-        a.loggedInfo.GetComponent<TMPro.TextMeshProUGUI>().text = a.ReturnMsg();
+        a.loggedInfo.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = a.ReturnMsg();
         a.loggedInfo.GetComponentInChildren<CancelSpellScript>().parent = a;
     }
 
@@ -437,6 +437,9 @@ public class CombatHUDAttack : MonoBehaviour {
     }
 
     public void SelectSpell(Spell spell, GameObject parent) {
+        if(this.spell != null) {
+            spellObject.GetComponent<SelectAttackScript>().IsSelected = false;
+        }
         this.spell = spell;
         spellObject = parent;
         selectedSpell = true;
@@ -502,7 +505,8 @@ public class CombatHUDAttack : MonoBehaviour {
         }
         foreach (Attack a in loggedAttacks) {
             if(a.hash == CombatManager.ins.combatHUDLog.loggedMoves[0].hash) {
-                if(Vector3.Distance(GameManagerScript.ins.GetPlayerFeetPosition(), a.attackPoint) <= 0.2f) {
+                //CHECK IF THE SPELL IS CLOSE ENOUGH TO BE CASTED AND IF hasCLICKED IS FALSE TO PREVENT CLICKING AND ADDING TO QUEUE
+                if(Vector3.Distance(GameManagerScript.ins.GetPlayerFeetPosition(), a.attackPoint) <= 0.2f && hasClicked == false) {
                     Destroy(a.attackObject);
                     loggedAttacks.Remove(a);
                     //send to a queue in the player and then a queue to spell manager

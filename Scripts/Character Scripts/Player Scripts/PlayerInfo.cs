@@ -37,6 +37,7 @@ public class PlayerInfo : CharacterInfo {
         inCombat = false;
         polyNav.Stop();
         polyNav.enabled = false;
+        ClearSpells();
         spellQueue.Clear();
         CombatManager.ins.combatHUDAttack.RemoveAllAttacks();
         CombatManager.ins.combatHUDAttack.ResetValues();
@@ -45,6 +46,19 @@ public class PlayerInfo : CharacterInfo {
             StopCoroutine(spellCastCoroutine);
         }
         UIManager.ins.DisableCombatHUD();
+    }
+
+    void ClearSpells() {
+        List<CombatHUDAttack.Attack> attacks = new List<CombatHUDAttack.Attack>(spellQueue);
+        foreach (CombatHUDAttack.Attack a in attacks) {
+            foreach (Transform child in CombatManager.ins.combatHUDLog.gridlayout) {
+                if (child == a.loggedInfo.transform) {
+                    Destroy(a.attackObject.gameObject);
+                    Destroy(a.loggedInfo.gameObject);
+                    spellQueue.Remove(a);
+                }
+            }
+        }
     }
 
 }
