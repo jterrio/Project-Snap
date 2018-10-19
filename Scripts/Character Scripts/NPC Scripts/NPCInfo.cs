@@ -106,65 +106,7 @@ public class NPCInfo : CharacterInfo {
         InitPosition();
     }
 
-    void SetDirection() {
-        if(polyNav.movingDirection == Vector2.zero) {
-            return;
-        }
-        int x = 0;
-        int y = 0;
-        if(polyNav.movingDirection.x > 0) {
-            x = 1;
-        }else if(polyNav.movingDirection.x < 0) {
-            x = -1;
-        }
-        if (polyNav.movingDirection.y > 0) {
-            y = 1;
-        } else if (polyNav.movingDirection.y < 0) {
-            y = -1;
-        }
-        switch (x) {
-            case -1:
-                switch (y) {
-                    case -1:
-                        direction = Direction.FRONTLEFT;
-                        break;
-                    case 1:
-                        direction = Direction.BACKLEFT;
-                        break;
-                    case 0:
-                        direction = Direction.LEFT;
-                        break;
-                }
-                break;
-            case 1:
-                switch (y) {
-                    case -1:
-                        direction = Direction.FRONTRIGHT;
-                        break;
-                    case 1:
-                        direction = Direction.BACKRIGHT;
-                        break;
-                    case 0:
-                        direction = Direction.RIGHT;
-                        break;
-                }
-                break;
-            case 0:
-                switch (y) {
-                    case -1:
-                        direction = Direction.FRONT;
-                        break;
-                    case 1:
-                        direction = Direction.BACK;
-                        break;
-                    case 0:
-                        break;
-                }
-                break;
-        }
-
-
-    }
+   
 
 
     //movement for the area type
