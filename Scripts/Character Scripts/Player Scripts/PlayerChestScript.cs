@@ -12,6 +12,9 @@ public class PlayerChestScript : MonoBehaviour {
         if (!canOpenChest || inChest) {
             return;
         }
+        if (GameManagerScript.ins.player.GetComponent<PlayerInfo>().inCombat) {
+            return;
+        }
 
         if (Input.GetKeyDown(KeyCode.Space)) {
             inChest = true;

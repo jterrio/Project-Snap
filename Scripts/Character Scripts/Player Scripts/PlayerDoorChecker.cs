@@ -13,6 +13,9 @@ public class PlayerDoorChecker : MonoBehaviour {
         if (!canUseDoor) {
             return;
         }
+        if (GameManagerScript.ins.player.GetComponent<PlayerInfo>().inCombat) {
+            return;
+        }
         if (Input.GetKeyDown(KeyCode.Space)) {
             //player has pressed space to enter the door
             UseDoorScript useDoorScript = target.GetComponent<UseDoorScript>(); //get reference

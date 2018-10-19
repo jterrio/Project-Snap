@@ -22,6 +22,9 @@ public class PlayerSpeechChecker : MonoBehaviour {
 
         //checks to see if the player is able to talk before allowing them to hit space
         if (canTalk) {
+            if (GameManagerScript.ins.player.GetComponent<PlayerInfo>().inCombat) {
+                return;
+            }
             if (Input.GetKeyDown(KeyCode.Space)) {
                 targetNPC.GetComponent<NPCInfo>().direction = targetNPC.GetComponent<NPCInfo>().TurnToFace(transform.parent.gameObject.GetComponent<PlayerInfo>().direction);
                 targetNPC.GetComponent<NPCInfo>().Talk();

@@ -15,6 +15,9 @@ public class PlayerPickUpItemScript : MonoBehaviour {
         if (!canPickUp) {
             return;
         }
+        if (GameManagerScript.ins.player.GetComponent<PlayerInfo>().inCombat) {
+            return;
+        }
         if (Input.GetKeyDown(KeyCode.Space)) {
             //pick up item
             hasPickedUp = true; //set code for when ontriggerexit2d gets called // determine if inventory was full
