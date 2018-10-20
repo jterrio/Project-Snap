@@ -95,4 +95,5 @@ public class CameraFollowScript : MonoBehaviour {
         transform.position += (pos.normalized * cameraSpeed);
     }
 
+
 }
