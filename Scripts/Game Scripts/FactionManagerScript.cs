@@ -83,6 +83,7 @@ public class FactionManagerScript : MonoBehaviour {
         return 0;//This is not right!!
     }
 
+
     // Begining of Relationship Methods 
     
     public bool DoesHate(Faction a, Faction b) { // if >= -100 or < -60 "Faction A hates Faction B." If not "they do not hate them."
