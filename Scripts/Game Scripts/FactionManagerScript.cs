@@ -8,7 +8,7 @@ public class FactionManagerScript : MonoBehaviour {
     [SerializeField]
     private List<FactionRelation> factionRelations;// This is a list of all the relations that factions have of each other.
     //These Floats are for checking the Relationship Methods
-    public float doesHateUpperBound = -60, doesDislikeLowerBound = -60, doesDislikeUpperBound = -10, isNeutralLowerBound = -10, isNeutralUpperBound = 10, doesLikeLowerBound = 10, doesLikeUpperBound = 60, doesLoveLowerBound = 60;
+    public float doesHateUpperBound = -60, doesDislikeUpperBound = -10, isNeutralLowerBound = -10, isNeutralUpperBound = 10, doesLikeLowerBound = 10, doesLoveLowerBound = 60;
 
     public enum Faction {
         EMPIRE, //those allied to sasha but not in black rose and are fighting against daud
@@ -106,7 +106,7 @@ public class FactionManagerScript : MonoBehaviour {
         }
         foreach (FactionRelation fr in factionRelations) {
             if ((a == fr.faction1 || a == fr.faction2) && (b == fr.faction1 || b == fr.faction2)) { 
-                return ((fr.opinion >= doesDislikeLowerBound) && (fr.opinion < doesDislikeUpperBound));
+                return (fr.opinion < doesDislikeUpperBound);
             }
         }
         return false;
@@ -128,7 +128,7 @@ public class FactionManagerScript : MonoBehaviour {
         }
         foreach (FactionRelation fr in factionRelations) {
             if ((a == fr.faction1 || a == fr.faction2) && (b == fr.faction1 || b == fr.faction2)) {
-                return ((fr.opinion > doesLikeLowerBound) && (fr.opinion <= doesLikeUpperBound));
+                return (fr.opinion > doesLikeLowerBound);
             }
         }
         return false;
