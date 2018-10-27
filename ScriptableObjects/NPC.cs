@@ -14,16 +14,16 @@ public class NPC : ScriptableObject {
     public int spawnChance; //if the npc is an enemy, what the spawn chance will be
 
     public Item[] itemPool;
-    public Faction faction;
+    public FactionManagerScript.Faction faction;
 
-    public enum Faction {
+    /*public enum Faction {
         EMPIRE, //those allied to sasha but not in black rose and are fighting against daud
         REBELS, //daud and his crew
         BLACKROSE, //sasha and her crew
         METRODORA, //isabel and her crew
         CIVILIAN, //civilians, like random people or merchants
         GANG //expand on this (for multiple gangs)
-    }
+    }*/
 
     public enum MovementType {
         STATIONARY, //stands still, like a merchant
