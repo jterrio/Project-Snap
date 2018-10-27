@@ -39,29 +39,6 @@ public class CombatScript : MonoBehaviour {
     private float progress = 0; //progress from 0 to 1 of the spell being cast
     public CombatState state; //current state in combat for the ai
 
-    //test class; ignore
-    public class FocusTarget {
-        public GameObject focusTarget {
-            get {
-                return focusTarget;
-            }
-            set {
-                focusTarget = value;
-                
-            }
-        }
-
-        public Vector3 position {
-            get {
-                return focusTarget.transform.position;
-            }
-            set {
-                position = value;
-            }
-        }
-
-    }
-
     public void AIEndCombat() {
         targets.Clear();
         focusTarget = null;
@@ -139,7 +116,7 @@ public class CombatScript : MonoBehaviour {
                     Projectile a = selectedSpell as Projectile;
                     //if the spell is a projectile, also check to see if target is close enough for the spell to hit, with small buffer
                     if(Vector3.Distance(memory[focusTarget], gameObject.transform.position) <= a.distance * 0.9) {
-                        Vector3 dir = focusTarget.transform.position - transform.position; //get direction to target
+                        Vector3 dir = memory[focusTarget] - transform.position; //get direction to target
                         SpellManagerScript.ins.CastSpell(selectedSpell, transform.position, dir, gameObject); //send the information to the spell manager
                         progress = 0; //reset values
                         selectedSpell = null;
@@ -421,15 +398,21 @@ public class CombatScript : MonoBehaviour {
 
                         Projectile p = selectedSpell as Projectile; //create instance of the spell as our type
                         Vector3 f = new Vector3(transform.position.x, transform.position.y - 0.45f, 0); //get feet position (point of AI)
-                        float disFromTarget = Vector3.Distance(focusTarget.transform.position, f); //get current distance from focusTarget
-                        Vector3 directionFromTargetToAI = f - focusTarget.transform.position; //get current direction from focusTarget to us (feet)
+                        float disFromTarget = Vector3.Distance(memory[focusTarget], f); //get current distance from focusTarget
+                        Vector3 directionFromTargetToAI = f - memory[focusTarget]; //get current direction from focusTarget to us (feet)
+                        float targetDistance = disFromTarget;
 
                         //raycast from focusTarget to us by p distance, which is the distance of the max range of the projectile
-                        RaycastHit2D hit = Physics2D.Raycast(focusTarget.transform.position, f - focusTarget.transform.position, p.distance * 1.05f, CombatManager.ins.obstacleTest);
+                        RaycastHit2D hit = Physics2D.Raycast(memory[focusTarget], f - memory[focusTarget], p.distance * 1.05f, CombatManager.ins.obstacleTest);
+                        if(disFromTarget >= p.distance) {
+                            targetDistance = p.distance * 0.9f;
+                        }else if (disFromTarget <= p.distance * 0.35f) {
+                            targetDistance = p.distance * 0.45F;
+                        }
 
                         if (hit.collider == null) { //we have room to move back
                             float angle = Vector2.Angle(Vector2.right, directionFromTargetToAI); 
-                            if (transform.position.y - 0.45f < focusTarget.transform.position.y) { //we are bottom half of the y-axis, so add 180 since it is absolute
+                            if (transform.position.y - 0.45f < memory[focusTarget].y) { //we are bottom half of the y-axis, so add 180 since it is absolute
                                 angle = 360 - angle;
                             }
                             //angle = Mathf.Round(angle);
@@ -448,10 +431,10 @@ public class CombatScript : MonoBehaviour {
                                 }
 
                                 //check the point on the edge of the circle
-                                float x1 = focusTarget.transform.position.x + p.distance * Mathf.Cos(Mathf.Deg2Rad * counterClockwiseAngle);
-                                float y1 = focusTarget.transform.position.y + p.distance * Mathf.Sin(Mathf.Deg2Rad * counterClockwiseAngle);
+                                float x1 = memory[focusTarget].x + targetDistance * Mathf.Cos(Mathf.Deg2Rad * counterClockwiseAngle);
+                                float y1 = memory[focusTarget].y + targetDistance * Mathf.Sin(Mathf.Deg2Rad * counterClockwiseAngle);
                                 //test the point
-                                bool[] counterClockwiseTest = TryAttackPoint(x1, y1, p.distance);
+                                bool[] counterClockwiseTest = TryAttackPoint(x1, y1, targetDistance);
                                 //if we cant reach the point or the focusTarget cant see, we have reached the farthest point
                                 if (!counterClockwiseTest[0] || !counterClockwiseTest[1]) {
                                     break;
@@ -471,10 +454,10 @@ public class CombatScript : MonoBehaviour {
                                 }
 
                                 //create point on circle
-                                float x2 = focusTarget.transform.position.x + p.distance * Mathf.Cos(Mathf.Deg2Rad * clockwiseAngle);
-                                float y2 = focusTarget.transform.position.y + p.distance * Mathf.Sin(Mathf.Deg2Rad * clockwiseAngle);
+                                float x2 = memory[focusTarget].x + targetDistance * Mathf.Cos(Mathf.Deg2Rad * clockwiseAngle);
+                                float y2 = memory[focusTarget].y + targetDistance * Mathf.Sin(Mathf.Deg2Rad * clockwiseAngle);
                                 //test the point
-                                bool[] clockwiseTest = TryAttackPoint(x2, y2, p.distance);
+                                bool[] clockwiseTest = TryAttackPoint(x2, y2, targetDistance);
                                 //if we cant reach the point or the focusTarget cant see, we have reached the farthest point
                                 if (!clockwiseTest[0] || !clockwiseTest[1]) {
                                     break;
@@ -532,11 +515,12 @@ public class CombatScript : MonoBehaviour {
                                 }
 
                                 //create new point on circle
-                                float newX = focusTarget.transform.position.x + p.distance * Mathf.Cos(Mathf.Deg2Rad * newAngle);
-                                float newY = focusTarget.transform.position.y + p.distance * Mathf.Sin(Mathf.Deg2Rad * newAngle);
+                                
+                                float newX = memory[focusTarget].x + targetDistance * Mathf.Cos(Mathf.Deg2Rad * newAngle);
+                                float newY = memory[focusTarget].y + targetDistance * Mathf.Sin(Mathf.Deg2Rad * newAngle);
 
                                 //try the point
-                                bool[] turnAroundTest = TryAttackPoint(newX, newY, p.distance);
+                                bool[] turnAroundTest = TryAttackPoint(newX, newY, targetDistance);
 
                                 //if the someone cant see it, then we need to turn around and continue
                                 if (!turnAroundTest[1]) {
@@ -557,7 +541,7 @@ public class CombatScript : MonoBehaviour {
                             }
 
                         } else { //we dont have enough room behind us
-                            float disFromWall = Vector3.Distance(focusTarget.transform.position, hit.point);
+                            float disFromWall = Vector3.Distance(memory[focusTarget], hit.point);
                         }
                         break;
                     case Spell.Type.Beam:
@@ -575,7 +559,7 @@ public class CombatScript : MonoBehaviour {
                 }
                 break;
             case CombatState.RUNNING: //running
-                int selfQuad = SetQuad(transform.position, focusTarget.transform.position); //get our current quadrant in reference to focusTarget
+                int selfQuad = SetQuad(transform.position, memory[focusTarget]); //get our current quadrant in reference to focusTarget
                 Vector3 feet = new Vector3(transform.position.x, transform.position.y - 0.45f, 0); //get feet position (AI)
                 Vector3 lastDirection = feet - lastRunAwayPosition; //get lastRunAwayPosition to feet direction
                 float currentAngle = Vector2.Angle(Vector2.right, lastDirection); //get current Angle we are running
@@ -640,7 +624,7 @@ public class CombatScript : MonoBehaviour {
                                  * -if the distance between this point and us is greater than the distance between last point and us
                                  * -if the point is within 90 degree of our LOS (so we dont just make 180 flip judgements)
                                  * */
-                                if (IsVisible(testPoint, lastPoint) && (Vector3.Distance(testPoint, transform.position) > Vector3.Distance(lastPoint, transform.position)) && !RangeTest(transform.position, focusTarget.transform.position, testPoint, 90)) {
+                                if (IsVisible(testPoint, lastPoint) && (Vector3.Distance(testPoint, transform.position) > Vector3.Distance(lastPoint, transform.position)) && !RangeTest(transform.position, memory[focusTarget], testPoint, 90)) {
                                     pointsPossibleCover.Add(point + ((point - transform.position.normalized) * 3f)); //in possible cover
                                 } else {
                                     pointsOpen.Add(point); //open
@@ -672,7 +656,7 @@ public class CombatScript : MonoBehaviour {
                             * -We don't have to pass through the focusTarget
                             * */
                             if (Vector3.Distance(p, transform.position) >= 2f && Vector3.Distance(p, transform.position) < Vector3.Distance(selectedPoint, transform.position) && RangeTest(transform.position, selectedPoint, p, 90) && QuadTest(SetQuad(focusTarget.transform.
-                                position, p), SetQuad(focusTarget.transform.position, transform.position))) {
+                                position, p), SetQuad(memory[focusTarget], transform.position))) {
                                 selectedPoint = p;
                             }
                         }
@@ -695,7 +679,7 @@ public class CombatScript : MonoBehaviour {
                             * -We don't have to pass through the focusTarget
                             * */
                             if (Vector3.Distance(p, transform.position) >= 2f && Vector3.Distance(p, transform.position) < Vector3.Distance(selectedPoint, transform.position) && RangeTest(transform.position, selectedPoint, p, 90) && QuadTest(SetQuad(focusTarget.transform.
-                                position, p), SetQuad(focusTarget.transform.position, transform.position))) {
+                                position, p), SetQuad(memory[focusTarget], transform.position))) {
                                 selectedPoint = p;
                             }
                         }
@@ -768,7 +752,7 @@ public class CombatScript : MonoBehaviour {
     bool[] TryAttackPoint(float x, float y, float distance) {
         bool[] returnBools = new bool[2]; //0 = if the ai can see it; 1 = can the target see it
         Vector3 testVector = new Vector3(x, y, 0);
-        RaycastHit2D targetWallHit = Physics2D.Raycast(focusTarget.transform.position, testVector - focusTarget.transform.position, distance, CombatManager.ins.obstacleTest);
+        RaycastHit2D targetWallHit = Physics2D.Raycast(memory[focusTarget], testVector - memory[focusTarget], distance, CombatManager.ins.obstacleTest);
         if(targetWallHit.collider == null) { //the target  can see it
 
             returnBools[1] = true;
@@ -800,7 +784,7 @@ public class CombatScript : MonoBehaviour {
             if(focusTarget == null || focusTarget == c) { //get base case, or skip we we have already selected
                 focusTarget = c;
             } else { //check distance, if the target is closer than the focus target, they become the new focus target
-                if(Vector3.Distance(focusTarget.transform.position, transform.position) >= Vector3.Distance(c.transform.position, transform.position)) {
+                if(Vector3.Distance(memory[focusTarget], transform.position) >= Vector3.Distance(c.transform.position, transform.position)) {
                     focusTarget = c;
 
                 }

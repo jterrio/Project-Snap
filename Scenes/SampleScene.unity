@@ -1580,7 +1580,7 @@ TilemapRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 1582711423
-  m_SortingLayer: 0
+  m_SortingLayer: 1
   m_SortingOrder: 10
   m_ChunkSize: {x: 32, y: 32, z: 32}
   m_ChunkCullingBounds: {x: 0, y: 0, z: 0}
@@ -4149,7 +4149,7 @@ Camera:
   far clip plane: 1000
   field of view: 87.7
   orthographic: 1
-  orthographic size: 4.78125
+  orthographic size: 4.21875
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -4528,7 +4528,7 @@ TilemapRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 1582711423
-  m_SortingLayer: 0
+  m_SortingLayer: 1
   m_SortingOrder: 0
   m_ChunkSize: {x: 32, y: 32, z: 32}
   m_ChunkCullingBounds: {x: 0, y: 0, z: 0}
@@ -7649,7 +7649,7 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: -504248583
+  m_SortingLayerID: 425234961
   m_SortingLayer: 2
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300002, guid: 166e30b01fcc8cd4f924643bddea6755, type: 3}
@@ -7990,7 +7990,7 @@ Prefab:
     - target: {fileID: 212828941318527488, guid: 50da1bf508bffdd42841171b90825fe2,
         type: 2}
       propertyPath: m_SortingLayerID
-      value: 501207281
+      value: -459180299
       objectReference: {fileID: 0}
     - target: {fileID: 212828941318527488, guid: 50da1bf508bffdd42841171b90825fe2,
         type: 2}
@@ -9708,7 +9708,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 501207281
-  m_SortingLayer: 4
+  m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 08cdf570b3cfd3c47b5fc75bfbf295c8, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -10268,7 +10268,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -459180299
-  m_SortingLayer: 0
+  m_SortingLayer: 4
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 08cdf570b3cfd3c47b5fc75bfbf295c8, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -10537,55 +10537,18 @@ MonoBehaviour:
   m_GameObject: {fileID: 1186419863}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2f2cc6354bd9d224c8d4669aeb954540, type: 3}
+  m_Script: {fileID: 11500000, guid: 48663cec2851ff9469dc15c42109f7a3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  factionRelations:
-  - faction1: 0
-    faction2: 1
-    opinion: 0
-  - faction1: 0
-    faction2: 2
-    opinion: 0
-  - faction1: 0
-    faction2: 3
-    opinion: 0
-  - faction1: 0
-    faction2: 4
-    opinion: 0
-  - faction1: 0
-    faction2: 5
-    opinion: 0
-  - faction1: 1
-    faction2: 2
-    opinion: 0
-  - faction1: 1
-    faction2: 3
-    opinion: 0
-  - faction1: 1
-    faction2: 4
-    opinion: 0
-  - faction1: 1
-    faction2: 5
-    opinion: 0
-  - faction1: 2
-    faction2: 3
-    opinion: 0
-  - faction1: 2
-    faction2: 4
-    opinion: 0
-  - faction1: 2
-    faction2: 5
-    opinion: 0
-  - faction1: 3
-    faction2: 4
-    opinion: 0
-  - faction1: 3
-    faction2: 5
-    opinion: 0
-  - faction1: 4
-    faction2: 5
-    opinion: 0
+  factionRelations: []
+  doesHateUpperBound: -61
+  doesDislikeLowerBound: -60
+  doesDislikeUpperBound: -30
+  isNeutralLowerBound: -29
+  isNeutralUpperBound: 29
+  doesLikeLowerBound: 30
+  doesLikeUpperBound: 60
+  doesLoveLowerBound: 61
 --- !u!4 &1186419865
 Transform:
   m_ObjectHideFlags: 0
@@ -10846,7 +10809,7 @@ Prefab:
     - target: {fileID: 212987113094775800, guid: dc0fc5471c8d19e4a88db1f7a11f2cc1,
         type: 2}
       propertyPath: m_SortingLayerID
-      value: 501207281
+      value: -459180299
       objectReference: {fileID: 0}
     - target: {fileID: 212987113094775800, guid: dc0fc5471c8d19e4a88db1f7a11f2cc1,
         type: 2}
@@ -11176,7 +11139,7 @@ MonoBehaviour:
   spirituality: 1
   dexterity: 10
   perception: 10
-  attitude: 100
+  attitude: -30
   fear: 0
   danger: 0
 --- !u!114 &1254768301
@@ -11293,7 +11256,7 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 501207281
+  m_SortingLayerID: -459180299
   m_SortingLayer: 4
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 08cdf570b3cfd3c47b5fc75bfbf295c8, type: 3}
@@ -14444,7 +14407,7 @@ LineRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -459180299
-  m_SortingLayer: 0
+  m_SortingLayer: 4
   m_SortingOrder: 10000
   m_Positions:
   - {x: 0, y: 0, z: 0}
@@ -15667,7 +15630,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 425234961
-  m_SortingLayer: 0
+  m_SortingLayer: 2
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300002, guid: 166e30b01fcc8cd4f924643bddea6755, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -16384,7 +16347,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1942604906
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16544,7 +16507,7 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 501207281
+  m_SortingLayerID: -459180299
   m_SortingLayer: 4
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 08cdf570b3cfd3c47b5fc75bfbf295c8, type: 3}
