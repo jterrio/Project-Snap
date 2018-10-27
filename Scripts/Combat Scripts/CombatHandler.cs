@@ -13,7 +13,7 @@ public class CombatHandler : MonoBehaviour {
     private bool combatStarted = false; //if the first turn has started yet
     public TurnStage turnStage; //turn of stage - MAY BE LEGACY AND NOT USED
 
-    public EdgeCollider2D combatBounds;
+    public EdgeCollider2D combatBounds; // Never used to my knowlage -Ryan
     private Coroutine turnCoroutine;
     private bool isReady;
 
@@ -62,7 +62,7 @@ public class CombatHandler : MonoBehaviour {
     }
 
     //Start of combat function to begin the turn process for each character in combat
-    void StartWaiting() {
+    void StartWaiting() { //Needs to be a second fuction that calls a specific character. 
         foreach(GameObject c in charactersInCombat) {
             c.GetComponent<CombatScript>().StartWaiting();
         }
@@ -125,10 +125,10 @@ public class CombatHandler : MonoBehaviour {
                 if(d != GameManagerScript.ins.player) {
                     if(c != GameManagerScript.ins.player) {
                         //both characters are AI
-                        if(d.GetComponent<NPCInfo>().faction != c.GetComponent<NPCInfo>().faction) {
+                        if (FactionManagerScript.ins.DoesDislike(c.GetComponent<NPCInfo>().faction, d.GetComponent<NPCInfo>().faction)) {
                             return false;
                         }
-                    } else {
+                    } else { 
                         if(d.GetComponent<Stats>().attitude <= -30) {
                             return false;
                         }
