@@ -10928,9 +10928,18 @@ MonoBehaviour:
   m_GameObject: {fileID: 1186419863}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 48663cec2851ff9469dc15c42109f7a3, type: 3}
+  m_Script: {fileID: 11500000, guid: ef13c6b996ef68c44b989f418dadf97e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  factionRelations: []
+  doesHateUpperBound: -60
+  doesDislikeLowerBound: -60
+  doesDislikeUpperBound: -10
+  isNeutralLowerBound: -10
+  isNeutralUpperBound: 10
+  doesLikeLowerBound: 10
+  doesLikeUpperBound: 60
+  doesLoveLowerBound: 60
 --- !u!4 &1186419865
 Transform:
   m_ObjectHideFlags: 0
