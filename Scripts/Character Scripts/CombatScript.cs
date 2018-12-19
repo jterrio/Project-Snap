@@ -407,13 +407,19 @@ public class CombatScript : MonoBehaviour {
 
                         //raycast from focusTarget to us by p distance, which is the distance of the max range of the projectile
                         RaycastHit2D hit = Physics2D.Raycast(memory[focusTarget], f - memory[focusTarget], p.distance * 1.05f, CombatManager.ins.obstacleTest);
-                        if(disFromTarget >= p.distance) {
+                        float wallDistance = Vector3.Distance(memory[focusTarget], hit.point) * 0.95f;
+                        if (disFromTarget >= p.distance) {
                             targetDistance = p.distance * 0.9f;
-                        }else if (disFromTarget <= p.distance * 0.35f) {
+                        } else if (disFromTarget <= p.distance * 0.35f) {
                             targetDistance = p.distance * 0.45F;
                         }
+                        if (hit.collider != null) {
+                            if (targetDistance >= wallDistance) {
+                                targetDistance = wallDistance;
+                            }
+                        }
 
-                        if (hit.collider == null) { //we have room to move back
+                        if (true) {
                             float angle = Vector2.Angle(Vector2.right, directionFromTargetToAI); 
                             if (transform.position.y - 0.45f < memory[focusTarget].y) { //we are bottom half of the y-axis, so add 180 since it is absolute
                                 angle = 360 - angle;
@@ -543,8 +549,6 @@ public class CombatScript : MonoBehaviour {
 
                             }
 
-                        } else { //we dont have enough room behind us
-                            float disFromWall = Vector3.Distance(memory[focusTarget], hit.point);
                         }
                         break;
                     case Spell.Type.Beam:
