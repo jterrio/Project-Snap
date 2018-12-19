@@ -289,12 +289,15 @@ public class CombatScript : MonoBehaviour {
         //check if someone is visible, if they are, update their position in the ai's memory
         targets.Clear(); //clear old targets for new test
         foreach(GameObject c in charactersInCombat) { //check everyone in combat
+            if(c == gameObject) {
+                continue;
+            }
             if(c == GameManagerScript.ins.player) { //if the object is the player, check ai's attitude to see if it should be hostile
                 if(npcInfo.stats.attitude > -30f) {
                     continue;
                 }
             } else {
-                if(!FactionManagerScript.ins.DoesDislike(c.GetComponent<NPCInfo>().faction,npcInfo.faction)) { //if the object is another unit, check factions' to see if it should be hostile
+                if(!FactionManagerScript.ins.DoesDislike(c.GetComponent<NPCInfo>().faction,npcInfo.faction) && !FactionManagerScript.ins.DoesHate(c.GetComponent<NPCInfo>().faction, npcInfo.faction)) { //if the object is another unit, check factions' to see if it should be hostile
                     continue;
                 }
             }
