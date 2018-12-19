@@ -58,7 +58,7 @@ public class CombatManager : MonoBehaviour {
             }
             //check positions relative to each other if the player is in combat
             if (Vector3.Distance(handler.transform.position, playerCombatHandler.transform.position) <= 20) {
-                playerCombatHandler.GetComponent<CombatHandler>().AddLateCharacters(handler.GetComponent<CombatHandler>().charactersInCombat);
+                playerCombatHandler.GetComponent<CombatHandler>().AddLateCharacters(handler.GetComponent<CombatHandler>().charactersInCombat); //It should just add them to combat
                 allCombatHandlers.Remove(handler);
                 Destroy(handler);
                 return;

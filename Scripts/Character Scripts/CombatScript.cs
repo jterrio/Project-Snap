@@ -294,7 +294,7 @@ public class CombatScript : MonoBehaviour {
                     continue;
                 }
             } else {
-                if(c.GetComponent<NPCInfo>().faction == npcInfo.faction) { //if the object is another unit, check factions' to see if it should be hostile
+                if(!FactionManagerScript.ins.DoesDislike(c.GetComponent<NPCInfo>().faction,npcInfo.faction)) { //if the object is another unit, check factions' to see if it should be hostile
                     continue;
                 }
             }
@@ -389,7 +389,7 @@ public class CombatScript : MonoBehaviour {
             case CombatState.ATTACKING:
 
                 movementQueue.Clear(); //clear our movement
-                if (selectedSpell == null) { //if we don't have a spell, we cant move
+                if (selectedSpell == null || focusTarget == null) { //if we don't have a spell, we cant move; if we have no target who is are enemy, we cant move
                     return;
                 }
                 Vector3 dir = Vector3.zero; //init dir vec3

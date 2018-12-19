@@ -15,7 +15,8 @@ public class NPCInfo : CharacterInfo {
 
     public Inventory merchantInventory;
     public float merchantMoney;
-    public NPC.Faction faction;
+    //public NPC.Faction faction;
+    public FactionManagerScript.Faction faction;
     public NPC.MovementType movementType;
 
     public GameObject areaPoint; //for the movementtype.area
