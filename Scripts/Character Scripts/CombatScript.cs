@@ -789,7 +789,6 @@ public class CombatScript : MonoBehaviour {
             case CombatState.AVOIDING: //avoiding
                 Vector3 movementVector = Vector3.zero;
                 foreach(GameObject t in targets) {
-                    print(IsVisible(t));
                     if (IsVisible(t)) {
                         if (Vector3.Distance(t.transform.position, gameObject.transform.position) <= safeDistance) {
                             movementVector += gameObject.transform.position - t.transform.position;

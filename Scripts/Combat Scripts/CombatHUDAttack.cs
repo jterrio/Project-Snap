@@ -240,28 +240,28 @@ public class CombatHUDAttack : MonoBehaviour {
                             if (results[0].gameObject.layer == LayerMask.NameToLayer("UI")) {
                                 break;
                             }
-                        } else {
+                        }
                             Vector2 mouse2D = new Vector2(Camera.main.ScreenToWorldPoint(Input.mousePosition).x, Camera.main.ScreenToWorldPoint(Input.mousePosition).y);
                             RaycastHit2D hit = Physics2D.Raycast(mouse2D, Vector2.zero);
-                            if (hit.collider != null) {
-                                if (hit.collider.gameObject.layer == LayerMask.NameToLayer("NPC")) {
+                        if (hit.collider != null) {
+                            if (hit.collider.gameObject.layer == LayerMask.NameToLayer("NPC")) {
 
-                                    if (!IsVisible(hit.collider.gameObject)) {
-                                        break;
-                                    }
-
-                                    if (selectedNPC != null) {
-                                        selectedNPC.GetComponent<Renderer>().material.color = Color.white;
-                                    }
-                                    selectedNPC = hit.collider.gameObject;
-                                    selectedNPC.GetComponent<Renderer>().material.color = Color.yellow;
-                                    CheckTargetClick();
+                                if (!IsVisible(hit.collider.gameObject)) {
+                                    print("NOT VISIBLE!");
+                                    break;
                                 }
-                            } else {
+
                                 if (selectedNPC != null) {
                                     selectedNPC.GetComponent<Renderer>().material.color = Color.white;
-                                    selectedNPC = null;
                                 }
+                                selectedNPC = hit.collider.gameObject;
+                                selectedNPC.GetComponent<Renderer>().material.color = Color.yellow;
+                                CheckTargetClick();
+                            }
+                        } else {
+                            if (selectedNPC != null) {
+                                selectedNPC.GetComponent<Renderer>().material.color = Color.white;
+                                selectedNPC = null;
                             }
                         }
                         break;
@@ -426,9 +426,22 @@ public class CombatHUDAttack : MonoBehaviour {
                         if (tempAttack == null) {
                             tempAttack = Instantiate(attackOnLinePrefab);
                         }
-                        if(percentage >= 0.975) {
+                        Vector2 mouse2D = new Vector2(Camera.main.ScreenToWorldPoint(Input.mousePosition).x, Camera.main.ScreenToWorldPoint(Input.mousePosition).y);
+                        RaycastHit2D hit = Physics2D.Raycast(mouse2D, Vector2.zero);
+                        if (hit.collider != null) {
+                            if (hit.collider.gameObject.layer == LayerMask.NameToLayer("Player")) {
+                                tempAttack.GetComponent<SpriteRenderer>().enabled = false;
+                                tempAttack.transform.position = GameManagerScript.ins.player.transform.position;
+                                GameManagerScript.ins.player.GetComponent<SpriteRenderer>().color = Color.yellow;
+                                tempHash = combatHUDLog.loggedMoves[x].hash;
+                                return tempAttack.transform.position;
+                            }
+                        }
+                        GameManagerScript.ins.player.GetComponent<SpriteRenderer>().color = Color.white;
+                        tempAttack.GetComponent<SpriteRenderer>().enabled = true;
+                        if (percentage >= 0.975) {
                             tempAttack.transform.position = endPoint;
-                        }else if(percentage <= 0.025) {
+                        } else if (percentage <= 0.025) {
                             tempAttack.transform.position = startPoint;
                         } else {
                             tempAttack.transform.position = ((1 - percentage) * startPoint) + (percentage * endPoint);
@@ -439,8 +452,19 @@ public class CombatHUDAttack : MonoBehaviour {
                     tempHash = -1;
 
                 }
-            }   
+            }
 
+        } else {
+            Vector2 mouse2D = new Vector2(Camera.main.ScreenToWorldPoint(Input.mousePosition).x, Camera.main.ScreenToWorldPoint(Input.mousePosition).y);
+            RaycastHit2D hit = Physics2D.Raycast(mouse2D, Vector2.zero);
+            if (hit.collider != null) {
+                if (hit.collider.gameObject.layer == LayerMask.NameToLayer("Player")) {
+                    GameManagerScript.ins.player.GetComponent<SpriteRenderer>().color = Color.yellow;
+                    return GameManagerScript.ins.player.transform.position;
+                }
+            } else {
+                GameManagerScript.ins.player.GetComponent<SpriteRenderer>().color = Color.white;
+            }
         }
         if (tempAttack != null) {
             Destroy(tempAttack);
