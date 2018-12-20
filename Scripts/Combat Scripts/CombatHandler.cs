@@ -54,21 +54,27 @@ public class CombatHandler : MonoBehaviour {
         }
     }
 
-    //DEBUG FUNCTION TO END ALL TURNS
+    /// <summary>
+    /// DEBUG FUNCTION TO END ALL TURNS
+    /// </summary>
     public void ManualEndTurn() {
         foreach(GameObject c in currentCharactersTurn) {
             c.GetComponent<CombatScript>().EndTurn();
         }
     }
 
-    //Start of combat function to begin the turn process for each character in combat
+    /// <summary>
+    /// Start of combat function to begin the turn process for each character in combat
+    /// </summary>
     void StartWaiting() { //Needs to be a second fuction that calls a specific character. 
         foreach(GameObject c in charactersInCombat) {
             c.GetComponent<CombatScript>().StartWaiting();
         }
     }
 
-    //Remove null (Dead) game object from characters in combat
+    /// <summary>
+    /// Remove null (Dead) game object from characters in combat
+    /// </summary>
     void RemoveDeadCharacters() {
         List<GameObject> toDelete = new List<GameObject>();
         foreach(GameObject c in charactersInCombat) {
@@ -81,7 +87,9 @@ public class CombatHandler : MonoBehaviour {
         }
     }
 
-    //remove characters that have strayed too far
+    /// <summary>
+    /// remove characters that have strayed too far
+    /// </summary>
     void RemoveFarCharacters() {
         List<GameObject> characters = new List<GameObject>(charactersInCombat);
         bool doRemove = true;
@@ -100,7 +108,9 @@ public class CombatHandler : MonoBehaviour {
         }
     }
 
-    //End combat for every character in this combat
+    /// <summary>
+    /// End combat for every character in this combat
+    /// </summary>
     void EndCombat() {
         foreach(GameObject c in charactersInCombat) {
             RemoveFromCombat(c);
@@ -109,7 +119,10 @@ public class CombatHandler : MonoBehaviour {
         Destroy(this.gameObject);
     }
 
-    //Remove a specific character from combat
+    /// <summary>
+    /// Remove a specific character from combat
+    /// </summary>
+    /// <param name="c"></param>
     void RemoveFromCombat(GameObject c) {
         if (c == GameManagerScript.ins.player) {
             c.GetComponent<PlayerInfo>().LeaveCombat();
@@ -118,7 +131,10 @@ public class CombatHandler : MonoBehaviour {
         }
     }
 
-    //CHANGE AFTER MAKING A FACTION MANAGER
+    /// <summary>
+    /// Checks with factionManager to see if everyone has applicable targets
+    /// </summary>
+    /// <returns></returns>
     bool CanEndCombat() {
         foreach(GameObject c in charactersInCombat) {
             foreach(GameObject d in charactersInCombat) {
@@ -144,7 +160,10 @@ public class CombatHandler : MonoBehaviour {
         return true;
     }
 
-    //check to see if a characters is ready to begin their turn
+    /// <summary>
+    /// check to see if a characters is ready to begin their turn
+    /// </summary>
+    /// <returns></returns>
     IEnumerator TurnCheck() {
         yield return new WaitForEndOfFrame();
         foreach (GameObject c in charactersInCombat) {
@@ -160,7 +179,9 @@ public class CombatHandler : MonoBehaviour {
         }
         turnCoroutine = null;
     }
-    //check to see if a characters is ready to end their turn
+    /// <summary>
+    /// check to see if a characters is ready to end their turn
+    /// </summary>
     public void EndTurnCheck() {
         List<GameObject> charactersToRemove = new List<GameObject>();
         foreach(GameObject c in currentCharactersTurn) {
@@ -184,7 +205,10 @@ public class CombatHandler : MonoBehaviour {
 
     }
 
-    //check to see if any characters are pulling in nearby characters in for combat
+    /// <summary>
+    /// check to see if any characters are pulling in nearby characters in for combat
+    /// </summary>
+    /// <param name="colliders"></param>
     void CheckCollider(Collider2D[] colliders) {
         foreach (Collider2D c in colliders) {
             if (charactersChecked.Contains(c.gameObject)) {
@@ -210,7 +234,9 @@ public class CombatHandler : MonoBehaviour {
         } //end of adding to combat
     }
 
-    //check characters pulled to see if they will actually join
+    /// <summary>
+    /// check characters pulled to see if they will actually join
+    /// </summary>
     void CheckCharacters() {
         foreach(GameObject n in charactersInCombat) {
             charactersChecked.Add(n);

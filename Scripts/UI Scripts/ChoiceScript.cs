@@ -7,7 +7,9 @@ public class ChoiceScript : MonoBehaviour {
 
     public int choiceSet; //tells npc speech holder which set to jump to
 
-    //send the info the speech manager of our choice
+    /// <summary>
+    /// Sends info of choice to the SpeechManager
+    /// </summary>
     public void TaskOnClick() {
         SpeechManager.ins.PickChoice(choiceSet);
     }

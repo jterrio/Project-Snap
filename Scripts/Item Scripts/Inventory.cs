@@ -32,7 +32,11 @@ public class Inventory : MonoBehaviour {
         }
     }
 
-    //add item to the inventory
+    /// <summary>
+    /// add item to the inventory
+    /// </summary>
+    /// <param name="item"></param>
+    /// <returns></returns>
     public int AddItem(Item item) {
         if(size >= maxSize) {
             return -1; //throw error to the player
@@ -62,7 +66,12 @@ public class Inventory : MonoBehaviour {
         return c;
     }
 
-    //remove an item to the inventory
+    /// <summary>
+    /// remove an item to the inventory
+    /// </summary>
+    /// <param name="item"></param>
+    /// <param name="removeCount"></param>
+    /// <returns></returns>
     public int RemoveItem(Item item, int removeCount) {
         size -= removeCount;
         if(size < 0) {
@@ -81,7 +90,11 @@ public class Inventory : MonoBehaviour {
         return -1;
     }
 
-    //removes all counts of an item from inventory
+    /// <summary>
+    /// removes all counts of an item from inventory
+    /// </summary>
+    /// <param name="item"></param>
+    /// <returns></returns>
     public int RemoveAllItem(Item item) {
         int i = 0;
         foreach(InventorySlot inv in inventory) {
@@ -95,12 +108,18 @@ public class Inventory : MonoBehaviour {
         return -1;
     }
 
-    //delete every item in inventory
+    /// <summary>
+    /// delete every item in inventory
+    /// </summary>
     public void ClearInventory() {
         inventory.Clear();
     }
 
-    //check to see if the passed item is in the inventory
+    /// <summary>
+    /// check to see if the passed item is in the inventory
+    /// </summary>
+    /// <param name="item"></param>
+    /// <returns></returns>
     public bool HasItemInInventory(Item item) {
         foreach(InventorySlot inv in inventory) {
             if(inv.item == item) {
@@ -131,7 +150,12 @@ public class Inventory : MonoBehaviour {
         }
     }
 
-    //check to see if the passed item is in the inventory with at least the passed ammount
+    /// <summary>
+    /// check to see if the passed item is in the inventory with at least the passed ammount
+    /// </summary>
+    /// <param name="item"></param>
+    /// <param name="count"></param>
+    /// <returns></returns>
     public bool HasItemCountInInventory(Item item, int count) {
         foreach(InventorySlot inv in inventory) {
             if(inv.item == item && inv.count >= count) {

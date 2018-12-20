@@ -11,7 +11,11 @@ public class DisplaySpellInfo : MonoBehaviour {
 
     public Vector3 defaultPosition;
 
-    //displays info from item and adds it into the inventory
+    /// <summary>
+    /// Display spell info
+    /// </summary>
+    /// <param name="newSpell">Spell to display</param>
+    /// <param name="parent">Parent RectTransform</param>
     public void Display(Spell newSpell, RectTransform parent) {
         spell = newSpell;
         image.sprite = spell.icon;

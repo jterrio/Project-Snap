@@ -62,12 +62,18 @@ public class NPCSpeechHolder : MonoBehaviour {
        
     }
 
-    //give (speech manager) the current dialogue
+    /// <summary>
+    /// give (speech manager) the current dialogue
+    /// </summary>
+    /// <returns></returns>
     public Dialogue Speak() {
         return speechSets[currentSet].dialogue[currentLine];
     }
 
-    //move to the next dialogue set/line
+    /// <summary>
+    /// move to the next dialogue set/line
+    /// </summary>
+    /// <returns></returns>
     public bool UpdateCurrentLine() {
         //if we are at the end of the current set's line, do something
         if(currentLine == speechSets[currentSet].dialogue.Length - 1) {
@@ -85,7 +91,9 @@ public class NPCSpeechHolder : MonoBehaviour {
         }
     }
 
-    //if we reset, the set should have a set number to reset to, which we set the current set to
+    /// <summary>
+    /// if we reset, the set should have a set number to reset to, which we set the current set to
+    /// </summary>
     public void ResetSetNumber() {
         currentSet = speechSets[currentSet].dialogue[currentLine].resetSet;
     }
@@ -110,7 +118,10 @@ public class NPCSpeechHolder : MonoBehaviour {
         }
     }
 
-    //set dialogue set number to the given number and move the current line to beginning (0)
+    /// <summary>
+    /// set dialogue set number to the given number and move the current line to beginning (0)
+    /// </summary>
+    /// <param name="setNumber"></param>
     public void SetDialogueSet(int setNumber) {
         currentSet = setNumber;
         currentLine = 0;

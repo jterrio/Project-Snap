@@ -33,7 +33,9 @@ public class CharacterInfo : MonoBehaviour {
     private int progress = 0;
 
 
-    //Direction that we are facing
+    /// <summary>
+    /// Direction that we are facing
+    /// </summary>
     public enum Direction {
         FRONT,
         FRONTRIGHT,
@@ -45,7 +47,9 @@ public class CharacterInfo : MonoBehaviour {
         FRONTLEFT
     }
 
-    //State that we are moving in, if at all
+    /// <summary>
+    /// State that we are moving in, if at all
+    /// </summary>
     public enum MovementState {
         STANDING,
         WALKING,
@@ -81,7 +85,12 @@ public class CharacterInfo : MonoBehaviour {
         }
     }
 
-    //returns a bool depending on if we are facing another character
+    /// <summary>
+    /// returns a bool depending on if we are facing another character
+    /// </summary>
+    /// <param name="self"></param>
+    /// <param name="other"></param>
+    /// <returns></returns>
     public bool isFacing(Direction self, Direction other) {
         //switch statement to check to see if self is indeed opposite of other
         switch (self) {
@@ -130,7 +139,11 @@ public class CharacterInfo : MonoBehaviour {
         return false; //something has gone wrong if you reach this
     }
 
-    //returns direction to turn to face in order to face another character
+    /// <summary>
+    /// returns direction to turn to face in order to face another character
+    /// </summary>
+    /// <param name="other"></param>
+    /// <returns></returns>
     public Direction TurnToFace(Direction other) {
         //return the inverse of the current direction
         switch (other) {
@@ -319,6 +332,9 @@ public class CharacterInfo : MonoBehaviour {
         return !DoHate(other);
     }
 
+    /// <summary>
+    /// Sets direction for when the character and used by player when in combat
+    /// </summary>
     public void SetDirection() {
         if (polyNav.movingDirection == Vector2.zero) {
             return;

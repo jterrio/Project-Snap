@@ -51,7 +51,9 @@ public class CombatHUDAttack : MonoBehaviour {
         }
     }
 
-    //reser values back to default (differs from right clicking as this happens after finished selecting everything)
+    /// <summary>
+    /// reset values back to default (differs from right clicking as this happens after finished selecting everything)
+    /// </summary>
     public void ResetValues() {
         CombatManager.ins.combatDrawMovePosition.ResetAttackValue();
         
@@ -132,14 +134,20 @@ public class CombatHUDAttack : MonoBehaviour {
 
     }
 
-    //add to the menu log
+    /// <summary>
+    /// add to the menu log
+    /// </summary>
+    /// <param name="a"></param>
     public void AddAttackToLayout(Attack a) {
         a.loggedInfo = (RectTransform)Instantiate(combatHUDLog.logPrefab, combatHUDLog.gridlayout);
         a.loggedInfo.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = a.ReturnMsg();
         a.loggedInfo.GetComponentInChildren<CancelSpellScript>().parent = a;
     }
 
-    //remove from the menu log
+    /// <summary>
+    /// remove from the menu log
+    /// </summary>
+    /// <param name="a"></param>
     public void RemoveAttackFromLayout(Attack a) {
         foreach(Transform child in combatHUDLog.gridlayout) {
             if(child == a.loggedInfo.transform) {
@@ -166,7 +174,9 @@ public class CombatHUDAttack : MonoBehaviour {
     }
 
 
-    //reset values
+    /// <summary>
+    /// reset values
+    /// </summary>
     void RightClick() {
         UIManager.ins.ShowLogPanel();
         hasClicked = false;
@@ -191,7 +201,9 @@ public class CombatHUDAttack : MonoBehaviour {
         loggedAttacks.Remove(loggedAttacks[loggedAttacks.Count - 1]);
     }
 
-    //set the firemode object positions accordingly
+    /// <summary>
+    /// set the firemode object positions accordingly
+    /// </summary>
     void SetMouse() {
         switch (spell.type) {
             case Spell.Type.Projectile:
@@ -260,7 +272,9 @@ public class CombatHUDAttack : MonoBehaviour {
 
     }
 
-    //setting target attack
+    /// <summary>
+    /// setting target attack
+    /// </summary>
     void CheckTargetClick() {
         if(selectedNPC == null) {
             return;
@@ -289,7 +303,9 @@ public class CombatHUDAttack : MonoBehaviour {
         }
     }
 
-    //update each object in memory
+    /// <summary>
+    /// update each object in memory
+    /// </summary>
     void UpdateMemory() {
         List<GameObject> characters = new List<GameObject>(memory.Keys);
         foreach(GameObject c in characters) {
@@ -299,7 +315,10 @@ public class CombatHUDAttack : MonoBehaviour {
         }
     }
 
-    //add or update to memory
+    /// <summary>
+    /// add or update to memory
+    /// </summary>
+    /// <param name="c"></param>
     void MemoryAdd(GameObject c) {
         if (memory.ContainsKey(c)) {
             memory[c] = c.transform.position;
@@ -308,7 +327,11 @@ public class CombatHUDAttack : MonoBehaviour {
         }
     }
 
-    //checks whether we can directly see them
+    /// <summary>
+    /// checks whether we can directly see them
+    /// </summary>
+    /// <param name="target"></param>
+    /// <returns></returns>
     public bool IsVisible(GameObject target) {
         int oldLayer = gameObject.layer;
         gameObject.layer = 2; //change to ignore raycast
@@ -324,7 +347,9 @@ public class CombatHUDAttack : MonoBehaviour {
         return false;
     }
 
-    //setting point attack
+    /// <summary>
+    /// setting point attack
+    /// </summary>
     void CheckPointClick() {
         if (Input.GetMouseButtonDown(0)) {
             PointerEventData pointerData = new PointerEventData(EventSystem.current);
@@ -348,7 +373,10 @@ public class CombatHUDAttack : MonoBehaviour {
 
     }
 
-    //setting directional attack
+    /// <summary>
+    /// setting directional attack
+    /// </summary>
+    /// <param name="dir"></param>
     void CheckDirectionalClick(Vector3 dir) {
         if (Input.GetMouseButtonDown(0)) {
             PointerEventData pointerData = new PointerEventData(EventSystem.current);
@@ -371,7 +399,10 @@ public class CombatHUDAttack : MonoBehaviour {
         }
     }
 
-    //for line detection for the attack
+    /// <summary>
+    /// for line detection for the attack
+    /// </summary>
+    /// <returns></returns>
     Vector3 CalculateMousePosition() {
         Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         mousePosition = new Vector3(mousePosition.x, mousePosition.y, 0);
