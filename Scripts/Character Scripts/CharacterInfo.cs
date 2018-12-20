@@ -341,14 +341,14 @@ public class CharacterInfo : MonoBehaviour {
         }
         int x = 0;
         int y = 0;
-        if (polyNav.movingDirection.x > 0) {
+        if (polyNav.movingDirection.x > 0.25) {
             x = 1;
-        } else if (polyNav.movingDirection.x < 0) {
+        } else if (polyNav.movingDirection.x < -0.25) {
             x = -1;
         }
-        if (polyNav.movingDirection.y > 0) {
+        if (polyNav.movingDirection.y > 0.25) {
             y = 1;
-        } else if (polyNav.movingDirection.y < 0) {
+        } else if (polyNav.movingDirection.y < -0.25) {
             y = -1;
         }
         switch (x) {
