@@ -34,6 +34,12 @@ public class SpeechManager : MonoBehaviour {
     private PlayerInfo pInfo;
     private NPCInfo npcInfo;
 
+    public bool InShop {
+        get {
+            return inShop;
+        }
+    }
+
     // Use this for initialization
     void Start () {
         //make singleton

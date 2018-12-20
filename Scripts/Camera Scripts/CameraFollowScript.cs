@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class CameraFollowScript : MonoBehaviour {
 
@@ -31,7 +32,7 @@ public class CameraFollowScript : MonoBehaviour {
             }
         }
         CameraZoom();
-
+        
         if (cameraLocked) {
             FollowPlayer();
         } else {
@@ -49,7 +50,18 @@ public class CameraFollowScript : MonoBehaviour {
             Camera.main.orthographicSize = defaultOrthoSize;
             cameraLocked = true;
         }
-
+        PointerEventData pointerData = new PointerEventData(EventSystem.current);
+        pointerData.position = Input.mousePosition;
+        List<RaycastResult> results = new List<RaycastResult>();
+        EventSystem.current.RaycastAll(pointerData, results);
+        if (results.Count > 0) {
+            if (results[0].gameObject.layer == LayerMask.NameToLayer("UI")) {
+                return;
+            }
+        }
+        if (SpeechManager.ins.InShop) {
+            return;
+        }
 
         var i = Input.GetAxis("Mouse ScrollWheel");
         if (i > 0) { //scroll up - zoom in

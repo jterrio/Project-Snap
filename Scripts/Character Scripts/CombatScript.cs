@@ -326,6 +326,9 @@ public class CombatScript : MonoBehaviour {
     
     //checks whether we can directly see them
     public bool IsVisible(GameObject target) {
+        if(target == null) {
+            return false;
+        }
         gameObject.layer = 2; //change to ignore raycast
         Vector3 feet = new Vector3(transform.position.x, transform.position.y - 0.45f, 0);
         RaycastHit2D hit = Physics2D.Raycast(feet, target.transform.position - feet, Mathf.Infinity, CombatManager.ins.characterVisibleTest); //raycast
