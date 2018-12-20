@@ -579,6 +579,21 @@ public class CombatScript : MonoBehaviour {
                                 }
 
                                 //create new point on circle
+
+                                //randomize the movement slightly
+                                if(Random.Range(0, 4) == 0) {
+                                    targetDistance = targetDistance + Random.Range(targetDistance * -0.05f, targetDistance * 0.05f);
+                                    if (targetDistance >= p.distance) {
+                                        targetDistance = p.distance * 0.9f;
+                                    } else if (disFromTarget <= p.distance * 0.35f) {
+                                        targetDistance = p.distance * 0.45F;
+                                    }
+                                    if (hit.collider != null) {
+                                        if (targetDistance >= wallDistance) {
+                                            targetDistance = wallDistance;
+                                        }
+                                    }
+                                }
                                 
                                 float newX = memory[focusTarget].x + targetDistance * Mathf.Cos(Mathf.Deg2Rad * newAngle);
                                 float newY = memory[focusTarget].y + targetDistance * Mathf.Sin(Mathf.Deg2Rad * newAngle);
