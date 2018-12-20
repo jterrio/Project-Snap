@@ -11,6 +11,7 @@ public class CameraFollowScript : MonoBehaviour {
     private float defaultOrthoSize;
     private float maxOrthoSize;
     private float minOrthoSize;
+    private float maxCameraLookDistance = 15f;
 
     void Start() {
         cameraLocked = true;
@@ -104,6 +105,9 @@ public class CameraFollowScript : MonoBehaviour {
             vel = new Vector2(vel.x, 0);
         }
         Vector3 pos = new Vector3(vel.x, vel.y, 0);
+        if(Vector3.Distance(transform.position + (pos.normalized * cameraSpeed), player.transform.position) >= maxCameraLookDistance) {
+            return;
+        }
         transform.position += (pos.normalized * cameraSpeed);
     }
 
