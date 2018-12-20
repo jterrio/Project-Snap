@@ -27,11 +27,15 @@ public class CombatScript : MonoBehaviour {
     private float stuckTimerBase = 2f; //timer value before the ai says it is stuck
     private bool isStuck = false; //if the ai can't move or is trying to move to impossible spot bool
 
+    private int turnsToClose = 0; //turns we are too close to an enemy
+    private float tooCloseDistance = 1f;
+    private float safeDistance = 2f;
 
     public int difficulty = 1; //difficulty doesnt do anything (it did do something on v1 of the AI)
     public bool hasAttackedRecently; //has attacked recently bool; used for cooldowns on casting spells
     public bool inCover; //in cover bool
     public bool inPartialCover; //in partial cover bool
+    
 
     private int rotationDirection = -1; //0 is counter clockwise, 1 is clockwise. If on -1, then is it not set to anything
     private Spell selectedSpell; //spell that is being casted (or attempted to)
@@ -171,6 +175,7 @@ public class CombatScript : MonoBehaviour {
         //print("AI STARTING!");
         TryStuck(); //test to see if we are stuck trying to get to a point
         GetTargets(charactersInCombat); //get all active targets
+        TryAvoid(); //test if we have been too close to an enemy for too long
         CoverTest(); //tests to see if there are any changes to cover and partial cover
         SelectTarget(); //selects a target
         GetSpell(); //get a spell to perform
@@ -782,6 +787,16 @@ public class CombatScript : MonoBehaviour {
                 npcInfo.RecoverStamina();
                 break;
             case CombatState.AVOIDING: //avoiding
+                Vector3 movementVector = Vector3.zero;
+                foreach(GameObject t in targets) {
+                    print(IsVisible(t));
+                    if (IsVisible(t)) {
+                        if (Vector3.Distance(t.transform.position, gameObject.transform.position) <= safeDistance) {
+                            movementVector += gameObject.transform.position - t.transform.position;
+                        }
+                    }
+                }
+                movementQueue.Add(gameObject.transform.position + movementVector);
                 break;
             case CombatState.DEFENDING: //defending
                 break;
@@ -906,6 +921,15 @@ public class CombatScript : MonoBehaviour {
                 }
                 break;
             case CombatState.AVOIDING:
+                state = CombatState.ATTACKING;
+                foreach(GameObject t in targets) {
+                    if (IsVisible(t)) {
+                        if(Vector3.Distance(t.transform.position, gameObject.transform.position) <= safeDistance) {
+                            state = CombatState.AVOIDING;
+                            break;
+                        }
+                    }
+                }
                 break;
             case CombatState.DEFENDING:
                 break;
@@ -1017,8 +1041,13 @@ public class CombatScript : MonoBehaviour {
         if(Mathf.FloorToInt(transform.position.x * 100) == Mathf.FloorToInt(lastPosition.x * 100) && Mathf.FloorToInt(transform.position.y * 100) == Mathf.FloorToInt(lastPosition.y * 100)) {
             print("isStuck");
             if (isStuck && Time.time >= stuckTimer) { //if we are stuck and it has been X ammount of seconds, clear our movement to start fresh
-                isStuck = false;
-                movementQueue.Clear();
+                if (state == CombatState.AVOIDING) {
+                    state = CombatState.ATTACKING;
+                } else {
+                    isStuck = false;
+                    movementQueue.Clear();
+                    state = CombatState.AVOIDING;
+                }
             } else { //if not stuck, set the timer and set stuck
                 isStuck = true;
                 stuckTimer = Time.time + stuckTimer;
@@ -1030,6 +1059,21 @@ public class CombatScript : MonoBehaviour {
             lastPosition = transform.position;
         }
 
+    }
+
+    void TryAvoid() {
+        foreach(GameObject t in targets) {
+            if (IsVisible(t)) {
+                if(Vector3.Distance(t.transform.position, gameObject.transform.position) <= tooCloseDistance) {
+                    turnsToClose += 1;
+                    break;
+                }
+            }
+        }
+        if(turnsToClose >= 3) {
+            turnsToClose = 0;
+            state = CombatState.AVOIDING;
+        }
     }
 
     /// <summary>
