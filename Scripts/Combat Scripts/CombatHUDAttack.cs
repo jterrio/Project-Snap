@@ -23,6 +23,7 @@ public class CombatHUDAttack : MonoBehaviour {
     public FireMode fireMode = FireMode.FREE;
     private GameObject fireModePointObject;
     private GameObject selectedNPC;
+    private bool selectedSelf;
     public Dictionary<GameObject, Vector3> memory = new Dictionary<GameObject, Vector3>(); //keep track of the player's memory of last seen locations
 
     public enum FireMode { //types of modes that we can fire
@@ -160,11 +161,15 @@ public class CombatHUDAttack : MonoBehaviour {
 
     //dont know
     void MouseClick() {
-        if(tempAttack != null) {
+        if(tempAttack != null || selectedSelf == true) {
             hasClicked = true;
             Attack att = new Attack();
-            att.attackObject = tempAttack;
-            att.attackPoint = tempAttack.transform.position;
+            if (tempAttack != null) {
+                att.attackObject = tempAttack;
+                att.attackPoint = tempAttack.transform.position;
+            } else {
+                att.attackPoint = GameManagerScript.ins.player.transform.position;
+            }
             att.hash = tempHash;
             loggedAttacks.Add(att);
             tempAttack = null;
@@ -451,12 +456,17 @@ public class CombatHUDAttack : MonoBehaviour {
                         RaycastHit2D hit = Physics2D.Raycast(mouse2D, Vector2.zero);
                         if (hit.collider != null) {
                             if (hit.collider.gameObject.layer == LayerMask.NameToLayer("Player")) {
+                                selectedSelf = true;
                                 tempAttack.GetComponent<SpriteRenderer>().enabled = false;
                                 tempAttack.transform.position = GameManagerScript.ins.player.transform.position;
                                 GameManagerScript.ins.player.GetComponent<SpriteRenderer>().color = Color.yellow;
                                 tempHash = combatHUDLog.loggedMoves[x].hash;
                                 return tempAttack.transform.position;
+                            } else {
+                                selectedSelf = false;
                             }
+                        } else {
+                            selectedSelf = false;
                         }
                         GameManagerScript.ins.player.GetComponent<SpriteRenderer>().color = Color.white;
                         tempAttack.GetComponent<SpriteRenderer>().enabled = true;
