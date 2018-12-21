@@ -245,18 +245,18 @@ public class CombatHUDAttack : MonoBehaviour {
                             RaycastHit2D hit = Physics2D.Raycast(mouse2D, Vector2.zero);
                         if (hit.collider != null) {
                             if (hit.collider.gameObject.layer == LayerMask.NameToLayer("NPC")) {
-
-                                if (!IsVisible(hit.collider.gameObject)) {
-                                    print("NOT VISIBLE!");
-                                    break;
-                                }
-
                                 if (selectedNPC != null) {
-                                    selectedNPC.GetComponent<Renderer>().material.color = Color.white;
+                                    if (selectedNPC != hit.collider.gameObject) {
+                                        selectedNPC.GetComponent<Renderer>().material.color = Color.white;
+                                    }
                                 }
                                 selectedNPC = hit.collider.gameObject;
-                                selectedNPC.GetComponent<Renderer>().material.color = Color.yellow;
-                                CheckTargetClick();
+                                if (!IsVisible(hit.collider.gameObject, loggedAttacks[loggedAttacks.Count - 1].attackPoint)) {
+                                    selectedNPC.GetComponent<Renderer>().material.color = Color.red;
+                                } else {
+                                    selectedNPC.GetComponent<Renderer>().material.color = Color.yellow;
+                                    CheckTargetClick();
+                                }
                             }
                         } else {
                             if (selectedNPC != null) {
@@ -342,7 +342,25 @@ public class CombatHUDAttack : MonoBehaviour {
         gameObject.layer = selfOldLayer; //Set layer back to normal
         target.layer = targetOldLayer; //Set layer back to normal
         if (hit.collider != null) {
-            print(hit.collider.gameObject);
+            if (hit.collider.gameObject == target) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /// <summary>
+    /// checks whether the location of the attack can see them
+    /// </summary>
+    /// <param name="target"></param>
+    /// <param name="attackPosition"></param>
+    /// <returns></returns>
+    public bool IsVisible(GameObject target, Vector3 attackPosition) {
+        int targetOldLayer = target.layer;
+        target.layer = LayerMask.NameToLayer("SightTest"); //change to what we test
+        RaycastHit2D hit = Physics2D.Raycast(attackPosition, target.transform.position - attackPosition, Mathf.Infinity, CombatManager.ins.characterVisibleTest); //raycast
+        target.layer = targetOldLayer; //Set layer back to normal
+        if (hit.collider != null) {
             if (hit.collider.gameObject == target) {
                 return true;
             }
