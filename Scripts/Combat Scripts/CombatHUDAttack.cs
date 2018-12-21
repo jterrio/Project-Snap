@@ -333,13 +333,16 @@ public class CombatHUDAttack : MonoBehaviour {
     /// <param name="target"></param>
     /// <returns></returns>
     public bool IsVisible(GameObject target) {
-        int oldLayer = gameObject.layer;
-        gameObject.layer = 2; //change to ignore raycast
+        int selfOldLayer = gameObject.layer;
+        gameObject.layer = LayerMask.NameToLayer("Ignore Raycast"); //change to ignore raycast
+        int targetOldLayer = target.layer;
+        target.layer = LayerMask.NameToLayer("SightTest"); //change to what we test
         Vector3 feet = new Vector3(transform.position.x, transform.position.y - 0.45f, 0);
         RaycastHit2D hit = Physics2D.Raycast(feet, target.transform.position - feet, Mathf.Infinity, CombatManager.ins.characterVisibleTest); //raycast
-        //Debug.DrawRay(gameObject.transform.position, target.transform.position - gameObject.transform.position, Color.white, Mathf.Infinity);
-        gameObject.layer = oldLayer; //Set layer back to normal
+        gameObject.layer = selfOldLayer; //Set layer back to normal
+        target.layer = targetOldLayer; //Set layer back to normal
         if (hit.collider != null) {
+            print(hit.collider.gameObject);
             if (hit.collider.gameObject == target) {
                 return true;
             }

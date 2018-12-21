@@ -14930,7 +14930,7 @@ MonoBehaviour:
     m_Bits: 768
   characterVisibleTest:
     serializedVersion: 2
-    m_Bits: 1792
+    m_Bits: 3072
 --- !u!4 &1619709817
 Transform:
   m_ObjectHideFlags: 0

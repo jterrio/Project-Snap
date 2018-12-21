@@ -372,11 +372,13 @@ public class CombatScript : MonoBehaviour {
         if(target == null) {
             return false;
         }
-        gameObject.layer = 2; //change to ignore raycast
+        gameObject.layer = LayerMask.NameToLayer("Ignore Raycast"); //change to ignore raycast
+        int targetOldLayer = target.layer;
+        target.layer = LayerMask.NameToLayer("SightTest"); //change to what we are testing
         Vector3 feet = new Vector3(transform.position.x, transform.position.y - 0.45f, 0);
         RaycastHit2D hit = Physics2D.Raycast(feet, target.transform.position - feet, Mathf.Infinity, CombatManager.ins.characterVisibleTest); //raycast
-        gameObject.layer = 8; //set back to npc
-        //Debug.DrawRay(gameObject.transform.position, target.transform.position - gameObject.transform.position, Color.white, Mathf.Infinity);
+        gameObject.layer = LayerMask.NameToLayer("NPC"); //set back to npc
+        target.layer = targetOldLayer; //set back to normal
         if(hit.collider != null) {
             if(hit.collider.gameObject == target) {
                 return true;
