@@ -24,7 +24,6 @@ public class CombatHUDAttack : MonoBehaviour {
     private GameObject fireModePointObject;
     private GameObject selectedNPC;
     private bool selectedSelf;
-    public Dictionary<GameObject, Vector3> memory = new Dictionary<GameObject, Vector3>(); //keep track of the player's memory of last seen locations
 
     public enum FireMode { //types of modes that we can fire
         FREE, //free directional
@@ -88,7 +87,6 @@ public class CombatHUDAttack : MonoBehaviour {
 
     //called every frame
     void Update() {
-        UpdateMemory(); //update positions in memory
         if (!isSelected) {
             return;
         }
@@ -308,7 +306,6 @@ public class CombatHUDAttack : MonoBehaviour {
             loggedAttacks[loggedAttacks.Count - 1].fireMode = FireMode.TARGET;
             loggedAttacks[loggedAttacks.Count - 1].attackTarget = selectedNPC;
             AddAttackToLayout(loggedAttacks[loggedAttacks.Count - 1]);
-            MemoryAdd(selectedNPC);
             UIManager.ins.ShowLogPanel();
             selectedNPC.GetComponent<Renderer>().material.color = Color.white;
             selectedNPC = null;
@@ -318,35 +315,14 @@ public class CombatHUDAttack : MonoBehaviour {
     }
 
     /// <summary>
-    /// update each object in memory
-    /// </summary>
-    void UpdateMemory() {
-        List<GameObject> characters = new List<GameObject>(memory.Keys);
-        foreach(GameObject c in characters) {
-            if (IsVisible(c)) {
-                memory[c] = c.transform.position;
-            }
-        }
-    }
-
-    /// <summary>
-    /// add or update to memory
-    /// </summary>
-    /// <param name="c"></param>
-    void MemoryAdd(GameObject c) {
-        if (memory.ContainsKey(c)) {
-            memory[c] = c.transform.position;
-        } else {
-            memory.Add(c, c.transform.position);
-        }
-    }
-
-    /// <summary>
     /// checks whether we can directly see them
     /// </summary>
     /// <param name="target"></param>
     /// <returns></returns>
     public bool IsVisible(GameObject target) {
+        if(target == null) {
+            return false; ;
+        }
         int selfOldLayer = gameObject.layer;
         gameObject.layer = LayerMask.NameToLayer("Ignore Raycast"); //change to ignore raycast
         int targetOldLayer = target.layer;
@@ -370,6 +346,9 @@ public class CombatHUDAttack : MonoBehaviour {
     /// <param name="attackPosition"></param>
     /// <returns></returns>
     public bool IsVisible(GameObject target, Vector3 attackPosition) {
+        if(target == null) {
+            return false;
+        }
         int targetOldLayer = target.layer;
         target.layer = LayerMask.NameToLayer("SightTest"); //change to what we test
         RaycastHit2D hit = Physics2D.Raycast(attackPosition, target.transform.position - attackPosition, Mathf.Infinity, CombatManager.ins.characterVisibleTest); //raycast
