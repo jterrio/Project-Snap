@@ -36,7 +36,11 @@ public class MerchantManagerScript : MonoBehaviour {
         DontDestroyOnLoad(gameObject);
 	}
 
-    //open the shop window
+    /// <summary>
+    /// Open the shop window
+    /// </summary>
+    /// <param name="player"></param>
+    /// <param name="npc"></param>
     public void Shop(GameObject player, GameObject npc) {
         ResetText(); //reset text fields for money and such
         ClearPlayerItems(); //clear player item panel for no duplicates
@@ -52,7 +56,9 @@ public class MerchantManagerScript : MonoBehaviour {
         merchantPanel.gameObject.SetActive(true); //set the merchant panel active
     }
 
-    //displays players item in the player item panel
+    /// <summary>
+    /// Display player items on their side of the window
+    /// </summary>
     void DisplayPlayerItems() {
         //goes through every item in the player's inventory
         foreach(Inventory.InventorySlot inv in player.GetComponent<PlayerInfo>().inventory.inventory) {
@@ -69,7 +75,9 @@ public class MerchantManagerScript : MonoBehaviour {
         }
     }
 
-    //displays npc items in the merchant item panel
+    /// <summary>
+    /// Display npc items on their side of the window
+    /// </summary>
     void DisplayNPCItems() {
         //goes through every item in the npc's inventory
         foreach (Inventory.InventorySlot inv in npc.GetComponent<NPCInfo>().merchantInventory.inventory) {
@@ -86,7 +94,9 @@ public class MerchantManagerScript : MonoBehaviour {
         }
     }
 
-    //close the shop panel
+    /// <summary>
+    /// Close the shop panel and clear
+    /// </summary>
     public void CloseShop() {
         itemsToBuy.ClearInventory(); //clear the items to buy list
         itemsToSell.ClearInventory(); //clear the items to sell list
@@ -96,7 +106,9 @@ public class MerchantManagerScript : MonoBehaviour {
         totalSellCost = 0; //reset total sell cost to 0 for next time
     }
 
-    //exchange items between merchant and player
+    /// <summary>
+    /// Exchange items in itemsToBuy and itemsToSell
+    /// </summary>
     public void ExchangeItems() {
 
         /*Checks multiple things:
@@ -127,25 +139,32 @@ public class MerchantManagerScript : MonoBehaviour {
 
     }
 
-    //destory items in gridlayout for player
+    /// <summary>
+    /// Destroys items in gridlayout for player
+    /// </summary>
     void ClearPlayerItems() {
         foreach(Transform child in playerGridLayout.transform) {
             Destroy(child.gameObject);
         }
     }
 
-    //destory items in gridlayout for npc
+    /// <summary>
+    /// Destroys items in gridlayout for npc
+    /// </summary>
     void ClearNPCItems() {
         foreach (Transform child in merchantGridLayout.transform) {
             Destroy(child.gameObject);
         }
     }
     
-    //reset the text
+    /// <summary>
+    /// Reset text
+    /// </summary>
     void ResetText() {
         sellCost.text = "Click to Sell";
         buyCost.text = "Click to Buy";
     }
+
 
     public void AddItemToBuy(Item item) {
         itemsToBuy.AddItem(item);
@@ -201,7 +220,12 @@ public class MerchantManagerScript : MonoBehaviour {
         return i;
     }
 
-    //update text fields for buying and selling
+    /// <summary>
+    /// Update text fields for buying and selling
+    /// </summary>
+    /// <param name="isSelected">Bool for if item is selected</param>
+    /// <param name="targetObject">Item gameobject</param>
+    /// <returns></returns>
     public int UpdateCost(bool isSelected, GameObject targetObject) {
         //checks to see if the item selected belonged to the player (which means we are selling)
         int i = -1;

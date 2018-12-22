@@ -26,6 +26,10 @@ public class DisplayItemInfo : MonoBehaviour {
     //determines where the info panel should appear
     //newParent is legacy and does not matter
     //position is determined by the mouse position
+    /// <summary>
+    /// Determines where the info panel should apparent
+    /// </summary>
+    /// <param name="newParent">Legacy</param>
     public void MakePanelChild(RectTransform newParent) {
         transform.position = newParent.position;
         Vector3 mousePosition = Camera.main.ScreenToViewportPoint(Input.mousePosition);
@@ -44,7 +48,9 @@ public class DisplayItemInfo : MonoBehaviour {
         }
     }
 
-    //reset the fields
+    /// <summary>
+    /// Resets the fields
+    /// </summary>
     void ResetFields() {
         itemExtra2.text = "";
         itemExtra3.text = "";
@@ -52,7 +58,10 @@ public class DisplayItemInfo : MonoBehaviour {
         itemExtra5.text = "";
     }
 
-    //display the item info in the info panel
+    /// <summary>
+    /// Display the item info
+    /// </summary>
+    /// <param name="newItem"></param>
     public void DisplayInfo(Item newItem) {
         ResetFields(); //reset the field
         item = newItem; //set the current item 

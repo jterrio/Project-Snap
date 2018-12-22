@@ -115,12 +115,16 @@ public class UIManager : MonoBehaviour {
 
     }
 
-    //close the inventory panel
+    /// <summary>
+    /// close the inventory panel
+    /// </summary>
     public void CloseInventory() {
         InvPanel.gameObject.SetActive(false);
     }
 
-    //re-populate the inventory screen and show it
+    /// <summary>
+    /// re-populate the inventory screen and show it
+    /// </summary>
     public void ShowInventory() {
         DePopulateInventoryScreen();
         PopulateInventoryScreen();
@@ -128,14 +132,18 @@ public class UIManager : MonoBehaviour {
         InvPanel.gameObject.SetActive(true);
     }
 
-    //remove every item from the inventory screen so we don't get duplicates
+    /// <summary>
+    /// remove every item from the inventory screen so we don't get duplicates
+    /// </summary>
     public void DePopulateInventoryScreen() {
         foreach (Transform child in InvGridLayout.transform) {
             Destroy(child.gameObject);
         }
     }
 
-    //add every item in the players inventory to the screen
+    /// <summary>
+    /// add every item in the players inventory to the screen
+    /// </summary>
     public void PopulateInventoryScreen() {
         foreach (Inventory.InventorySlot inv in player.GetComponent<PlayerInfo>().inventory.inventory) {
             RectTransform newItem = (RectTransform)Instantiate(InventorySlotPrefab, InvGridLayout);
@@ -144,7 +152,11 @@ public class UIManager : MonoBehaviour {
         }
     }
 
-    //display the items info in the info panel
+    /// <summary>
+    /// display the items info in the info panel
+    /// </summary>
+    /// <param name="item"></param>
+    /// <param name="parent"></param>
     public void DisplayItemInfo(Item item, RectTransform parent) {
         //check to see if the players mouse hovered over long enough
         if (Timer()) {
@@ -157,7 +169,10 @@ public class UIManager : MonoBehaviour {
         }
     }
 
-    //determine if the mouse hovered over the item long enough
+    /// <summary>
+    /// determine if the mouse hovered over the item long enough
+    /// </summary>
+    /// <returns></returns>
     bool Timer() {
         //check to see if the mouse has started to hover
         if (!beganTimer) {
@@ -172,19 +187,27 @@ public class UIManager : MonoBehaviour {
         return false;
     }
 
-    //hide the info panel (esp if the mouse moves off);
+    /// <summary>
+    /// hide the info panel (esp if the mouse moves off);
+    /// </summary>
     public void HideInfo() {
         beganTimer = false;
         infoIsDisplayed = false;
         InvItemInfoPanel.gameObject.SetActive(false);
     }
 
-    //just sets info panel active
+    /// <summary>
+    /// just sets info panel active
+    /// </summary>
     public void KeepInfoOpen() {
         InvItemInfoPanel.gameObject.SetActive(true);
     }
 
-    //display item picked up
+    /// <summary>
+    /// display item picked up
+    /// </summary>
+    /// <param name="item"></param>
+    /// <returns></returns>
     public bool DisplayItemPickup(Item item) {
         if (!SpeechManager.ins.PickUpItem(item)) {
             playerMovement.CanPlayerMove = false;
@@ -194,7 +217,9 @@ public class UIManager : MonoBehaviour {
         return true;
     }
 
-    //close item pick up
+    /// <summary>
+    /// close item pick up
+    /// </summary>
     public void CloseItemPickup() {
 
     }

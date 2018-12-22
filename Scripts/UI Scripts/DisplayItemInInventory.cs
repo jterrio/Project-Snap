@@ -15,7 +15,11 @@ public class DisplayItemInInventory : MonoBehaviour {
 
     public Vector3 defaultPosition;
 
-    //displays info from item and adds it into the inventory
+    /// <summary>
+    /// Display item info and display in inventory
+    /// </summary>
+    /// <param name="newItem">Item to display</param>
+    /// <param name="parent">Parent RectTransform</param>
     public void InventoryDisplay(Item newItem, RectTransform parent) {
         item = newItem;
         image.sprite = item.sprite;

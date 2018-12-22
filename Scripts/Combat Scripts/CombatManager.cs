@@ -40,7 +40,9 @@ public class CombatManager : MonoBehaviour {
     }
 
 
-    //remove handlers that were destroyed, meaning that combat ended for them
+    /// <summary>
+    /// remove handlers that were destroyed, meaning that combat ended for them
+    /// </summary>
     void RemoveHandlers() {
         List<GameObject> handlers = new List<GameObject>(allCombatHandlers);
         foreach(GameObject handler in handlers) {
@@ -50,7 +52,9 @@ public class CombatManager : MonoBehaviour {
         }
     }
 
-    //check range of handlers to the player's and see if they need to merge with it
+    /// <summary>
+    /// check range of handlers to the player's and see if they need to merge with it
+    /// </summary>
     void CheckRange() {
         foreach (GameObject handler in allCombatHandlers) {
             if (handler == playerCombatHandler) {

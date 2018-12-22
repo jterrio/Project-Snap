@@ -9,14 +9,20 @@ public class MakeDraggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
     private Vector3 startPosition;
     private Vector3 offset;
 
-    //get offset and set the object that is being dragged
+    /// <summary>
+    /// Get offset and set the object that is being dragged
+    /// </summary>
+    /// <param name="eventData">Mouse data</param>
     public void OnBeginDrag(PointerEventData eventData) {
         itemBeingDragged = gameObject;
         startPosition = transform.position;
         offset = startPosition - Input.mousePosition;
     }
 
-    //move the object to the mouse with the added offset
+    /// <summary>
+    /// Move the object to the mouse with the added offset
+    /// </summary>
+    /// <param name="eventData">Mouse data</param>
     public void OnDrag(PointerEventData eventData) {
         transform.position = Input.mousePosition + offset;
     }
@@ -29,7 +35,11 @@ public class MakeDraggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
         
     }
 
-
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="eventData"></param>
+    /// <returns></returns>
     bool isVisible(PointerEventData eventData) {
         return false;
     }

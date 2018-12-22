@@ -8,10 +8,10 @@ public class CombatHUDAttack : MonoBehaviour {
     private CombatHUDLog combatHUDLog;
     private PlayerDrawCombatMovePosition combatMovePosition;
     public List<Attack> loggedAttacks = new List<Attack>();
-    public bool isSelected;
-    public bool hasClicked;
-    public bool selectedSpell;
-    public bool isFinished;
+    public bool isSelected; //has clicked the button to Attack ("A"); Step 1
+    public bool hasClicked; //clicked on self or the line; Step 2
+    public bool selectedSpell; //selected a spell; Step 3
+    public bool isFinished; //clicked with a firemode; Step 4
     public GameObject attackOnLinePrefab;
     public GameObject attackDirectionalPrefab;
     private GameObject tempAttack;
@@ -23,6 +23,7 @@ public class CombatHUDAttack : MonoBehaviour {
     public FireMode fireMode = FireMode.FREE;
     private GameObject fireModePointObject;
     private GameObject selectedNPC;
+    private bool selectedSelf;
     public Dictionary<GameObject, Vector3> memory = new Dictionary<GameObject, Vector3>(); //keep track of the player's memory of last seen locations
 
     public enum FireMode { //types of modes that we can fire
@@ -42,6 +43,7 @@ public class CombatHUDAttack : MonoBehaviour {
         public int hash; //random hash
         public GameObject attackTarget; 
         public FireMode fireMode; //fire mode of the spell
+        public bool selfCast = false;
 
         void Start() {
             mt = MoveType.Attack;
@@ -51,11 +53,14 @@ public class CombatHUDAttack : MonoBehaviour {
         }
     }
 
-    //reser values back to default (differs from right clicking as this happens after finished selecting everything)
+    /// <summary>
+    /// reset values back to default (differs from right clicking as this happens after finished selecting everything)
+    /// </summary>
     public void ResetValues() {
         CombatManager.ins.combatDrawMovePosition.ResetAttackValue();
-        
-        if((!isFinished || !selectedSpell) && hasClicked) {
+        GameManagerScript.ins.player.GetComponent<SpriteRenderer>().color = Color.white;
+        selectedSelf = false;
+        if ((!isFinished || !selectedSpell) && hasClicked) {
             RightClick();
         } else {
             isFinished = false;
@@ -132,14 +137,20 @@ public class CombatHUDAttack : MonoBehaviour {
 
     }
 
-    //add to the menu log
+    /// <summary>
+    /// add to the menu log
+    /// </summary>
+    /// <param name="a"></param>
     public void AddAttackToLayout(Attack a) {
         a.loggedInfo = (RectTransform)Instantiate(combatHUDLog.logPrefab, combatHUDLog.gridlayout);
         a.loggedInfo.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = a.ReturnMsg();
         a.loggedInfo.GetComponentInChildren<CancelSpellScript>().parent = a;
     }
 
-    //remove from the menu log
+    /// <summary>
+    /// remove from the menu log
+    /// </summary>
+    /// <param name="a"></param>
     public void RemoveAttackFromLayout(Attack a) {
         foreach(Transform child in combatHUDLog.gridlayout) {
             if(child == a.loggedInfo.transform) {
@@ -150,13 +161,20 @@ public class CombatHUDAttack : MonoBehaviour {
         }
     }
 
-    //dont know
+    /// <summary>
+    /// Called when clicking a point on the line or when selecting self
+    /// </summary>
     void MouseClick() {
-        if(tempAttack != null) {
+        if(tempAttack != null || selectedSelf == true) {
             hasClicked = true;
             Attack att = new Attack();
-            att.attackObject = tempAttack;
-            att.attackPoint = tempAttack.transform.position;
+            if (tempAttack != null) {
+                att.attackObject = tempAttack;
+                att.attackPoint = tempAttack.transform.position;
+            } else {
+                att.attackPoint = GameManagerScript.ins.player.transform.position;
+                att.selfCast = true;
+            }
             att.hash = tempHash;
             loggedAttacks.Add(att);
             tempAttack = null;
@@ -166,20 +184,26 @@ public class CombatHUDAttack : MonoBehaviour {
     }
 
 
-    //reset values
+    /// <summary>
+    /// reset values
+    /// </summary>
     void RightClick() {
         UIManager.ins.ShowLogPanel();
         hasClicked = false;
         isFinished = false;
         CombatManager.ins.combatDrawMovePosition.ResetAttackValue();
+        GameManagerScript.ins.player.GetComponent<SpriteRenderer>().color = Color.white;
+        selectedSelf = false;
+        if (selectedNPC != null) {
+            selectedNPC.GetComponent<Renderer>().material.color = Color.white;
+            selectedNPC = null;
+        }
         if (selectedSpell) {
             selectedSpell = false;
+            spell = null;
+            spellObject = null;
             Destroy(tempAttackDirectional.gameObject);
             Destroy(fireModePointObject);
-            if(selectedNPC != null) {
-                selectedNPC.GetComponent<Renderer>().material.color = Color.white;
-                selectedNPC = null;
-            }
         }
         if (loggedAttacks.Count == 0) {
             return;
@@ -191,7 +215,9 @@ public class CombatHUDAttack : MonoBehaviour {
         loggedAttacks.Remove(loggedAttacks[loggedAttacks.Count - 1]);
     }
 
-    //set the firemode object positions accordingly
+    /// <summary>
+    /// set the firemode object positions accordingly
+    /// </summary>
     void SetMouse() {
         switch (spell.type) {
             case Spell.Type.Projectile:
@@ -228,28 +254,28 @@ public class CombatHUDAttack : MonoBehaviour {
                             if (results[0].gameObject.layer == LayerMask.NameToLayer("UI")) {
                                 break;
                             }
-                        } else {
+                        }
                             Vector2 mouse2D = new Vector2(Camera.main.ScreenToWorldPoint(Input.mousePosition).x, Camera.main.ScreenToWorldPoint(Input.mousePosition).y);
                             RaycastHit2D hit = Physics2D.Raycast(mouse2D, Vector2.zero);
-                            if (hit.collider != null) {
-                                if (hit.collider.gameObject.layer == LayerMask.NameToLayer("NPC")) {
-
-                                    if (!IsVisible(hit.collider.gameObject)) {
-                                        break;
-                                    }
-
-                                    if (selectedNPC != null) {
+                        if (hit.collider != null) {
+                            if (hit.collider.gameObject.layer == LayerMask.NameToLayer("NPC")) {
+                                if (selectedNPC != null) {
+                                    if (selectedNPC != hit.collider.gameObject) {
                                         selectedNPC.GetComponent<Renderer>().material.color = Color.white;
                                     }
-                                    selectedNPC = hit.collider.gameObject;
+                                }
+                                selectedNPC = hit.collider.gameObject;
+                                if (!IsVisible(hit.collider.gameObject, loggedAttacks[loggedAttacks.Count - 1].attackPoint)) {
+                                    selectedNPC.GetComponent<Renderer>().material.color = Color.red;
+                                } else {
                                     selectedNPC.GetComponent<Renderer>().material.color = Color.yellow;
                                     CheckTargetClick();
                                 }
-                            } else {
-                                if (selectedNPC != null) {
-                                    selectedNPC.GetComponent<Renderer>().material.color = Color.white;
-                                    selectedNPC = null;
-                                }
+                            }
+                        } else {
+                            if (selectedNPC != null) {
+                                selectedNPC.GetComponent<Renderer>().material.color = Color.white;
+                                selectedNPC = null;
                             }
                         }
                         break;
@@ -260,7 +286,9 @@ public class CombatHUDAttack : MonoBehaviour {
 
     }
 
-    //setting target attack
+    /// <summary>
+    /// setting target attack
+    /// </summary>
     void CheckTargetClick() {
         if(selectedNPC == null) {
             return;
@@ -289,17 +317,24 @@ public class CombatHUDAttack : MonoBehaviour {
         }
     }
 
-    //update each object in memory
+    /// <summary>
+    /// update each object in memory
+    /// </summary>
     void UpdateMemory() {
-        List<GameObject> characters = new List<GameObject>(memory.Keys);
-        foreach(GameObject c in characters) {
+        foreach(GameObject c in new List<GameObject>(memory.Keys)) {
+            if(c == null) {
+                memory.Remove(c);
+            }
             if (IsVisible(c)) {
                 memory[c] = c.transform.position;
             }
         }
     }
 
-    //add or update to memory
+    /// <summary>
+    /// add or update to memory
+    /// </summary>
+    /// <param name="c"></param>
     void MemoryAdd(GameObject c) {
         if (memory.ContainsKey(c)) {
             memory[c] = c.transform.position;
@@ -308,14 +343,23 @@ public class CombatHUDAttack : MonoBehaviour {
         }
     }
 
-    //checks whether we can directly see them
+    /// <summary>
+    /// checks whether we can directly see them
+    /// </summary>
+    /// <param name="target"></param>
+    /// <returns></returns>
     public bool IsVisible(GameObject target) {
-        int oldLayer = gameObject.layer;
-        gameObject.layer = 2; //change to ignore raycast
-        Vector3 feet = new Vector3(transform.position.x, transform.position.y - 0.45f, 0);
-        RaycastHit2D hit = Physics2D.Raycast(feet, target.transform.position - feet, Mathf.Infinity, CombatManager.ins.characterVisibleTest); //raycast
-        //Debug.DrawRay(gameObject.transform.position, target.transform.position - gameObject.transform.position, Color.white, Mathf.Infinity);
-        gameObject.layer = oldLayer; //Set layer back to normal
+        if(target == null) {
+            return false;
+        }
+        int selfOldLayer = GameManagerScript.ins.player.layer;
+        gameObject.layer = LayerMask.NameToLayer("Ignore Raycast"); //change to ignore raycast
+        int targetOldLayer = target.layer;
+        target.layer = LayerMask.NameToLayer("SightTest"); //change to what we test
+        RaycastHit2D hit = Physics2D.Raycast(GameManagerScript.ins.player.transform.position, target.transform.position - GameManagerScript.ins.player.transform.position, Mathf.Infinity, CombatManager.ins.characterVisibleTest); //raycast
+        //Debug.DrawRay(GameManagerScript.ins.player.transform.position, target.transform.position - GameManagerScript.ins.player.transform.position, Color.green);
+        GameManagerScript.ins.player.layer = selfOldLayer; //Set layer back to normal
+        target.layer = targetOldLayer; //Set layer back to normal
         if (hit.collider != null) {
             if (hit.collider.gameObject == target) {
                 return true;
@@ -324,7 +368,31 @@ public class CombatHUDAttack : MonoBehaviour {
         return false;
     }
 
-    //setting point attack
+    /// <summary>
+    /// checks whether the location of the attack can see them
+    /// </summary>
+    /// <param name="target"></param>
+    /// <param name="attackPosition"></param>
+    /// <returns></returns>
+    public bool IsVisible(GameObject target, Vector3 attackPosition) {
+        if(target == null) {
+            return false;
+        }
+        int targetOldLayer = target.layer;
+        target.layer = LayerMask.NameToLayer("SightTest"); //change to what we test
+        RaycastHit2D hit = Physics2D.Raycast(attackPosition, target.transform.position - attackPosition, Mathf.Infinity, CombatManager.ins.characterVisibleTest); //raycast
+        target.layer = targetOldLayer; //Set layer back to normal
+        if (hit.collider != null) {
+            if (hit.collider.gameObject == target) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /// <summary>
+    /// setting point attack
+    /// </summary>
     void CheckPointClick() {
         if (Input.GetMouseButtonDown(0)) {
             PointerEventData pointerData = new PointerEventData(EventSystem.current);
@@ -348,7 +416,10 @@ public class CombatHUDAttack : MonoBehaviour {
 
     }
 
-    //setting directional attack
+    /// <summary>
+    /// setting directional attack
+    /// </summary>
+    /// <param name="dir"></param>
     void CheckDirectionalClick(Vector3 dir) {
         if (Input.GetMouseButtonDown(0)) {
             PointerEventData pointerData = new PointerEventData(EventSystem.current);
@@ -371,7 +442,10 @@ public class CombatHUDAttack : MonoBehaviour {
         }
     }
 
-    //for line detection for the attack
+    /// <summary>
+    /// for line detection for the attack
+    /// </summary>
+    /// <returns></returns>
     Vector3 CalculateMousePosition() {
         Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         mousePosition = new Vector3(mousePosition.x, mousePosition.y, 0);
@@ -395,21 +469,59 @@ public class CombatHUDAttack : MonoBehaviour {
                         if (tempAttack == null) {
                             tempAttack = Instantiate(attackOnLinePrefab);
                         }
-                        if(percentage >= 0.975) {
+                        GameManagerScript.ins.player.GetComponent<SpriteRenderer>().color = Color.white;
+                        tempAttack.GetComponent<SpriteRenderer>().enabled = true;
+                        if (percentage >= 0.975) {
                             tempAttack.transform.position = endPoint;
-                        }else if(percentage <= 0.025) {
+                        } else if (percentage <= 0.025) {
                             tempAttack.transform.position = startPoint;
                         } else {
                             tempAttack.transform.position = ((1 - percentage) * startPoint) + (percentage * endPoint);
                         }
                         tempHash = combatHUDLog.loggedMoves[x].hash;
                         return tempAttack.transform.position;
+                    } else {
+                        Vector2 mouse2D = new Vector2(Camera.main.ScreenToWorldPoint(Input.mousePosition).x, Camera.main.ScreenToWorldPoint(Input.mousePosition).y);
+                        RaycastHit2D hit = Physics2D.Raycast(mouse2D, Vector2.zero);
+                        if (hit.collider != null) {
+                            if (hit.collider.gameObject.layer == LayerMask.NameToLayer("Player")) {
+                                selectedSelf = true;
+                                if (tempAttack != null) {
+                                    tempAttack.GetComponent<SpriteRenderer>().enabled = false;
+                                }
+                                GameManagerScript.ins.player.GetComponent<SpriteRenderer>().color = Color.yellow;
+                                tempHash = combatHUDLog.loggedMoves[x].hash;
+                                return GameManagerScript.ins.player.transform.position;
+                            } else {
+                                selectedSelf = false;
+                                GameManagerScript.ins.player.GetComponent<SpriteRenderer>().color = Color.white;
+                            }
+                        } else {
+                            selectedSelf = false;
+                            GameManagerScript.ins.player.GetComponent<SpriteRenderer>().color = Color.white;
+                        }
                     }
-                    tempHash = -1;
+                    tempHash = -1; //means set to nothing (i tihnk)
 
                 }
-            }   
+            }
 
+        } else {
+            Vector2 mouse2D = new Vector2(Camera.main.ScreenToWorldPoint(Input.mousePosition).x, Camera.main.ScreenToWorldPoint(Input.mousePosition).y);
+            RaycastHit2D hit = Physics2D.Raycast(mouse2D, Vector2.zero);
+            if (hit.collider != null) {
+                if (hit.collider.gameObject.layer == LayerMask.NameToLayer("Player")) {
+                    selectedSelf = true;
+                    GameManagerScript.ins.player.GetComponent<SpriteRenderer>().color = Color.yellow;
+                    return GameManagerScript.ins.player.transform.position;
+                } else {
+                    selectedSelf = false;
+                    GameManagerScript.ins.player.GetComponent<SpriteRenderer>().color = Color.white;
+                }
+            } else {
+                selectedSelf = false;
+                GameManagerScript.ins.player.GetComponent<SpriteRenderer>().color = Color.white;
+            }
         }
         if (tempAttack != null) {
             Destroy(tempAttack);
@@ -500,19 +612,22 @@ public class CombatHUDAttack : MonoBehaviour {
     }
 
     public void CheckAttacks() {
-        if(CombatManager.ins.combatHUDLog.loggedMoves.Count == 0) {
+        if(hasClicked == true) {
             return;
         }
-        foreach (Attack a in loggedAttacks) {
-            if(a.hash == CombatManager.ins.combatHUDLog.loggedMoves[0].hash) {
+        foreach (Attack a in new List<Attack>(loggedAttacks)) {
+            if (a.selfCast) {
+                Destroy(a.attackObject);
+                loggedAttacks.Remove(a);
+                GameManagerScript.ins.playerInfo.spellQueue.Add(a);
+            } else if(a.hash == CombatManager.ins.combatHUDLog.loggedMoves[0].hash) {
                 //CHECK IF THE SPELL IS CLOSE ENOUGH TO BE CASTED AND IF hasCLICKED IS FALSE TO PREVENT CLICKING AND ADDING TO QUEUE
-                if(Vector3.Distance(GameManagerScript.ins.GetPlayerFeetPosition(), a.attackPoint) <= 0.2f && hasClicked == false) {
+                if (Vector3.Distance(GameManagerScript.ins.GetPlayerFeetPosition(), a.attackPoint) <= 0.2f && hasClicked == false) {
                     Destroy(a.attackObject);
                     loggedAttacks.Remove(a);
                     //send to a queue in the player and then a queue to spell manager
                     //SpellManagerScript.ins.CastSpell(a, GameManagerScript.ins.player);
                     GameManagerScript.ins.playerInfo.spellQueue.Add(a);
-                    return;
                 }
             }
         }
