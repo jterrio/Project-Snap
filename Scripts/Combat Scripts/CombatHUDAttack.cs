@@ -325,9 +325,6 @@ public class CombatHUDAttack : MonoBehaviour {
             if(c == null) {
                 memory.Remove(c);
             }
-            print("TTTTTTTTTTTTTTT");
-            print(c);
-            print(IsVisible(c));
             if (IsVisible(c)) {
                 memory[c] = c.transform.position;
             }

@@ -7717,7 +7717,7 @@ MonoBehaviour:
   spirituality: 1
   dexterity: 10
   perception: 10
-  attitude: -30
+  attitude: 0
   fear: 0
   danger: 0
 --- !u!114 &776057295
@@ -11025,7 +11025,7 @@ MonoBehaviour:
   factionRelations:
   - faction1: 2
     faction2: 5
-    opinion: -65
+    opinion: 0
   doesHateUpperBound: -60
   doesDislikeUpperBound: -10
   isNeutralLowerBound: -10
@@ -11642,7 +11642,7 @@ MonoBehaviour:
   spirituality: 1
   dexterity: 10
   perception: 10
-  attitude: -30
+  attitude: 0
   fear: 0
   danger: 0
 --- !u!114 &1254768301
@@ -17406,7 +17406,7 @@ MonoBehaviour:
   spirituality: 1
   dexterity: 10
   perception: 10
-  attitude: -30
+  attitude: 0
   fear: 0
   danger: 0
 --- !u!114 &1942604916
