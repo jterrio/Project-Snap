@@ -24,6 +24,7 @@ public class CombatHUDAttack : MonoBehaviour {
     private GameObject fireModePointObject;
     private GameObject selectedNPC;
     private bool selectedSelf;
+    public Dictionary<GameObject, Vector3> memory = new Dictionary<GameObject, Vector3>(); //keep track of the player's memory of last seen locations
 
     public enum FireMode { //types of modes that we can fire
         FREE, //free directional
@@ -87,6 +88,7 @@ public class CombatHUDAttack : MonoBehaviour {
 
     //called every frame
     void Update() {
+        UpdateMemory(); //update positions in memory
         if (!isSelected) {
             return;
         }
@@ -306,11 +308,38 @@ public class CombatHUDAttack : MonoBehaviour {
             loggedAttacks[loggedAttacks.Count - 1].fireMode = FireMode.TARGET;
             loggedAttacks[loggedAttacks.Count - 1].attackTarget = selectedNPC;
             AddAttackToLayout(loggedAttacks[loggedAttacks.Count - 1]);
+            MemoryAdd(selectedNPC);
             UIManager.ins.ShowLogPanel();
             selectedNPC.GetComponent<Renderer>().material.color = Color.white;
             selectedNPC = null;
             ResetValues();
             DrawAttackPositions();
+        }
+    }
+
+    /// <summary>
+    /// update each object in memory
+    /// </summary>
+    void UpdateMemory() {
+        foreach(GameObject c in new List<GameObject>(memory.Keys)) {
+            if(c == null) {
+                memory.Remove(c);
+            }
+            if (IsVisible(c)) {
+                memory[c] = c.transform.position;
+            }
+        }
+    }
+
+    /// <summary>
+    /// add or update to memory
+    /// </summary>
+    /// <param name="c"></param>
+    void MemoryAdd(GameObject c) {
+        if (memory.ContainsKey(c)) {
+            memory[c] = c.transform.position;
+        } else {
+            memory.Add(c, c.transform.position);
         }
     }
 
@@ -321,7 +350,7 @@ public class CombatHUDAttack : MonoBehaviour {
     /// <returns></returns>
     public bool IsVisible(GameObject target) {
         if(target == null) {
-            return false; ;
+            return false;
         }
         int selfOldLayer = gameObject.layer;
         gameObject.layer = LayerMask.NameToLayer("Ignore Raycast"); //change to ignore raycast
@@ -588,6 +617,7 @@ public class CombatHUDAttack : MonoBehaviour {
         }
         foreach (Attack a in new List<Attack>(loggedAttacks)) {
             if (a.selfCast) {
+                Destroy(a.attackObject);
                 loggedAttacks.Remove(a);
                 GameManagerScript.ins.playerInfo.spellQueue.Add(a);
             } else if(a.hash == CombatManager.ins.combatHUDLog.loggedMoves[0].hash) {
