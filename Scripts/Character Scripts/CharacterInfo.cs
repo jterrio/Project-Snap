@@ -206,7 +206,7 @@ public class CharacterInfo : MonoBehaviour {
     }
 
     public void CancelSpell(CombatHUDAttack.Attack a) {
-        print("Spell canceled!");
+        print("Spell cancelled!");
         if(spellCastCoroutine != null) {
             StopCoroutine(spellCastCoroutine);
             spellCastCoroutine = null;
