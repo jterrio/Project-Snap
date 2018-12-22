@@ -82,6 +82,9 @@ public class CharacterInfo : MonoBehaviour {
             case Direction.FRONTLEFT:
                 sr.sprite = directionSprites[7];
                 break;
+            default:
+                sr.sprite = directionSprites[0];
+                break;
         }
     }
 
@@ -134,9 +137,9 @@ public class CharacterInfo : MonoBehaviour {
                     return true;
                 }
                 return false;
-
+            default:
+                return false;
         }
-        return false; //something has gone wrong if you reach this
     }
 
     /// <summary>
@@ -163,9 +166,37 @@ public class CharacterInfo : MonoBehaviour {
                 return Direction.FRONTRIGHT;
             case Direction.FRONTRIGHT:
                 return Direction.BACKLEFT;
+            default:
+                return Direction.FRONT;
         }
+    }
 
-        return Direction.FRONT; //something has gone wrong to reach this
+    public Direction FaceDirection(Vector3 targetLocation) {
+        float currentAngle = Vector2.Angle(Vector2.down, targetLocation - gameObject.transform.position); //get current Angle we are running
+        if (targetLocation.x < gameObject.transform.position.x) {
+            currentAngle = 360 - currentAngle;
+        }
+        switch (Mathf.FloorToInt((currentAngle + 22.5f)  / 45)) {
+
+            case 0:
+                return Direction.FRONT;
+            case 1:
+                return Direction.FRONTRIGHT;
+            case 2:
+                return Direction.RIGHT;
+            case 3:
+                return Direction.BACKRIGHT;
+            case 4:
+                return Direction.BACK;
+            case 5:
+                return Direction.BACKLEFT;
+            case 6:
+                return Direction.LEFT;
+            case 7:
+                return Direction.FRONTLEFT;
+            default:
+                return Direction.FRONT;
+        }
     }
 
 
@@ -336,19 +367,30 @@ public class CharacterInfo : MonoBehaviour {
     /// Sets direction for when the character and used by player when in combat
     /// </summary>
     public void SetDirection() {
+        if (spellQueue.Count != 0) {
+            if (spellQueue[0].fireMode == CombatHUDAttack.FireMode.TARGET) {
+                direction = FaceDirection(CombatManager.ins.combatHUDAttack.memory[spellQueue[0].attackTarget]);
+                return;
+            }else if(spellQueue[0].fireMode == CombatHUDAttack.FireMode.POINT) {
+                direction = FaceDirection(spellQueue[0].attackPointModePoint);
+                return;
+            } else {
+                direction = FaceDirection(spellQueue[0].attackDirection); 
+            }
+        }
         if (polyNav.movingDirection == Vector2.zero) {
             return;
         }
         int x = 0;
         int y = 0;
-        if (polyNav.movingDirection.x > 0.25) {
+        if (polyNav.movingDirection.x > 0.225f) {
             x = 1;
-        } else if (polyNav.movingDirection.x < -0.25) {
+        } else if (polyNav.movingDirection.x < -0.225f) {
             x = -1;
         }
-        if (polyNav.movingDirection.y > 0.25) {
+        if (polyNav.movingDirection.y > 0.225f) {
             y = 1;
-        } else if (polyNav.movingDirection.y < -0.25) {
+        } else if (polyNav.movingDirection.y < -0.225f) {
             y = -1;
         }
         switch (x) {
@@ -360,7 +402,7 @@ public class CharacterInfo : MonoBehaviour {
                     case 1:
                         direction = Direction.BACKLEFT;
                         break;
-                    case 0:
+                    default:
                         direction = Direction.LEFT;
                         break;
                 }
@@ -373,7 +415,7 @@ public class CharacterInfo : MonoBehaviour {
                     case 1:
                         direction = Direction.BACKRIGHT;
                         break;
-                    case 0:
+                    default:
                         direction = Direction.RIGHT;
                         break;
                 }
@@ -386,7 +428,7 @@ public class CharacterInfo : MonoBehaviour {
                     case 1:
                         direction = Direction.BACK;
                         break;
-                    case 0:
+                    default:
                         break;
                 }
                 break;

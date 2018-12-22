@@ -325,6 +325,9 @@ public class CombatHUDAttack : MonoBehaviour {
             if(c == null) {
                 memory.Remove(c);
             }
+            print("TTTTTTTTTTTTTTT");
+            print(c);
+            print(IsVisible(c));
             if (IsVisible(c)) {
                 memory[c] = c.transform.position;
             }
@@ -352,13 +355,13 @@ public class CombatHUDAttack : MonoBehaviour {
         if(target == null) {
             return false;
         }
-        int selfOldLayer = gameObject.layer;
+        int selfOldLayer = GameManagerScript.ins.player.layer;
         gameObject.layer = LayerMask.NameToLayer("Ignore Raycast"); //change to ignore raycast
         int targetOldLayer = target.layer;
         target.layer = LayerMask.NameToLayer("SightTest"); //change to what we test
-        Vector3 feet = new Vector3(transform.position.x, transform.position.y - 0.45f, 0);
-        RaycastHit2D hit = Physics2D.Raycast(feet, target.transform.position - feet, Mathf.Infinity, CombatManager.ins.characterVisibleTest); //raycast
-        gameObject.layer = selfOldLayer; //Set layer back to normal
+        RaycastHit2D hit = Physics2D.Raycast(GameManagerScript.ins.player.transform.position, target.transform.position - GameManagerScript.ins.player.transform.position, Mathf.Infinity, CombatManager.ins.characterVisibleTest); //raycast
+        //Debug.DrawRay(GameManagerScript.ins.player.transform.position, target.transform.position - GameManagerScript.ins.player.transform.position, Color.green);
+        GameManagerScript.ins.player.layer = selfOldLayer; //Set layer back to normal
         target.layer = targetOldLayer; //Set layer back to normal
         if (hit.collider != null) {
             if (hit.collider.gameObject == target) {
