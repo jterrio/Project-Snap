@@ -27,11 +27,15 @@ public class CombatScript : MonoBehaviour {
     private float stuckTimerBase = 2f; //timer value before the ai says it is stuck
     private bool isStuck = false; //if the ai can't move or is trying to move to impossible spot bool
 
+    private int turnsToClose = 0; //turns we are too close to an enemy
+    private float tooCloseDistance = 1f;
+    private float safeDistance = 2f;
 
     public int difficulty = 1; //difficulty doesnt do anything (it did do something on v1 of the AI)
     public bool hasAttackedRecently; //has attacked recently bool; used for cooldowns on casting spells
     public bool inCover; //in cover bool
     public bool inPartialCover; //in partial cover bool
+    
 
     private int rotationDirection = -1; //0 is counter clockwise, 1 is clockwise. If on -1, then is it not set to anything
     private Spell selectedSpell; //spell that is being casted (or attempted to)
@@ -96,7 +100,9 @@ public class CombatScript : MonoBehaviour {
         }
     }
 
-    //Called when the AI has died
+    /// <summary>
+    /// Called when the AI has died
+    /// </summary>
     void Dead() {
         GetComponent<Renderer>().material.color = new Color(0, 0, 0); //debug color change
         npcInfo.polyNav.enabled = false; //disable ai
@@ -108,7 +114,9 @@ public class CombatScript : MonoBehaviour {
         selectedSpell = null; //set selected spell to nothing
     }
 
-    //Called when a selected spell has finished its progress (= 1)
+    /// <summary>
+    /// Called when a selected spell has finished its progress (= 1)
+    /// </summary>
     void Cast() {
         if (SpellStaminaCheck(selectedSpell.energyToCast * 0.25f) && IsVisible(focusTarget)) { //check to see if the target is visible and if we have enough energy to finish the cast
             switch (selectedSpell.type) {
@@ -127,14 +135,19 @@ public class CombatScript : MonoBehaviour {
 
     }
 
-    //Called at the start of a fight and when a(n) player/AI finished their turn
+    /// <summary>
+    /// Called at the start of a fight and when a(n) player/AI finished their turn
+    /// </summary>
     public void StartWaiting() {
         //print(gameObject + " has started waiting...");
         endTurn = false; //end turn
         turnCoroutine = StartCoroutine(TurnCoroutine()); //start the turn coroutine, which will auto ready when it is their turn
     }
 
-    //Turn Coroutine called in StartWaiting()
+    /// <summary>
+    /// Turn Coroutine called in StartWaiting()
+    /// </summary>
+    /// <returns></returns>
     IEnumerator TurnCoroutine() {
         float s = (0.75f - (myStats.perception * 0.025f)); //get the seconds to wait based on stats
         //print(gameObject + " wait time is " + s);
@@ -144,18 +157,25 @@ public class CombatScript : MonoBehaviour {
         //print(gameObject + " has stopped waiting!");
     }
 
-    //Ends the unit's turn
+    /// <summary>
+    /// Ends the unit's turn
+    /// </summary>
     public void EndTurn() {
         print(gameObject + " has ended their turn at " + Time.time);
         endTurn = true; //combat handler will handle the rest
     }
 
 
-    //Called at the beginning of an AI's turn (NOT THE PLAYER)
+    /// <summary>
+    /// Called at the beginning of an AI's turn (NOT THE PLAYER)
+    /// </summary>
+    /// <param name="charactersInCombat"></param>
+    /// <param name="isPlayerInCombat"></param>
     public void AI(List<GameObject> charactersInCombat, bool isPlayerInCombat) {
         //print("AI STARTING!");
         TryStuck(); //test to see if we are stuck trying to get to a point
         GetTargets(charactersInCombat); //get all active targets
+        TryAvoid(); //test if we have been too close to an enemy for too long
         CoverTest(); //tests to see if there are any changes to cover and partial cover
         SelectTarget(); //selects a target
         GetSpell(); //get a spell to perform
@@ -164,7 +184,9 @@ public class CombatScript : MonoBehaviour {
         EndTurn(); //end turn
     }
 
-    //Begins casting the selected spell, if we have not already
+    /// <summary>
+    /// Begins casting the selected spell, if we have not already
+    /// </summary>
     void TrySpell() {
 
         if(selectedSpell !=null && spellCoroutine == null && progress == 0) { //checks to make sure we have a selected spell and we havent started casting
@@ -176,7 +198,10 @@ public class CombatScript : MonoBehaviour {
 
     }
 
-    //Checks to see if we have enough stamina
+    /// <summary>
+    /// Checks to see if we have enough stamina
+    /// </summary>
+    /// <returns></returns>
     bool SpellStaminaCheck() {
         if(npcInfo.currentStamina <= 0) { //if we run out of stamina, cancel the spell we are trying to cast
             if(spellCoroutine != null) {
@@ -189,7 +214,11 @@ public class CombatScript : MonoBehaviour {
         return true;
     }
 
-    //Check to see if we have enough stamina, given a value A that will be used
+    /// <summary>
+    /// Check to see if we have enough stamina, given a value A that will be used
+    /// </summary>
+    /// <param name="a"></param>
+    /// <returns></returns>
     bool SpellStaminaCheck(float a) {
         if ((npcInfo.currentStamina - a) < 0) { //if we dont have at least value A in stamina, cancel spell
             if (spellCoroutine != null) {
@@ -203,7 +232,10 @@ public class CombatScript : MonoBehaviour {
 
     }
 
-    //SpellEnumerator that drains energy
+    /// <summary>
+    /// SpellEnumerator that drains energy
+    /// </summary>
+    /// <returns></returns>
     IEnumerator SpellEnumerator() {
         for (int i = 0; i < (selectedSpell.castTime * 100); i++) { //run for loop based on seconds (* 100 to get precision)
             progress = (i / (selectedSpell.castTime * 100)); //update progress
@@ -217,7 +249,9 @@ public class CombatScript : MonoBehaviour {
         spellCoroutine = null; //end the spellCoroutine
     }
 
-    //Get a neew spell
+    /// <summary>
+    /// Get a new spell
+    /// </summary>
     void GetSpell() {
         if(selectedSpell == null && state == CombatState.ATTACKING) { //check to make sure we dont have a spell selected and that we are ready to attack
             //get a new spell from npc's spell list
@@ -239,7 +273,9 @@ public class CombatScript : MonoBehaviour {
         }
     }
 
-    //Tests to see if we are in partial cover or full cover or none at all
+    /// <summary>
+    /// Tests to see if we are in partial cover or full cover or none at all
+    /// </summary>
     void CoverTest() {
         //print("Target Size: " + memory.Count);
         if(memory.Count > 0) { //check to see if we have a memory
@@ -284,17 +320,23 @@ public class CombatScript : MonoBehaviour {
 
     }
 
-    //Get targets that are in combat with the unit
+    /// <summary>
+    /// Get targets that are in combat with the unit
+    /// </summary>
+    /// <param name="charactersInCombat"></param>
     void GetTargets(List<GameObject> charactersInCombat) {
         //check if someone is visible, if they are, update their position in the ai's memory
         targets.Clear(); //clear old targets for new test
         foreach(GameObject c in charactersInCombat) { //check everyone in combat
+            if(c == gameObject) {
+                continue;
+            }
             if(c == GameManagerScript.ins.player) { //if the object is the player, check ai's attitude to see if it should be hostile
                 if(npcInfo.stats.attitude > -30f) {
                     continue;
                 }
             } else {
-                if(!FactionManagerScript.ins.DoesDislike(c.GetComponent<NPCInfo>().faction,npcInfo.faction)) { //if the object is another unit, check factions' to see if it should be hostile
+                if(!FactionManagerScript.ins.DoesDislike(c.GetComponent<NPCInfo>().faction,npcInfo.faction) && !FactionManagerScript.ins.DoesHate(c.GetComponent<NPCInfo>().faction, npcInfo.faction)) { //if the object is another unit, check factions' to see if it should be hostile
                     continue;
                 }
             }
@@ -320,14 +362,23 @@ public class CombatScript : MonoBehaviour {
 
 
     }
-    
-    //checks whether we can directly see them
+
+    /// <summary>
+    /// checks whether we can directly see them
+    /// </summary>
+    /// <param name="target"></param>
+    /// <returns></returns>
     public bool IsVisible(GameObject target) {
-        gameObject.layer = 2; //change to ignore raycast
+        if(target == null) {
+            return false;
+        }
+        gameObject.layer = LayerMask.NameToLayer("Ignore Raycast"); //change to ignore raycast
+        int targetOldLayer = target.layer;
+        target.layer = LayerMask.NameToLayer("SightTest"); //change to what we are testing
         Vector3 feet = new Vector3(transform.position.x, transform.position.y - 0.45f, 0);
         RaycastHit2D hit = Physics2D.Raycast(feet, target.transform.position - feet, Mathf.Infinity, CombatManager.ins.characterVisibleTest); //raycast
-        gameObject.layer = 8; //set back to npc
-        //Debug.DrawRay(gameObject.transform.position, target.transform.position - gameObject.transform.position, Color.white, Mathf.Infinity);
+        gameObject.layer = LayerMask.NameToLayer("NPC"); //set back to npc
+        target.layer = targetOldLayer; //set back to normal
         if(hit.collider != null) {
             if(hit.collider.gameObject == target) {
                 return true;
@@ -336,7 +387,12 @@ public class CombatScript : MonoBehaviour {
         return false;
     }
 
-    //check whether a gameobject has unbroken LOS to a point
+    /// <summary>
+    /// check whether a gameobject has unbroken LOS to a point
+    /// </summary>
+    /// <param name="target"></param>
+    /// <param name="point"></param>
+    /// <returns></returns>
     public bool IsVisible(GameObject target, Vector3 point) {
         gameObject.layer = 2; // change to ignore raycast
         RaycastHit2D hit = Physics2D.Raycast(point, target.transform.position - point, Mathf.Infinity, CombatManager.ins.characterVisibleTest); //raycast
@@ -348,7 +404,12 @@ public class CombatScript : MonoBehaviour {
         }
         return false;
     }
-    //check whether two points have unbroken LOS to each other
+    /// <summary>
+    /// check whether two points have unbroken LOS to each other
+    /// </summary>
+    /// <param name="point1"></param>
+    /// <param name="point2"></param>
+    /// <returns></returns>
     public bool IsVisible(Vector3 point1, Vector3 point2) {
         RaycastHit2D hit = Physics2D.Raycast(point1, point2 - point1, Vector3.Distance(point1, point2), CombatManager.ins.obstacleTest); //raycast from point 1 to point 2
         if(hit.collider == null) {
@@ -358,7 +419,9 @@ public class CombatScript : MonoBehaviour {
 
     }
 
-    //Move the ai based on movementqueue
+    /// <summary>
+    /// check whether two points have unbroken LOS to each other
+    /// </summary>
     void Move() {
         Vector3 feet = new Vector3(transform.position.x, transform.position.y - 0.45f, 0); //get position of feet
         //print(Vector3.Distance(feet, movementQueue[0]));
@@ -383,7 +446,9 @@ public class CombatScript : MonoBehaviour {
 
     }
 
-    //Set a movement pattern based on the unit's state
+    /// <summary>
+    /// Set a movement pattern based on the unit's state
+    /// </summary>
     void SetMove() {
         switch (state) { //switch statement for movement state so we know how to move
             case CombatState.ATTACKING:
@@ -404,13 +469,19 @@ public class CombatScript : MonoBehaviour {
 
                         //raycast from focusTarget to us by p distance, which is the distance of the max range of the projectile
                         RaycastHit2D hit = Physics2D.Raycast(memory[focusTarget], f - memory[focusTarget], p.distance * 1.05f, CombatManager.ins.obstacleTest);
-                        if(disFromTarget >= p.distance) {
+                        float wallDistance = Vector3.Distance(memory[focusTarget], hit.point) * 0.95f;
+                        if (disFromTarget >= p.distance) {
                             targetDistance = p.distance * 0.9f;
-                        }else if (disFromTarget <= p.distance * 0.35f) {
+                        } else if (disFromTarget <= p.distance * 0.35f) {
                             targetDistance = p.distance * 0.45F;
                         }
+                        if (hit.collider != null) {
+                            if (targetDistance >= wallDistance) {
+                                targetDistance = wallDistance;
+                            }
+                        }
 
-                        if (hit.collider == null) { //we have room to move back
+                        if (true) {
                             float angle = Vector2.Angle(Vector2.right, directionFromTargetToAI); 
                             if (transform.position.y - 0.45f < memory[focusTarget].y) { //we are bottom half of the y-axis, so add 180 since it is absolute
                                 angle = 360 - angle;
@@ -515,6 +586,21 @@ public class CombatScript : MonoBehaviour {
                                 }
 
                                 //create new point on circle
+
+                                //randomize the movement slightly
+                                if(Random.Range(0, 4) == 0) {
+                                    targetDistance = targetDistance + Random.Range(targetDistance * -0.05f, targetDistance * 0.05f);
+                                    if (targetDistance >= p.distance) {
+                                        targetDistance = p.distance * 0.9f;
+                                    } else if (disFromTarget <= p.distance * 0.35f) {
+                                        targetDistance = p.distance * 0.45F;
+                                    }
+                                    if (hit.collider != null) {
+                                        if (targetDistance >= wallDistance) {
+                                            targetDistance = wallDistance;
+                                        }
+                                    }
+                                }
                                 
                                 float newX = memory[focusTarget].x + targetDistance * Mathf.Cos(Mathf.Deg2Rad * newAngle);
                                 float newY = memory[focusTarget].y + targetDistance * Mathf.Sin(Mathf.Deg2Rad * newAngle);
@@ -540,8 +626,6 @@ public class CombatScript : MonoBehaviour {
 
                             }
 
-                        } else { //we dont have enough room behind us
-                            float disFromWall = Vector3.Distance(memory[focusTarget], hit.point);
                         }
                         break;
                     case Spell.Type.Beam:
@@ -705,6 +789,15 @@ public class CombatScript : MonoBehaviour {
                 npcInfo.RecoverStamina();
                 break;
             case CombatState.AVOIDING: //avoiding
+                Vector3 movementVector = Vector3.zero;
+                foreach(GameObject t in targets) {
+                    if (IsVisible(t)) {
+                        if (Vector3.Distance(t.transform.position, gameObject.transform.position) <= safeDistance) {
+                            movementVector += gameObject.transform.position - t.transform.position;
+                        }
+                    }
+                }
+                movementQueue.Add(gameObject.transform.position + movementVector);
                 break;
             case CombatState.DEFENDING: //defending
                 break;
@@ -722,13 +815,19 @@ public class CombatScript : MonoBehaviour {
         }
 
     }
-                
-            
 
-            
-       
 
-    //return angle in full 360, opposed to 180, on basis that you used vector2.right
+
+
+
+
+    /// <summary>
+    /// /return angle in full 360, opposed to 180, on basis that you used vector2.right
+    /// </summary>
+    /// <param name="angle"></param>
+    /// <param name="originObject"></param>
+    /// <param name="targetObject"></param>
+    /// <returns></returns>
     float AngleCheck(float angle, Vector3 originObject, Vector3 targetObject) {
         if(targetObject.y < originObject.y) {
             return 360 - angle;
@@ -737,7 +836,11 @@ public class CombatScript : MonoBehaviour {
 
     }
 
-    //check to see if an angle is over 360 or below 0 when adding or subtracting angles
+    /// <summary>
+    /// check to see if an angle is over 360 or below 0 when adding or subtracting angles
+    /// </summary>
+    /// <param name="angle"></param>
+    /// <returns></returns>
     float AngleMath(float angle) {
         if(angle > 360) {
             return angle - 360;
@@ -748,7 +851,13 @@ public class CombatScript : MonoBehaviour {
         }
 
     }
-    //Returns information about cover and partial given a distance and coordinates x and y
+    /// <summary>
+    /// Returns information about cover and partial given a distance and coordinates x and y
+    /// </summary>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    /// <param name="distance"></param>
+    /// <returns></returns>
     bool[] TryAttackPoint(float x, float y, float distance) {
         bool[] returnBools = new bool[2]; //0 = if the ai can see it; 1 = can the target see it
         Vector3 testVector = new Vector3(x, y, 0);
@@ -778,7 +887,9 @@ public class CombatScript : MonoBehaviour {
         return returnBools;
     }
 
-    //Select a target from our list of targets
+    /// <summary>
+    /// Select a target from our list of targets
+    /// </summary>
     void SelectTarget() {
         foreach (GameObject c in targets) { //run through each target
             if(focusTarget == null || focusTarget == c) { //get base case, or skip we we have already selected
@@ -793,7 +904,9 @@ public class CombatScript : MonoBehaviour {
 
     }
 
-    //Set the state of the ai given self and world state
+    /// <summary>
+    /// Set the state of the ai given self and world state
+    /// </summary>
     void SetState() {
         if(npcInfo.currentHealth <= 0 && state != CombatState.DYING && state != CombatState.DEAD) { //if we are no health, we are dead
             state = CombatState.DYING;
@@ -809,6 +922,15 @@ public class CombatScript : MonoBehaviour {
                 }
                 break;
             case CombatState.AVOIDING:
+                state = CombatState.ATTACKING;
+                foreach(GameObject t in targets) {
+                    if (IsVisible(t)) {
+                        if(Vector3.Distance(t.transform.position, gameObject.transform.position) <= safeDistance) {
+                            state = CombatState.AVOIDING;
+                            break;
+                        }
+                    }
+                }
                 break;
             case CombatState.DEFENDING:
                 break;
@@ -853,7 +975,12 @@ public class CombatScript : MonoBehaviour {
 
     }
 
-    //Return what quadrant the given target is in reference to the origin
+    /// <summary>
+    /// Return what quadrant the given target is in reference to the origin
+    /// </summary>
+    /// <param name="target"></param>
+    /// <param name="origin"></param>
+    /// <returns></returns>
     int SetQuad(Vector3 target, Vector3 origin) {
         if(target.x >= origin.x) {
             if(target.y >= origin.y) {
@@ -872,8 +999,13 @@ public class CombatScript : MonoBehaviour {
 
         }
     }
-    
-    //test to see if two given quadrants are opposite of each other (1-3, 2-4)
+
+    /// <summary>
+    /// test to see if two given quadrants are opposite of each other (1-3, 2-4)
+    /// </summary>
+    /// <param name="self"></param>
+    /// <param name="test"></param>
+    /// <returns></returns>
     bool QuadTest(int self, int test) {
         if(Mathf.Abs(self - test) == 2) {
             return false; //failed
@@ -881,7 +1013,14 @@ public class CombatScript : MonoBehaviour {
         return true; //passed
     }
 
-    //Given an origin, check a range of two points angles
+    /// <summary>
+    /// Given an origin, check a range of two points angles
+    /// </summary>
+    /// <param name="origin"></param>
+    /// <param name="basePoint"></param>
+    /// <param name="testPoint"></param>
+    /// <param name="range"></param>
+    /// <returns></returns>
     bool RangeTest(Vector3 origin, Vector3 basePoint, Vector3 testPoint, int range) {
         float angle = Vector3.Angle(basePoint - origin, testPoint - origin); //get angle for basepoint and testpoint with reference to origin
         
@@ -891,7 +1030,9 @@ public class CombatScript : MonoBehaviour {
         return true;
     }
 
-    //Check to see if the AI is stuck and cannot move
+    /// <summary>
+    /// Check to see if the AI is stuck and cannot move
+    /// </summary>
     void TryStuck() {
         if(state == CombatState.DEFENDING || state == CombatState.DYING || state == CombatState.RECHARGING) { //exclude these movement state when moving
             return;
@@ -901,8 +1042,13 @@ public class CombatScript : MonoBehaviour {
         if(Mathf.FloorToInt(transform.position.x * 100) == Mathf.FloorToInt(lastPosition.x * 100) && Mathf.FloorToInt(transform.position.y * 100) == Mathf.FloorToInt(lastPosition.y * 100)) {
             print("isStuck");
             if (isStuck && Time.time >= stuckTimer) { //if we are stuck and it has been X ammount of seconds, clear our movement to start fresh
-                isStuck = false;
-                movementQueue.Clear();
+                if (state == CombatState.AVOIDING) {
+                    state = CombatState.ATTACKING;
+                } else {
+                    isStuck = false;
+                    movementQueue.Clear();
+                    state = CombatState.AVOIDING;
+                }
             } else { //if not stuck, set the timer and set stuck
                 isStuck = true;
                 stuckTimer = Time.time + stuckTimer;
@@ -916,7 +1062,24 @@ public class CombatScript : MonoBehaviour {
 
     }
 
-    //Update the memory dictionary with relevant character positions visible to the AI
+    void TryAvoid() {
+        foreach(GameObject t in targets) {
+            if (IsVisible(t)) {
+                if(Vector3.Distance(t.transform.position, gameObject.transform.position) <= tooCloseDistance) {
+                    turnsToClose += 1;
+                    break;
+                }
+            }
+        }
+        if(turnsToClose >= 3) {
+            turnsToClose = 0;
+            state = CombatState.AVOIDING;
+        }
+    }
+
+    /// <summary>
+    /// Update the memory dictionary with relevant character positions visible to the AI
+    /// </summary>
     void UpdateMemory() {
         //if we have something in memory, check
         if(memory.Count != 0) {

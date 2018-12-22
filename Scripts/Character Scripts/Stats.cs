@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Stats : MonoBehaviour {
 
-    //stats
+    //stats - MAX 100
     public int intuition = 0; //und - ability to pickup skills in combat
     public int intelligence = 0; //int - ability to study skills outside of combat
     public int strength = 0; //str - ability to swing hard for physical attacks

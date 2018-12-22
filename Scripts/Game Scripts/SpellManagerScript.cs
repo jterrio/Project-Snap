@@ -19,7 +19,11 @@ public class SpellManagerScript : MonoBehaviour {
         }
 	}
 
-    //used by the player
+    /// <summary>
+    /// used by the player
+    /// </summary>
+    /// <param name="a"></param>
+    /// <param name="caster"></param>
     public void CastSpell(CombatHUDAttack.Attack a, GameObject caster) {
         switch (a.selectedSpell.type) {
             case Spell.Type.Projectile:
@@ -43,7 +47,13 @@ public class SpellManagerScript : MonoBehaviour {
         
     }
 
-    //used by the ai
+    /// <summary>
+    /// used by the ai
+    /// </summary>
+    /// <param name="spell"></param>
+    /// <param name="location"></param>
+    /// <param name="dir"></param>
+    /// <param name="caster"></param>
     public void CastSpell(Spell spell, Vector3 location, Vector3 dir, GameObject caster) {
         switch (spell.type) {
             case Spell.Type.Projectile:

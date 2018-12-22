@@ -40,7 +40,13 @@ public class FactionManagerScript : MonoBehaviour {
         //SetFactionRelation(Faction.BLACKROSE, Faction.EMPIRE, -999);
     }
 
-    public void SetFactionRelation(Faction a,Faction b, float newRelation) { //Updates the relation faction A has to faction B.
+    /// <summary>
+    /// Updates the relation faction A has to faction B.
+    /// </summary>
+    /// <param name="a"></param>
+    /// <param name="b"></param>
+    /// <param name="newRelation"></param>
+    public void SetFactionRelation(Faction a,Faction b, float newRelation) {
         if (a == b) {
             return;
         }
@@ -53,7 +59,11 @@ public class FactionManagerScript : MonoBehaviour {
         }
     }
 
-    void Validate(FactionRelation relation) { // Checks to see if relation is within certain value. If not sets to highest or lowest possiable.
+    /// <summary>
+    /// Checks to see if relation is within certain value. If not sets to highest or lowest possiable.
+    /// </summary>
+    /// <param name="relation"></param>
+    void Validate(FactionRelation relation) { 
         if(relation.opinion < -100) {
             relation.opinion = -100;
         }
@@ -62,7 +72,13 @@ public class FactionManagerScript : MonoBehaviour {
         }
     }
 
-    public float GetFactionRelation(Faction a,Faction b) { //Returns the relation faction A has of faction B. ex: A thinks -50 of B.
+    /// <summary>
+    /// //Returns the relation faction A has of faction B. ex: A thinks -50 of B.
+    /// </summary>
+    /// <param name="a"></param>
+    /// <param name="b"></param>
+    /// <returns></returns>
+    public float GetFactionRelation(Faction a,Faction b) {
         if (a == b) {
             return 0;
         }
@@ -74,7 +90,14 @@ public class FactionManagerScript : MonoBehaviour {
         return 0;
     }
 
-    public float AddToFactionRelation(Faction a, Faction b, float addedValue) { // Updates the opinion that Faction A has of Faction B, through addition. You pass Negatives in addedValue to subtract.
+    /// <summary>
+    /// Updates the opinion that Faction A has of Faction B, through addition. You pass Negatives in addedValue to subtract.
+    /// </summary>
+    /// <param name="a"></param>
+    /// <param name="b"></param>
+    /// <param name="addedValue"></param>
+    /// <returns></returns>
+    public float AddToFactionRelation(Faction a, Faction b, float addedValue) { 
         if (a == b) {
             return 0;
         }

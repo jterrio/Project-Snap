@@ -34,6 +34,12 @@ public class SpeechManager : MonoBehaviour {
     private PlayerInfo pInfo;
     private NPCInfo npcInfo;
 
+    public bool InShop {
+        get {
+            return inShop;
+        }
+    }
+
     // Use this for initialization
     void Start () {
         //make singleton
@@ -50,7 +56,11 @@ public class SpeechManager : MonoBehaviour {
         speechText = talkerTextPanel.GetComponent<TMPro.TextMeshProUGUI>();
 	}
 
-    //called when the player hits space (either to enter dialogue, skip text, or see next line)
+    /// <summary>
+    /// called when the player hits space (either to enter dialogue, skip text, or see next line)
+    /// </summary>
+    /// <param name="player"></param>
+    /// <param name="npc"></param>
     public void Speak(GameObject player, GameObject npc) {
         this.player = player; //set player
         
@@ -104,7 +114,11 @@ public class SpeechManager : MonoBehaviour {
         
     }
 
-    //if we can open the shop from the current dialogue, open it
+    /// <summary>
+    /// if we can open the shop from the current dialogue, open it
+    /// </summary>
+    /// <param name="dialogue"></param>
+    /// <returns></returns>
     bool CheckShop(NPCSpeechHolder.Dialogue dialogue) {
         if (dialogue.openShop) {
             OpenShop(); //opens shop and sets values
@@ -113,7 +127,9 @@ public class SpeechManager : MonoBehaviour {
         return false;
     }
 
-    //opens shop and sets values
+    /// <summary>
+    /// opens shop and sets values
+    /// </summary>
     void OpenShop() {
         inShop = true; //set that we are in the sgop
         speechOutline.gameObject.SetActive(false); //disable speech panels
@@ -122,7 +138,9 @@ public class SpeechManager : MonoBehaviour {
         MerchantManagerScript.ins.Shop(player, npc); //tell merchant script to open shop
     }
 
-    //close the shop panel 
+    /// <summary>
+    /// close the shop panel 
+    /// </summary>
     public void CloseShop() {
         inShop = false; //set that we have left the shop
         merchantPanel.gameObject.SetActive(false); //set the panel inactive if it wasnt already
@@ -142,7 +160,10 @@ public class SpeechManager : MonoBehaviour {
         }
     }
 
-    //displays the choices of the current dialogue
+    /// <summary>
+    /// displays the choices of the current dialogue
+    /// </summary>
+    /// <param name="dialogue"></param>
     void DisplayChoices(NPCSpeechHolder.Dialogue dialogue) {
         speechPanel.gameObject.SetActive(false); //set this inactive since we don't need it
         //destory old choices if there were any in the grid layout
@@ -159,7 +180,10 @@ public class SpeechManager : MonoBehaviour {
         choicePanel.gameObject.SetActive(true); //set the choice panel and grid layout to be active
     }
 
-    //pick a choice; number represents set number to jump to for the dialogue
+    /// <summary>
+    /// pick a choice; number represents set number to jump to for the dialogue
+    /// </summary>
+    /// <param name="number"></param>
     public void PickChoice(int number) {
         //check to see if the choice opens the shop, if does, open it
         if (npcSpeech.Speak().openShop) {
@@ -174,7 +198,10 @@ public class SpeechManager : MonoBehaviour {
         Speak(player, npc); //re-enter speech manually since the player clicked instead of hitting space
     }
 
-    //set the name text; dynamically sets player name and npc names
+    /// <summary>
+    /// set the name text; dynamically sets player name and npc names
+    /// </summary>
+    /// <param name="text"></param>
     void SetNameText(string text) {
         if(text == "[PlayerName]") {
             nameText.text = pInfo.characterName;
@@ -183,12 +210,19 @@ public class SpeechManager : MonoBehaviour {
         }
     }
 
-    //set speech text to the full text
+    /// <summary>
+    /// set speech text to the full text
+    /// </summary>
+    /// <param name="text"></param>
     void SetSpeechText(string text) {
         speechText.text = text;
     }
 
-    //enter speech and begin printing the speech
+    /// <summary>
+    /// enter speech and begin printing the speech
+    /// </summary>
+    /// <param name="talkerName"></param>
+    /// <param name="talkerText"></param>
     public void EnterSpeech(string talkerName, string talkerText) {
         //check to see if we skipped some dialogue and we need to stop the previous coroutine
         if(typingCoroutine != null) {
@@ -202,7 +236,9 @@ public class SpeechManager : MonoBehaviour {
         typingCoroutine = StartCoroutine(Type()); //begin the couroutine for displaying the letters
     }
 
-    //Reset values and exit the dialogue
+    /// <summary>
+    /// Reset values and exit the dialogue
+    /// </summary>
     public void EndSpeech() {
         if(npcSpeech == null) {
             return;
@@ -230,7 +266,9 @@ public class SpeechManager : MonoBehaviour {
         
     }
 
-    //for ending an item pick-up dialogue/sequence
+    /// <summary>
+    /// for ending an item pick-up dialogue/sequence
+    /// </summary>
     public void EndSpeechItem() {
         speechOutline.gameObject.SetActive(false);
         choicePanel.gameObject.SetActive(false);
@@ -244,7 +282,9 @@ public class SpeechManager : MonoBehaviour {
 
     }
 
-    //end the coroutine and display the full text (used for skipping dialogue)
+    /// <summary>
+    /// end the coroutine and display the full text (used for skipping dialogue)
+    /// </summary>
     public void FinishSpeech() {
         StopCoroutine(typingCoroutine);
         speechText.text = textToDisplay;
@@ -273,8 +313,11 @@ public class SpeechManager : MonoBehaviour {
         speechText.text = itemName + " has been picked up.";
         EnterSpeech(nameText.text, speechText.text);
     }
-    
-    //is what the couroutine calls
+
+    /// <summary>
+    /// is what the couroutine calls
+    /// </summary>
+    /// <returns></returns>
     IEnumerator Type() {
         //splits sentence/speech into charaters to be displayed at the given speed: typing speed
         foreach(char letter in textToDisplay.ToCharArray()) {
