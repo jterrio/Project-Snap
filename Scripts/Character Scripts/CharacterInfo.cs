@@ -209,6 +209,7 @@ public class CharacterInfo : MonoBehaviour {
         if (gameObject == GameManagerScript.ins.player && spellQueue.Count > 0) {
             Image child = spellQueue[0].loggedInfo.GetComponentInChildren<Image>();
             Toggle toggle = spellQueue[0].loggedInfo.GetComponentInChildren<Toggle>();
+            Slider slider = spellQueue[0].loggedInfo.GetComponentInChildren<Slider>();
             for (progress = 0; progress < (spellQueue[0].selectedSpell.castTime * 100); progress++) {
                 if (toggle.isOn) {
                     polyNav.maxSpeed = defaultSpeed;
@@ -223,6 +224,11 @@ public class CharacterInfo : MonoBehaviour {
             child.fillAmount = 1;
             polyNav.maxSpeed = defaultSpeed;
             print("Spell casted!");
+            print("Before: " + (spellQueue[0].attackTarget.transform.position - GameManagerScript.ins.player.transform.position));
+            if (spellQueue[0].fireMode == CombatHUDAttack.FireMode.TARGET) {
+                spellQueue[0].attackDirection = Quaternion.AngleAxis((slider.value - 50) * 2, Vector3.left) * (spellQueue[0].attackTarget.transform.position - GameManagerScript.ins.player.transform.position);
+                print("After: " + spellQueue[0].attackDirection);
+            }
             SpellManagerScript.ins.CastSpell(spellQueue[0], gameObject);
 
             //set check if the player here
