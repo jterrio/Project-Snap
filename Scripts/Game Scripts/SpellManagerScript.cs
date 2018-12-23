@@ -24,7 +24,7 @@ public class SpellManagerScript : MonoBehaviour {
     /// </summary>
     /// <param name="a"></param>
     /// <param name="caster"></param>
-    public void CastSpell(CombatHUDAttack.Attack a, GameObject caster) {
+    public void CastSpell(CombatHUDAttack.Attack a, GameObject caster, float angle) {
         switch (a.selectedSpell.type) {
             case Spell.Type.Projectile:
                 switch (a.fireMode) {
@@ -35,8 +35,8 @@ public class SpellManagerScript : MonoBehaviour {
                         SpellProjectileLookUp(a.selectedSpell, caster.transform.position, (a.attackPointModePoint - caster.transform.position), caster);
                         break;
                     case CombatHUDAttack.FireMode.TARGET:
-                        Vector3 memoryPos = CombatManager.ins.combatHUDAttack.memory[a.attackTarget];
-                        SpellProjectileLookUp(a.selectedSpell, caster.transform.position, (memoryPos - caster.transform.position), caster);
+                        Vector3 memoryPos = CombatManager.ins.combatHUDAttack.memory[a.attackTarget] - caster.transform.position;
+                        SpellProjectileLookUp(a.selectedSpell, caster.transform.position, memoryPos, caster);
                         break;
                     default:
                         SpellProjectileLookUp(a.selectedSpell, caster.transform.position, a.attackDirection, caster);

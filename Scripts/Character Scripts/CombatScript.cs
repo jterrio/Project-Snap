@@ -161,7 +161,7 @@ public class CombatScript : MonoBehaviour {
     /// Ends the unit's turn
     /// </summary>
     public void EndTurn() {
-        print(gameObject + " has ended their turn at " + Time.time);
+        //print(gameObject + " has ended their turn at " + Time.time);
         endTurn = true; //combat handler will handle the rest
     }
 
