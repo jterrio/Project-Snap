@@ -135,7 +135,7 @@ public class PlayerDrawCombatMovePosition : MonoBehaviour {
 
     public void UnSelectPlayerMovement() {
         isSelected = false;
-        //lr.enabled = false;
+        lr.enabled = false;
     }
 
     public void ChangeAttackValue() {
