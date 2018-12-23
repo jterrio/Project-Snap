@@ -210,6 +210,8 @@ public class CharacterInfo : MonoBehaviour {
             Image child = spellQueue[0].loggedInfo.GetComponentInChildren<Image>();
             Toggle toggle = spellQueue[0].loggedInfo.GetComponentInChildren<Toggle>();
             Slider slider = spellQueue[0].loggedInfo.GetComponentInChildren<Slider>();
+            LineRenderer lr = SpellManagerScript.ins.GetComponent<LineRenderer>();
+            lr.SetPosition(0, GameManagerScript.ins.player.transform.position);
             float angle = 0;
             for (progress = 0; progress < (spellQueue[0].selectedSpell.castTime * 100); progress++) {
                 if (toggle.isOn) {
@@ -218,6 +220,22 @@ public class CharacterInfo : MonoBehaviour {
                     polyNav.maxSpeed = 0;
                 }
                 yield return new WaitForSeconds(0.01f);
+
+                Vector3 memoryPos = CombatManager.ins.combatHUDAttack.memory[spellQueue[0].attackTarget] - GameManagerScript.ins.player.transform.position;
+                float currentAngle = Vector3.Angle(memoryPos, Vector3.right);
+                if (GameManagerScript.ins.player.transform.position.y > CombatManager.ins.combatHUDAttack.memory[spellQueue[0].attackTarget].y) {
+                    currentAngle += 180;
+                }
+                //currentAngle += angle;
+                if (currentAngle >= 360) {
+                    currentAngle -= 360;
+                } else if (currentAngle < 0) {
+                    currentAngle += 360;
+                }
+                //lr.SetPosition(1, new Vector3(memoryPos.x + 1 * Mathf.Cos(currentAngle * Mathf.Deg2Rad), memoryPos.y + 1 * Mathf.Sin(currentAngle * Mathf.Deg2Rad)));
+                lr.SetPosition(1, memoryPos);
+
+
                 currentStamina -= (spellQueue[0].selectedSpell.energyToCast / (spellQueue[0].selectedSpell.castTime * 100));
                 child.fillAmount = progress / (spellQueue[0].selectedSpell.castTime * 100);
             }
@@ -226,8 +244,8 @@ public class CharacterInfo : MonoBehaviour {
             polyNav.maxSpeed = defaultSpeed;
             print("Spell casted!");
             if (spellQueue[0].fireMode == CombatHUDAttack.FireMode.TARGET) {
-                angle = ((slider.value - 0.5f) * 180);
-                SpellManagerScript.ins.CastSpell(spellQueue[0], gameObject, 0);
+                angle = ((slider.value - 0.5f) * 360);
+                SpellManagerScript.ins.CastSpell(spellQueue[0], gameObject, angle);
             } else {
                 SpellManagerScript.ins.CastSpell(spellQueue[0], gameObject, 0);
             }

@@ -36,7 +36,17 @@ public class SpellManagerScript : MonoBehaviour {
                         break;
                     case CombatHUDAttack.FireMode.TARGET:
                         Vector3 memoryPos = CombatManager.ins.combatHUDAttack.memory[a.attackTarget] - caster.transform.position;
-                        SpellProjectileLookUp(a.selectedSpell, caster.transform.position, memoryPos, caster);
+                        float currentAngle = Vector3.Angle(memoryPos, Vector3.right);
+                        if(caster.transform.position.y > CombatManager.ins.combatHUDAttack.memory[a.attackTarget].y) {
+                            currentAngle += 180;
+                        }
+                        //currentAngle += angle;
+                        if(currentAngle >= 360) {
+                            currentAngle -= 360;
+                        }else if(currentAngle < 0) {
+                            currentAngle += 360;
+                        }
+                        SpellProjectileLookUp(a.selectedSpell, caster.transform.position, new Vector3(memoryPos.x + 1 * Mathf.Cos(currentAngle * Mathf.Deg2Rad), memoryPos.y + 1 * Mathf.Sin(currentAngle * Mathf.Deg2Rad), 0), caster);
                         break;
                     default:
                         SpellProjectileLookUp(a.selectedSpell, caster.transform.position, a.attackDirection, caster);
