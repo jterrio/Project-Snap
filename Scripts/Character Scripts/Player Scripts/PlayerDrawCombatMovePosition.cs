@@ -12,6 +12,7 @@ public class PlayerDrawCombatMovePosition : MonoBehaviour {
     private CombatHUDLog log;
     private CombatHUDAttack attackLog;
     private Vector3[] loggedPath;
+    private bool canMove = false;
 
     void Start() {
         lr.startWidth = 0.05f;
@@ -40,6 +41,9 @@ public class PlayerDrawCombatMovePosition : MonoBehaviour {
                 }
             }
             MouseClick();
+            if (!Input.GetKey(KeyCode.LeftShift) && canMove) {
+                ChangeMovementValue();
+            }
             return;
         }
 
@@ -85,8 +89,10 @@ public class PlayerDrawCombatMovePosition : MonoBehaviour {
 
     void LogPath(Vector2[] path) {
         if (path == null || path.Length == 0) {
+            canMove = false;
             return;
         }
+        canMove = true;
         int count = path.Length;
         log.LogMovePosition(path);
     }
