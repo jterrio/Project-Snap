@@ -14,8 +14,8 @@ public class UseDoorScript : MonoBehaviour {
 
 
     public void PlaySound() {
-        AudioManagerScript.ins.audioSource.clip = audioToPlay;
-        AudioManagerScript.ins.audioSource.Play();
+        //AudioManagerScript.ins.audioSource.clip = audioToPlay;
+        //AudioManagerScript.ins.audioSource.Play();
     }
 
 }
