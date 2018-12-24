@@ -35,18 +35,20 @@ public class SpellManagerScript : MonoBehaviour {
                         SpellProjectileLookUp(a.selectedSpell, caster.transform.position, (a.attackPointModePoint - caster.transform.position), caster);
                         break;
                     case CombatHUDAttack.FireMode.TARGET:
-                        Vector3 memoryPos = CombatManager.ins.combatHUDAttack.memory[a.attackTarget] - caster.transform.position;
-                        float currentAngle = Vector3.Angle(memoryPos, Vector3.right);
+                        float currentAngle = Vector3.Angle(Vector2.right, CombatManager.ins.combatHUDAttack.memory[a.attackTarget] - caster.transform.position);
                         if(caster.transform.position.y > CombatManager.ins.combatHUDAttack.memory[a.attackTarget].y) {
-                            currentAngle += 180;
+                            currentAngle = 360 - currentAngle;
                         }
-                        //currentAngle += angle;
-                        if(currentAngle >= 360) {
+                        currentAngle += angle;
+                        if (currentAngle > 360) {
                             currentAngle -= 360;
                         }else if(currentAngle < 0) {
                             currentAngle += 360;
                         }
-                        SpellProjectileLookUp(a.selectedSpell, caster.transform.position, new Vector3(memoryPos.x + 1 * Mathf.Cos(currentAngle * Mathf.Deg2Rad), memoryPos.y + 1 * Mathf.Sin(currentAngle * Mathf.Deg2Rad), 0), caster);
+                        float distance = Vector3.Distance(caster.transform.position, CombatManager.ins.combatHUDAttack.memory[a.attackTarget]);
+                        Vector3 newVec = new Vector3(caster.transform.position.x + distance * Mathf.Cos(currentAngle * Mathf.Deg2Rad), caster.transform.position.y + distance * Mathf.Sin(currentAngle * Mathf.Deg2Rad));
+                        SpellProjectileLookUp(a.selectedSpell, caster.transform.position, newVec - caster.transform.position, caster);
+                        //Debug.DrawRay(caster.transform.position, newVec - caster.transform.position, Color.green, 10f);
                         break;
                     default:
                         SpellProjectileLookUp(a.selectedSpell, caster.transform.position, a.attackDirection, caster);
