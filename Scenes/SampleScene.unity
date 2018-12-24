@@ -871,7 +871,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 334.9998, y: -0.000015258789}
+  m_AnchoredPosition: {x: 334.9998, y: 0.000015258789}
   m_SizeDelta: {x: 670, y: 10}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &101852370
@@ -4313,7 +4313,7 @@ Camera:
   far clip plane: 1000
   field of view: 87.7
   orthographic: 1
-  orthographic size: 4.734375
+  orthographic size: 4.21875
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -4709,7 +4709,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &614190419
 Transform:
   m_ObjectHideFlags: 0
@@ -7717,7 +7717,7 @@ MonoBehaviour:
   spirituality: 1
   dexterity: 10
   perception: 10
-  attitude: 0
+  attitude: -100
   fear: 0
   danger: 0
 --- !u!114 &776057295
@@ -11642,7 +11642,7 @@ MonoBehaviour:
   spirituality: 1
   dexterity: 10
   perception: 10
-  attitude: 0
+  attitude: -100
   fear: 0
   danger: 0
 --- !u!114 &1254768301
@@ -15070,8 +15070,8 @@ LineRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: -459180299
-  m_SortingLayer: 4
+  m_SortingLayerID: 425234961
+  m_SortingLayer: 2
   m_SortingOrder: 10000
   m_Positions:
   - {x: 0, y: 0, z: 0}
@@ -16402,7 +16402,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1840686262}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 34.84, y: -5.79, z: -0.07701796}
+  m_LocalPosition: {x: 33.887, y: -5.563, z: -0.07701796}
   m_LocalScale: {x: 0.5, y: 0.5, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -17406,7 +17406,7 @@ MonoBehaviour:
   spirituality: 1
   dexterity: 10
   perception: 10
-  attitude: 0
+  attitude: -100
   fear: 0
   danger: 0
 --- !u!114 &1942604916

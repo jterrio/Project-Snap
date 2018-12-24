@@ -168,7 +168,7 @@ public class CombatHUDAttack : MonoBehaviour {
         if(tempAttack != null || selectedSelf == true) {
             hasClicked = true;
             Attack att = new Attack();
-            if (tempAttack != null) {
+            if (!selectedSelf) {
                 att.attackObject = tempAttack;
                 att.attackPoint = tempAttack.transform.position;
             } else {

@@ -169,7 +169,7 @@ public class CombatHandler : MonoBehaviour {
         foreach (GameObject c in charactersInCombat) {
             if (c.GetComponent<CombatScript>().isReady) {
                 Time.timeScale = 0f;
-                print("Turn: " + c.gameObject.name + " at " + Time.time);
+                //print("Turn: " + c.gameObject.name + " at " + Time.time);
                 currentCharactersTurn.Add(c);
                 c.GetComponent<CombatScript>().isReady = false;
                 if(c.layer == 8) { //npc, means when need to run the AI

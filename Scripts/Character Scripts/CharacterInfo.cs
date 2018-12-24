@@ -31,7 +31,7 @@ public class CharacterInfo : MonoBehaviour {
     public float runSpeed;
 
     private int progress = 0;
-
+    private float maxRangeForShootPrediction = 90;
 
     /// <summary>
     /// Direction that we are facing
@@ -209,6 +209,8 @@ public class CharacterInfo : MonoBehaviour {
         if (gameObject == GameManagerScript.ins.player && spellQueue.Count > 0) {
             Image child = spellQueue[0].loggedInfo.GetComponentInChildren<Image>();
             Toggle toggle = spellQueue[0].loggedInfo.GetComponentInChildren<Toggle>();
+            Slider slider = spellQueue[0].loggedInfo.GetComponentInChildren<Slider>();
+            float angle = 0;
             for (progress = 0; progress < (spellQueue[0].selectedSpell.castTime * 100); progress++) {
                 if (toggle.isOn) {
                     polyNav.maxSpeed = defaultSpeed;
@@ -216,6 +218,9 @@ public class CharacterInfo : MonoBehaviour {
                     polyNav.maxSpeed = 0;
                 }
                 yield return new WaitForSeconds(0.01f);
+
+                //Debug.DrawRay(GameManagerScript.ins.player.transform.position, newVec - GameManagerScript.ins.player.transform.position, Color.green, 10f);
+
                 currentStamina -= (spellQueue[0].selectedSpell.energyToCast / (spellQueue[0].selectedSpell.castTime * 100));
                 child.fillAmount = progress / (spellQueue[0].selectedSpell.castTime * 100);
             }
@@ -223,7 +228,12 @@ public class CharacterInfo : MonoBehaviour {
             child.fillAmount = 1;
             polyNav.maxSpeed = defaultSpeed;
             print("Spell casted!");
-            SpellManagerScript.ins.CastSpell(spellQueue[0], gameObject);
+            if (spellQueue[0].fireMode == CombatHUDAttack.FireMode.TARGET) {
+                angle = ((slider.value - 0.5f) * maxRangeForShootPrediction);
+                SpellManagerScript.ins.CastSpell(spellQueue[0], gameObject, angle);
+            } else {
+                SpellManagerScript.ins.CastSpell(spellQueue[0], gameObject, 0);
+            }
 
             //set check if the player here
             CombatManager.ins.combatHUDAttack.RemoveAttackFromLayout(spellQueue[0]);

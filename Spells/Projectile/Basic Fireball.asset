@@ -4,7 +4,8 @@
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
@@ -21,10 +22,10 @@ MonoBehaviour:
   castTime: 1
   castSpeed: 0
   spellObject: {fileID: 1482257805578246, guid: e597d907ba5579c4b9bd99157f7b3bad,
-    type: 2}
+    type: 3}
   damage: 15
   killChance: 5
   doesExplode: 1
   explosionDamage: 10
-  distance: 3
+  distance: 13
   speed: 7.5
