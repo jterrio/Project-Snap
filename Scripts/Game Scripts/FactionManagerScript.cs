@@ -36,10 +36,53 @@ public class FactionManagerScript : MonoBehaviour {
                 Destroy(gameObject);
             }
         }
+        CreateFactionRelations();
         //print(IsNeutral(Faction.GANG, Faction.CIVILIAN));
         //SetFactionRelation(Faction.BLACKROSE, Faction.EMPIRE, -999);
     }
+    /// <summary>
+    /// Creates all the faction relations
+    /// </summary>
+    public void CreateFactionRelations() {
+        //string[] faction = System.Enum.GetNames(typeof(Faction));
 
+        foreach (Faction faction in (Faction[])System.Enum.GetValues(typeof(Faction))) {
+            foreach (Faction faction2 in (Faction[])System.Enum.GetValues(typeof(Faction))){
+                CreateFactionRelation(faction, faction2);
+            }
+        }
+    }
+    /// <summary>
+    /// Checks to see if a faction relation exists
+    /// </summary>
+    /// <param name="a"></param>
+    /// <param name="b"></param>
+    /// <returns></returns>
+    public bool DoesFactionRelationExist(Faction a,Faction b) {
+        foreach (FactionRelation fr in factionRelations) {
+            if((fr.faction1 == a || fr.faction1 == b) && (fr.faction2 == a || fr.faction2 == b) && (a != b)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /// <summary>
+    /// Creates a singular relation
+    /// </summary>
+    /// <param name="a"></param>
+    /// <param name="b"></param>
+    public void CreateFactionRelation(Faction a, Faction b) {
+        
+        if (a != b) {
+            if (!DoesFactionRelationExist(a, b)) {
+                FactionRelation fr = new FactionRelation();
+                fr.faction1 = a;
+                fr.faction2 = b;
+                factionRelations.Add(fr);
+            }
+        }
+    }
     /// <summary>
     /// Updates the relation faction A has to faction B.
     /// </summary>
