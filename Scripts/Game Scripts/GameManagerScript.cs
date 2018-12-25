@@ -10,8 +10,21 @@ public class GameManagerScript : MonoBehaviour {
     public Inventory playerInventory;
     public SpellInventory playerSpells;
 
-	// Use this for initialization
-	void Awake () {
+    //KEYS FOR INPUT
+    private KeyCode openMenu = KeyCode.Tab; public KeyCode OpenMenu { get { return openMenu; } }
+    private KeyCode toggleFireMode = KeyCode.Q; public KeyCode ToggleFireMode {  get { return toggleFireMode; } }
+    private KeyCode centerCamera = KeyCode.Home; public KeyCode CenterCamera { get { return centerCamera; } }
+    private KeyCode unlockCamera = KeyCode.LeftAlt; public KeyCode UnlockCamera { get { return unlockCamera; } }
+    private KeyCode moveLeft = KeyCode.A; public KeyCode MoveLeft { get { return moveLeft; } }
+    private KeyCode moveRight = KeyCode.D; public KeyCode MoveRight { get { return moveRight; } }
+    private KeyCode moveDown= KeyCode.S; public KeyCode MoveDown { get { return moveDown; } }
+    private KeyCode moveUp = KeyCode.W; public KeyCode MoveUp { get { return moveUp; } }
+
+
+
+
+    // Use this for initialization
+    void Awake () {
         Application.runInBackground = true;
         //singleton
 		if(ins == null) {
