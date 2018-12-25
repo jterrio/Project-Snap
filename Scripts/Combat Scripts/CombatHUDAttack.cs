@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class CombatHUDAttack : MonoBehaviour {
 
@@ -145,6 +146,9 @@ public class CombatHUDAttack : MonoBehaviour {
         a.loggedInfo = (RectTransform)Instantiate(combatHUDLog.logPrefab, combatHUDLog.gridlayout);
         a.loggedInfo.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = a.ReturnMsg();
         a.loggedInfo.GetComponentInChildren<CancelSpellScript>().parent = a;
+        if(a.fireMode != FireMode.TARGET) {
+            a.loggedInfo.GetComponentInChildren<Slider>().gameObject.SetActive(false);
+        }
     }
 
     /// <summary>
