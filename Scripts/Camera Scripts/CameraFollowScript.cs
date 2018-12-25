@@ -24,7 +24,7 @@ public class CameraFollowScript : MonoBehaviour {
     // Update is called once per frame
     void Update () {
         //follow the player
-        if (Input.GetKeyDown(KeyCode.LeftAlt)) {
+        if (Input.GetKeyDown(GameManagerScript.ins.UnlockCamera)) {
             cameraLocked = !cameraLocked;
             if (cameraLocked) {
                 player.GetComponent<PlayerInfo>().canMove = true;
@@ -47,7 +47,7 @@ public class CameraFollowScript : MonoBehaviour {
 
 
     void CameraZoom() {
-        if (Input.GetKeyDown(KeyCode.Home)) {
+        if (Input.GetKeyDown(GameManagerScript.ins.CenterCamera)) {
             Camera.main.orthographicSize = defaultOrthoSize;
             cameraLocked = true;
         }
@@ -80,28 +80,28 @@ public class CameraFollowScript : MonoBehaviour {
     void CameraKeyMovement() {
 
         Vector2 vel = Vector2.zero;
-        if (Input.GetKey(KeyCode.D)) {
+        if (Input.GetKey(GameManagerScript.ins.MoveRight)) {
             vel = new Vector2(1, vel.y);
         }
-        if (Input.GetKey(KeyCode.A)) {
+        if (Input.GetKey(GameManagerScript.ins.MoveLeft)) {
             vel = new Vector2(-1, vel.y);
         }
-        if (Input.GetKey(KeyCode.W)) {
+        if (Input.GetKey(GameManagerScript.ins.MoveUp)) {
             vel = new Vector2(vel.x, 1);
         }
-        if (Input.GetKey(KeyCode.S)) {
+        if (Input.GetKey(GameManagerScript.ins.MoveDown)) {
             vel = new Vector2(vel.x, -1);
         }
-        if (Input.GetKeyUp(KeyCode.D)) {
+        if (Input.GetKeyUp(GameManagerScript.ins.MoveRight)) {
             vel = new Vector2(0, vel.y);
         }
-        if (Input.GetKeyUp(KeyCode.A)) {
+        if (Input.GetKeyUp(GameManagerScript.ins.MoveLeft)) {
             vel = new Vector2(0, vel.y);
         }
-        if (Input.GetKeyUp(KeyCode.W)) {
+        if (Input.GetKeyUp(GameManagerScript.ins.MoveUp)) {
             vel = new Vector2(vel.x, 0);
         }
-        if (Input.GetKeyUp(KeyCode.S)) {
+        if (Input.GetKeyUp(GameManagerScript.ins.MoveDown)) {
             vel = new Vector2(vel.x, 0);
         }
         Vector3 pos = new Vector3(vel.x, vel.y, 0);

@@ -95,7 +95,7 @@ public class CombatHUDAttack : MonoBehaviour {
 
         //if we have selected a spell, check for firemode swich call
         if (selectedSpell) {
-            if (Input.GetKeyDown(KeyCode.Q)) {
+            if (Input.GetKeyDown(GameManagerScript.ins.ToggleFireMode)) {
                 SwitchFireMode();
             }
             SetMouse(); //set selectspell's firemode object accordingly

@@ -61,7 +61,7 @@ public class UIManager : MonoBehaviour {
     void Update() {
 
         //check to open/close menu elements
-        if (Input.GetKeyDown(KeyCode.Tab)) {
+        if (Input.GetKeyDown(GameManagerScript.ins.OpenMenu)) {
             TabPanel.gameObject.SetActive(!TabPanel.gameObject.activeInHierarchy);
         } //end
 
