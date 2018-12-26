@@ -36,6 +36,7 @@ public class FactionManagerScript : MonoBehaviour {
                 Destroy(gameObject);
             }
         }
+        DontDestroyOnLoad(gameObject);
         CreateFactionRelations();
         //print(IsNeutral(Faction.GANG, Faction.CIVILIAN));
         //SetFactionRelation(Faction.BLACKROSE, Faction.EMPIRE, -999);
