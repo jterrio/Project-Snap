@@ -17,7 +17,8 @@ public class SpellManagerScript : MonoBehaviour {
                 Destroy(gameObject);
             }
         }
-	}
+        DontDestroyOnLoad(gameObject);
+    }
 
     /// <summary>
     /// used by the player
