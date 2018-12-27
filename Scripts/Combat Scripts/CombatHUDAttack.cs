@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class CombatHUDAttack : MonoBehaviour {
 
@@ -43,7 +44,8 @@ public class CombatHUDAttack : MonoBehaviour {
         public int hash; //random hash
         public GameObject attackTarget; 
         public FireMode fireMode; //fire mode of the spell
-        public bool selfCast = false;
+        public bool selfCast = false; //if the spell is cast from self
+        public bool isCasting = false; //if the spell is currently in spell queue
 
         void Start() {
             mt = MoveType.Attack;
@@ -89,6 +91,7 @@ public class CombatHUDAttack : MonoBehaviour {
     //called every frame
     void Update() {
         UpdateMemory(); //update positions in memory
+        VerifyAttacksOnLine(); //verify attacks on the line (could happen from re-mapping or error)
         if (!isSelected) {
             return;
         }
@@ -145,6 +148,10 @@ public class CombatHUDAttack : MonoBehaviour {
         a.loggedInfo = (RectTransform)Instantiate(combatHUDLog.logPrefab, combatHUDLog.gridlayout);
         a.loggedInfo.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = a.ReturnMsg();
         a.loggedInfo.GetComponentInChildren<CancelSpellScript>().parent = a;
+        if(a.fireMode != FireMode.TARGET) {
+            a.loggedInfo.GetComponentInChildren<Slider>().gameObject.SetActive(false);
+        }
+        SortAttackLayout();
     }
 
     /// <summary>
@@ -157,8 +164,94 @@ public class CombatHUDAttack : MonoBehaviour {
                 Destroy(a.attackObject.gameObject);
                 Destroy(a.loggedInfo.gameObject);
                 loggedAttacks.Remove(a);
+                return;
             }
         }
+    }
+
+    /// <summary>
+    /// Sort logged attacks in order to be cast
+    /// </summary>
+    public void SortAttackLayout() {
+
+        //get copies of the gridlayout
+        List<Transform> gridLayoutChildren = new List<Transform>();
+        foreach (Transform child in combatHUDLog.gridlayout) {
+            gridLayoutChildren.Add(child);
+        }
+        //make the parent free for re-assignment
+        combatHUDLog.gridlayout.DetachChildren();
+
+        //get all spells that are in queue and being cast
+        foreach(Attack a in GameManagerScript.ins.player.GetComponent<PlayerInfo>().spellQueue) {
+            foreach(Transform t in new List<Transform>(gridLayoutChildren)) {
+                if(t == a.loggedInfo.transform) {
+                    a.loggedInfo.transform.SetParent(combatHUDLog.gridlayout);
+                    gridLayoutChildren.Remove(t);
+                }
+            }
+        }
+
+        //get all other spells
+        List<Attack> toSortAttacks = new List<Attack>(loggedAttacks);
+        List<Attack> onLineAttacks = new List<Attack>();
+        foreach(CombatHUDLog.Movement m in combatHUDLog.loggedMoves) {
+            foreach(Attack a in new List<Attack>(toSortAttacks)) {
+                //its on the line/path
+                if(a.hash == m.hash) {
+                    onLineAttacks.Add(a);
+                }
+            }
+            Vector3 lastPosition = GameManagerScript.ins.player.transform.position;
+            List<Attack> toCompareAttacks = new List<Attack>();
+            foreach(Vector3 v in m.destination) {
+                foreach (Attack b in new List<Attack>(onLineAttacks)) {
+                    if (IsPointOnLine(lastPosition, v, b.attackPoint)) {
+                        toCompareAttacks.Add(b);
+                        onLineAttacks.Remove(b);
+                    }
+                }
+
+                while(toCompareAttacks.Count > 0) {
+                    Attack closest = null;
+                    foreach(Attack c in toCompareAttacks) {
+                        if(closest == null) {
+                            closest = c;
+                        }else if(Vector3.Distance(closest.attackPoint, lastPosition) > Vector3.Distance(c.attackPoint, lastPosition)) {
+                            closest = c;
+                        }
+                    }
+                    toCompareAttacks.Remove(closest);
+                    closest.loggedInfo.SetParent(combatHUDLog.gridlayout);
+                }
+                lastPosition = v;
+            }
+
+        }
+
+    }
+
+
+    /// <summary>
+    /// Test whether a given point is on a given line between two points
+    /// </summary>
+    /// <param name="startP">Start of the line</param>
+    /// <param name="endP">End of the line</param>
+    /// <param name="testP">Point to test against</param>
+    /// <returns>Returns true if the point is on the line</returns>
+    bool IsPointOnLine(Vector3 startP, Vector3 endP, Vector3 testP) {
+        bool toReturn = false;
+        Vector3 startToEnd = (endP - startP);
+        Vector3 testToEnd = (endP - testP);
+        Vector3 startToTest = (testP - startP);
+        float a = Vector3.Dot(startToTest, startToEnd);
+        float b = (testP.x - startP.x) * (testP.x - startP.x) + (testP.y - startP.y) * (testP.y - startP.y);
+
+        if ((Vector3.SqrMagnitude(Vector3.Cross(startToEnd, testToEnd)) < 0.1f) && (a >= 0) && (a >= (b - 0.1f))) {
+            toReturn = true;
+        }
+        return toReturn;
+
     }
 
     /// <summary>
@@ -465,6 +558,7 @@ public class CombatHUDAttack : MonoBehaviour {
                     float b = (mousePosition.x - startPoint.x) * (mousePosition.x - startPoint.x) + (mousePosition.y - startPoint.y) * (mousePosition.y - startPoint.y);
                     
                     if ((Vector3.SqrMagnitude(Vector3.Cross(lineDir, mouseEndDir)) < 0.1f) && (a >= 0) && (a >= (b - 0.1f))) {
+                        selectedSelf = false;
                         float percentage = mouseStartDir.magnitude / lineDir.magnitude;
                         if (tempAttack == null) {
                             tempAttack = Instantiate(attackOnLinePrefab);
@@ -611,18 +705,52 @@ public class CombatHUDAttack : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Verifys if each attack point is on the movement path, if not, it deletes it and removes from queue
+    /// </summary>
+    public void VerifyAttacksOnLine() {
+        List<Attack> toVerify = new List<Attack>();
+        List<Attack> spellQueue = GameManagerScript.ins.player.GetComponent<PlayerInfo>().spellQueue;
+        foreach (CombatHUDLog.Movement m in combatHUDLog.loggedMoves) {
+            foreach (Attack a in loggedAttacks) {
+                //its on the line/path
+                if (a.hash == m.hash && !spellQueue.Contains(a)) {
+                    toVerify.Add(a);
+                }
+            }
+            Vector3 lastPosition = GameManagerScript.ins.player.transform.position;
+            bool onLine = false;
+            foreach (Attack b in new List<Attack>(toVerify)) {
+                foreach (Vector3 v in m.destination) {
+                    if (IsPointOnLine(lastPosition, v, b.attackPoint)) {
+                        onLine = true;
+                    }
+                    lastPosition = v;
+                }
+                lastPosition = GameManagerScript.ins.player.transform.position;
+                if (!onLine) {
+                    toVerify.Remove(b);
+                    RemoveAttackFromLayout(b);
+                }
+            }
+
+        }
+    }
+
     public void CheckAttacks() {
         if(hasClicked == true) {
             return;
         }
         foreach (Attack a in new List<Attack>(loggedAttacks)) {
             if (a.selfCast) {
+                a.isCasting = true;
                 Destroy(a.attackObject);
                 loggedAttacks.Remove(a);
                 GameManagerScript.ins.playerInfo.spellQueue.Add(a);
             } else if(a.hash == CombatManager.ins.combatHUDLog.loggedMoves[0].hash) {
                 //CHECK IF THE SPELL IS CLOSE ENOUGH TO BE CASTED AND IF hasCLICKED IS FALSE TO PREVENT CLICKING AND ADDING TO QUEUE
                 if (Vector3.Distance(GameManagerScript.ins.GetPlayerFeetPosition(), a.attackPoint) <= 0.2f && hasClicked == false) {
+                    a.isCasting = true;
                     Destroy(a.attackObject);
                     loggedAttacks.Remove(a);
                     //send to a queue in the player and then a queue to spell manager
