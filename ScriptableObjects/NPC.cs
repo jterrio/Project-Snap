@@ -15,6 +15,109 @@ public class NPC : ScriptableObject {
 
     public Item[] itemPool;
     public FactionManagerScript.Faction faction;
+    public string description;
+    public enum Integrity {
+        GENUINE,
+        AVERAGE,
+        INGENUINE
+    }
+    public enum Creativity {
+        CREATIVE,
+        AVERAGE,
+        UNCREATIVE
+    }
+    public enum Humor {
+        JOKESTER,
+        AVERAGE,
+        SERIOUS,
+    }
+    public enum Attitude {
+        Arrogant,
+        AVERAGE,
+        SelfDepricating
+    }
+    public enum Mind {
+        MEATHEAD,
+        AVERAGE,
+        SAVVY
+    }
+    public enum Learning {
+        BOOKWORM,
+        AVERAGE,
+        HANDSON
+    }
+    public enum Leadership {
+        DIRECT,
+        AVERAGE,
+        UNCLEAR
+    }
+    public enum Commitment {
+        COMMITTED,
+        AVERAGE,
+        PROCRASTINATOR
+    }
+    public enum Thinking {
+        QUICKTHINKER,
+        AVERAGE,
+        SLOW
+    }
+    public enum Loyal {
+        LOYAL,
+        AVERAGE,
+        UNLOYAL
+    }
+    public enum Intelligence {
+        INTELLIGENT,
+        AVERAGE,
+        UNINTELLIGENT
+    }
+    public enum Travel {
+        WONDERLUST,
+        AVERAGE,
+        SHUTIN
+    }
+    public enum Charisma {
+        CHARISMATIC,
+        AVERAGE,
+        DULL
+    }
+    public enum Friendship {
+        FRIENDLY,
+        AVERAGE,
+        UNFRIENDLY
+    }
+    public enum Sex {
+        MALE,
+        FEMALE
+    }
+    public enum Body {
+        BUFF,
+        Average,
+        Scrawny
+    }
+    public enum Height {
+        Tall,
+        Average,
+        Short
+    }
+    public enum Hair {
+        LONGCURLY,
+        SHORTSHTRAIGHT,
+        SHORTCURLY,
+        LONGSTRAIGTH,
+        BALD,
+        RECEDING,
+        THINNING
+    }
+    public enum HairColor {
+        BLONDE,
+        BROWN,
+        BLACK,
+        GREY,
+        WHITE,
+        RED
+    }
+
 
     /*public enum Faction {
         EMPIRE, //those allied to sasha but not in black rose and are fighting against daud
