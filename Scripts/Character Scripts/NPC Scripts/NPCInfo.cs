@@ -6,17 +6,17 @@ public class NPCInfo : CharacterInfo {
 
     public NPC npc;
 
-    private NPCSpeechHolder speech;
-    public bool isTalkable;
-    public bool isMerchant;
-    public bool isKeyNPC;
-    public bool hasQuests;
+    [HideInInspector] private NPCSpeechHolder speech;
+    [HideInInspector] public bool isTalkable;
+    [HideInInspector] public bool isMerchant;
+    [HideInInspector] public bool isKeyNPC;
+    [HideInInspector] public bool hasQuests;
 
 
     public Inventory merchantInventory;
     public float merchantMoney;
     //public NPC.Faction faction;
-    public FactionManagerScript.Faction faction;
+    [HideInInspector] public FactionManagerScript.Faction faction;
     public NPC.MovementType movementType;
 
     public GameObject areaPoint; //for the movementtype.area
@@ -63,20 +63,20 @@ public class NPCInfo : CharacterInfo {
             case NPC.MovementType.AREA:
                 //
                 polyNav.OnDestinationReached -= ResetStationary;
-                polyNav.OnDestinationReached -= GetNextPatrolPoint;
+                polyNav.OnDestinationReached -= RemoveLastPatrolPointReached;
                 polyNav.OnDestinationReached += GetNewAreaPoint;
                 break;
             case NPC.MovementType.PATROL:
                 //
                 polyNav.OnDestinationReached -= GetNewAreaPoint;
                 polyNav.OnDestinationReached -= ResetStationary;
-                polyNav.OnDestinationReached += GetNextPatrolPoint;
+                polyNav.OnDestinationReached += RemoveLastPatrolPointReached;
                 break;
             case NPC.MovementType.STATIONARY:
                 //set start direction
                 ResetStationary();
                 polyNav.OnDestinationReached -= GetNewAreaPoint;
-                polyNav.OnDestinationReached -= GetNextPatrolPoint;
+                polyNav.OnDestinationReached -= RemoveLastPatrolPointReached;
                 polyNav.OnDestinationReached += ResetStationary;
                 break;
         }
@@ -114,7 +114,6 @@ public class NPCInfo : CharacterInfo {
     void AreaMovement() {
         if(!isWaiting && !isMoving && !isTalking) {
             GetNewAreaPoint();
-
         }
     }
 
@@ -147,6 +146,10 @@ public class NPCInfo : CharacterInfo {
         }
     }
 
+    public void StopTalk() {
+        isTalking = false;
+    }
+
     void GetNewAreaPoint() {
         isMoving = false;
         waitCoroutine = StartCoroutine(StartWaitingArea());
@@ -171,26 +174,39 @@ public class NPCInfo : CharacterInfo {
             isWaiting = false;
             isMoving = true;
             polyNav.SetDestination(patrolPoints[0].transform.position);
-            patrolPoints.Add(patrolPoints[0]);
-            patrolPoints.Remove(patrolPoints[0]);
         }
     }
 
-    //movement for the patrol type
+    /// <summary>
+    /// movement for the patrol type
+    /// </summary>
     void PatrolMovement() {
         if (!isWaiting && !isMoving && !isTalking) {
             GetNextPatrolPoint();
         }
     }
 
+    /// <summary>
+    /// For when we reach the patrol point
+    /// </summary>
+    void RemoveLastPatrolPointReached() {
+        patrolPoints.Add(patrolPoints[0]);
+        patrolPoints.Remove(patrolPoints[0]);
+        GetNextPatrolPoint();
+    }
 
+    /// <summary>
+    /// Begin waiting
+    /// </summary>
     void GetNextPatrolPoint() {
         isMoving = false;
         waitCoroutine = StartCoroutine(StartWaitingPatrol());
     }
 
 
-    //movement for the stationary type
+    /// <summary>
+    /// movement for the stationary type
+    /// </summary>
     void StationaryMovement() {
         if (transform.position != stationaryPoint.transform.position && !isTalking) {
             polyNav.SetDestination(stationaryPoint.transform.position);
