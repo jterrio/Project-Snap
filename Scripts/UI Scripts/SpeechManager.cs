@@ -248,7 +248,7 @@ public class SpeechManager : MonoBehaviour {
         npcSpeech.currentLine = 0;
         player.GetComponent<PlayerMovementScript>().CanPlayerMove = true;
         npcInfo.InitPosition();
-        npcInfo.isTalking = false;
+        npcInfo.StopTalk();
         npcSpeech = null;
         pInfo = null;
         npcInfo = null;

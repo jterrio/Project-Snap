@@ -84,10 +84,15 @@ public class CombatScript : MonoBehaviour {
 
     //called every frame
     void Update() {
+
+
         if(npcInfo == null) { //check to see if initilization went wrong
             Awake(); //re-init
             return;
+        }else if (!npcInfo.inCombat) {
+            return;
         }
+
         UpdateMemory();
         SetState(); //get info about self and world and set the ai state accordingly
         if (state != CombatState.DYING) { //check if it isnt dead

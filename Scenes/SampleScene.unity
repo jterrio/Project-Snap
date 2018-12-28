@@ -3505,6 +3505,11 @@ PrefabInstance:
       propertyPath: audio
       value: 
       objectReference: {fileID: 8300000, guid: 1d05fce675b991843be96d384c98b3f6, type: 3}
+    - target: {fileID: 114304761002017980, guid: 55630cc1951e31b409cdc9a4a4c96fd4,
+        type: 3}
+      propertyPath: audioToPlay
+      value: 
+      objectReference: {fileID: 8300000, guid: 1d05fce675b991843be96d384c98b3f6, type: 3}
     - target: {fileID: 65715765175847186, guid: 55630cc1951e31b409cdc9a4a4c96fd4,
         type: 3}
       propertyPath: m_IsTrigger
@@ -7627,7 +7632,7 @@ MonoBehaviour:
   _map: {fileID: 279604253}
   maxSpeed: 2.6
   mass: 20
-  stoppingDistance: 0
+  stoppingDistance: 0.1
   slowingDistance: 0.1
   accelerationRate: 5
   decelerationRate: 5
@@ -7717,7 +7722,7 @@ MonoBehaviour:
   spirituality: 1
   dexterity: 10
   perception: 10
-  attitude: -100
+  attitude: 100
   fear: 0
   danger: 0
 --- !u!114 &776057295
@@ -10024,6 +10029,11 @@ PrefabInstance:
       propertyPath: audio
       value: 
       objectReference: {fileID: 8300000, guid: 1d05fce675b991843be96d384c98b3f6, type: 3}
+    - target: {fileID: 114304761002017980, guid: 55630cc1951e31b409cdc9a4a4c96fd4,
+        type: 3}
+      propertyPath: audioToPlay
+      value: 
+      objectReference: {fileID: 8300000, guid: 1d05fce675b991843be96d384c98b3f6, type: 3}
     - target: {fileID: 65715765175847186, guid: 55630cc1951e31b409cdc9a4a4c96fd4,
         type: 3}
       propertyPath: m_IsTrigger
@@ -11256,6 +11266,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1935789441055798, guid: dc0fc5471c8d19e4a88db1f7a11f2cc1, type: 3}
+      propertyPath: m_Name
+      value: Player
+      objectReference: {fileID: 0}
     - target: {fileID: 4646916850192338, guid: dc0fc5471c8d19e4a88db1f7a11f2cc1, type: 3}
       propertyPath: m_LocalPosition.x
       value: 2.9
@@ -11288,26 +11302,23 @@ PrefabInstance:
       propertyPath: m_RootOrder
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 4646916850192338, guid: dc0fc5471c8d19e4a88db1f7a11f2cc1, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4646916850192338, guid: dc0fc5471c8d19e4a88db1f7a11f2cc1, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4646916850192338, guid: dc0fc5471c8d19e4a88db1f7a11f2cc1, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 114379264451516218, guid: dc0fc5471c8d19e4a88db1f7a11f2cc1,
         type: 3}
       propertyPath: _map
       value: 
       objectReference: {fileID: 279604253}
-    - target: {fileID: 114583318065831654, guid: dc0fc5471c8d19e4a88db1f7a11f2cc1,
-        type: 3}
-      propertyPath: perception
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 212987113094775800, guid: dc0fc5471c8d19e4a88db1f7a11f2cc1,
-        type: 3}
-      propertyPath: m_SortingLayerID
-      value: -459180299
-      objectReference: {fileID: 0}
-    - target: {fileID: 212987113094775800, guid: dc0fc5471c8d19e4a88db1f7a11f2cc1,
-        type: 3}
-      propertyPath: m_SortingLayer
-      value: 4
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: dc0fc5471c8d19e4a88db1f7a11f2cc1, type: 3}
 --- !u!1 &1224864446
@@ -11552,7 +11563,7 @@ MonoBehaviour:
   _map: {fileID: 279604253}
   maxSpeed: 2.6
   mass: 20
-  stoppingDistance: 0
+  stoppingDistance: 0.1
   slowingDistance: 0.1
   accelerationRate: 5
   decelerationRate: 5
@@ -11642,7 +11653,7 @@ MonoBehaviour:
   spirituality: 1
   dexterity: 10
   perception: 10
-  attitude: -100
+  attitude: 100
   fear: 0
   danger: 0
 --- !u!114 &1254768301
@@ -11692,7 +11703,7 @@ MonoBehaviour:
   merchantInventory: {fileID: 1254768298}
   merchantMoney: 0
   faction: 0
-  movementType: 2
+  movementType: 1
   areaPoint: {fileID: 1605157499}
   radiusOfArea: 2
   patrolPoints:
@@ -17357,7 +17368,7 @@ MonoBehaviour:
   _map: {fileID: 279604253}
   maxSpeed: 2.6
   mass: 20
-  stoppingDistance: 0
+  stoppingDistance: 0.1
   slowingDistance: 0.1
   accelerationRate: 5
   decelerationRate: 5
@@ -17406,7 +17417,7 @@ MonoBehaviour:
   spirituality: 1
   dexterity: 10
   perception: 10
-  attitude: -100
+  attitude: 100
   fear: 0
   danger: 0
 --- !u!114 &1942604916
