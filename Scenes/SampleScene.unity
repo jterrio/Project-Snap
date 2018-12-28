@@ -3505,6 +3505,11 @@ PrefabInstance:
       propertyPath: audio
       value: 
       objectReference: {fileID: 8300000, guid: 1d05fce675b991843be96d384c98b3f6, type: 3}
+    - target: {fileID: 114304761002017980, guid: 55630cc1951e31b409cdc9a4a4c96fd4,
+        type: 3}
+      propertyPath: audioToPlay
+      value: 
+      objectReference: {fileID: 8300000, guid: 1d05fce675b991843be96d384c98b3f6, type: 3}
     - target: {fileID: 65715765175847186, guid: 55630cc1951e31b409cdc9a4a4c96fd4,
         type: 3}
       propertyPath: m_IsTrigger
@@ -10022,6 +10027,11 @@ PrefabInstance:
     - target: {fileID: 114304761002017980, guid: 55630cc1951e31b409cdc9a4a4c96fd4,
         type: 3}
       propertyPath: audio
+      value: 
+      objectReference: {fileID: 8300000, guid: 1d05fce675b991843be96d384c98b3f6, type: 3}
+    - target: {fileID: 114304761002017980, guid: 55630cc1951e31b409cdc9a4a4c96fd4,
+        type: 3}
+      propertyPath: audioToPlay
       value: 
       objectReference: {fileID: 8300000, guid: 1d05fce675b991843be96d384c98b3f6, type: 3}
     - target: {fileID: 65715765175847186, guid: 55630cc1951e31b409cdc9a4a4c96fd4,
