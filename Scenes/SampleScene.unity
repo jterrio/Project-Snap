@@ -8624,8 +8624,8 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 1993677807395592, guid: 50da1bf508bffdd42841171b90825fe2, type: 3}
-      propertyPath: m_Layer
-      value: 2
+      propertyPath: m_Name
+      value: Chest
       objectReference: {fileID: 0}
     - target: {fileID: 4581245285266666, guid: 50da1bf508bffdd42841171b90825fe2, type: 3}
       propertyPath: m_LocalPosition.x
@@ -8659,29 +8659,17 @@ PrefabInstance:
       propertyPath: m_RootOrder
       value: 22
       objectReference: {fileID: 0}
-    - target: {fileID: 114780472138556548, guid: 50da1bf508bffdd42841171b90825fe2,
-        type: 3}
-      propertyPath: extraOffset
-      value: 0.9
+    - target: {fileID: 4581245285266666, guid: 50da1bf508bffdd42841171b90825fe2, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 61500486234929100, guid: 50da1bf508bffdd42841171b90825fe2,
-        type: 3}
-      propertyPath: m_Enabled
-      value: 1
+    - target: {fileID: 4581245285266666, guid: 50da1bf508bffdd42841171b90825fe2, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 1727610890629920, guid: 50da1bf508bffdd42841171b90825fe2, type: 3}
-      propertyPath: m_Layer
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 212828941318527488, guid: 50da1bf508bffdd42841171b90825fe2,
-        type: 3}
-      propertyPath: m_SortingLayerID
-      value: -459180299
-      objectReference: {fileID: 0}
-    - target: {fileID: 212828941318527488, guid: 50da1bf508bffdd42841171b90825fe2,
-        type: 3}
-      propertyPath: m_SortingLayer
-      value: 4
+    - target: {fileID: 4581245285266666, guid: 50da1bf508bffdd42841171b90825fe2, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 50da1bf508bffdd42841171b90825fe2, type: 3}
