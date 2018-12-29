@@ -1,6 +1,6 @@
 import math
 import random
-#Ryan = "is a buthead"
+archetype = ""
 intuition = 0
 intelligence = 0
 strength = 0
@@ -8,6 +8,10 @@ charisma = 0
 precision = 0
 dexterity = 0
 perception = 0
+canUseMagic = False
+weaponType = ["Gun","Sword","GunSword","GunMage","MageSword","Magic"]
+favWeapon = "Nothing"
+
 def Character(startingStat,startingPer):
     global intuition
     global intelligence
@@ -100,33 +104,162 @@ def FinalizeValues():
         
     
 
-top = 70
-midBot = 31
+top = 85
+midBot = 16
 #returns a number bewtween 1 and 100
 def RandomNum():
     return math.floor(random.randint(1,100))
 
 #returns what type of npc they are going to be and the starting stats
 def NpcType():
+    global archetype
+    global canUseMagic
+    global weaponType
+    global favWeapon
     rando = RandomNum()
     #Goverment People
     if(rando >= 80):
-        Character(40,9)
-        print("Goverment Person", end = '\n')
+        Character(45,9)
+        archetype = "Government Person"
+        rando = RandomNum()
+        #Can they use magic
+        if(rando > 15):
+            canUseMagic = True
 
-    #Average Person
-    elif(rando < 80 and rando > 50):
-        Character(20,7)
-        print("Average Person", end = '\n')
+        else:
+            canUseMagic = False
+        #print("Goverment Person", end = '\n')
 
-    #Peasant
-    elif(rando <= 59 and rando > 10):
-        Character(10,4)
-        print("Peasant", end = '\n')
+    #Students: Mages, Non Mage but study magic, don't study magic
+    elif(rando < 80 and rando > 55):
+        rando = RandomNum()
+        Character(40,8)
+        #Mages
+        if(rando >= 60):
+            updateUnd(5)
+            updateInt(-5)
+            updateStr(5)
+            updateDex(5)
+            updatePrc(5)
+            updatePer(2)
+            archetype = "Mage Student"
+            canUseMagic = True
+            
+        #NonMage but sudy magic
+        elif(rando < 55 and rando >= 35):
+            updateUnd(-5)
+            updateInt(5)
+            updatePrc(3)
+            updatePer(2)
+            archetype = "Study Magic Student"
+            canUseMagic = False
+
+        #Don't study magic
+        else:
+            rando = RandomNum()
+            #Can they use magic
+            if(rando > 30):
+                canUseMagic = True
+
+            else:
+                canUseMagic = False
+
+            rando = RandomNum()
+            #Jock
+            if(rando >= 60):
+                updateStr(5)
+                updateDex(5)
+                updatePrc(5)
+                updatePer(1)
+                archetype = "Jock Sudent"
+
+            #Intellectual Study
+            elif(rando < 60 and rando >= 35):
+                updateUnd(5)
+                updateInt(5)
+                updatePer(2)
+                archetype = "Intellectual Student"
+
+            #General Studies
+            else:
+                updateUnd(2)
+                updateInt(2)
+                updateStr(2)
+                updateDex(2)
+                updatePrc(2)
+                archetype = "Average Student"
+                
+    #People on the streets
+    elif(rando <= 60 and rando > 5):
+        rando = RandomNum()
+        #Can they use magic
+        if(rando > 30):
+            canUseMagic = True
+
+        else:
+            canUseMagic = False
+
+        rando = RandomNum()
+        #Average Person
+        if(rando > 40):
+            Character(30,7)
+            archetype = "Average Person"
+            
+        #Lower Class    
+        else:
+            Character(10,4)
+            archetype = "Lower Class"
+            
     #Hero Type
     else:
-        Character(60,13)
-        print("Hero", end = '\n')
+        Character(65,13)
+        archetype = "Hero"
+        rando = RandomNum()
+        if(rando > 50):
+            canUseMagic = True
+
+        else:
+            canUseMagic = False
+
+    #Determine their fighting style
+    rando = RandomNum()
+    if(canUseMagic):
+        #Gun Mage
+        if(rando >= 66):
+            updatePrc(5)
+            updatePer(1)
+            favWeapon = weaponType[3]
+
+        #Sword Mage
+        elif(rando < 66 and rando > 33):
+            updateStr(5)
+            updatePer(1)
+            favWeapon = weaponType[4]
+
+        #Mage   
+        else:
+            updateStr(3)
+            updateDex(3)
+            updatePrc(3)
+            updatePer(1)
+            favWeapon = weaponType[5]
+
+    else:
+        #Gun
+        if(rando >= 66):
+            updatePrc(5)
+            favWeapon = weaponType[0]
+
+        #Sword
+        elif(rando < 66 and rando > 33):
+            updateStr(5)
+            favWeapon = weaponType[1]
+
+        #GunSword
+        else:
+            updatePrc(3)
+            updateStr(3)
+            favWeapon = weaponType[2]
 
 #creates an array of atributes to define an npc
 def Atributes():
@@ -431,44 +564,60 @@ def Traits():
     #Hair Type
     rando = RandomNum()
     if(rando > 84):
-        traits[3] = "Long-Curly"
+        traits[4] = "Long-Curly"
         
     elif(rando <= 84 and rando > 67):
-        traits[3] = "Short-Straight"
+        traits[4] = "Short-Straight"
         
     elif(rando <= 67 and rando > 51):
-        traits[3] = "Short-Curly"
+        traits[4] = "Short-Curly"
         
     elif(rando <= 51 and rando > 34):
-        traits[3] = "Long-Straight"
+        traits[4] = "Long-Straight"
         
     elif(rando <= 34 and rando > 17):
-        traits[3] = "Bald"
+        traits[4] = "Bald"
+        if(traits[0] == "Female"):
+            traits[4] = "Thinning"
         
     else:
-        traits[3] = "Receding"
+        traits[4] = "Receding"
 
     #Hair Color
     rando = RandomNum()
     if(rando > 84):
-        traits[4] = "Blonde"
+        traits[3] = "Blonde"
         if(traits[0] == "Female"):
             updateInt(-20)
         
     elif(rando <= 84 and rando > 67):
-        traits[4] = "Brown"
+        traits[3] = "Brown"
         
     elif(rando <= 67 and rando > 51):
-        traits[4] = "Black"
+        traits[3] = "Black"
         
     elif(rando <= 51 and rando > 34):
-        traits[4] = "Grey"
+        traits[3] = "Grey"
         
     elif(rando <= 34 and rando > 17):
-        traits[4] = "White"
+        traits[3] = "White"
         
     else:
-        traits[4] = "Red"
+        traits[3] = "Red"
+
+    #Skin Tone
+    rando = RandomNum()
+    if(rando >= 30):
+        traits[5] = "White"
+        
+    elif(rando < 30 and rando >= 20):
+        traits[5] = "Light-Brown"
+
+    elif(rando < 30 and rando >= 20):
+        traits[5] = "Brown"
+    
+    else:
+        traits[5] = "Dark-Brown"
         
     return traits
 
@@ -480,10 +629,21 @@ def Run():
     global precision
     global dexterity
     global perception
+    global archetype
+    global canUseMagic
+    global favWeapon
     NpcType()#Creating the Character base stats and Choosing What type they will be peasant Average Joe...
+    print(archetype, end = "\n")
+    if(canUseMagic):
+        print("Can use Magic")
+
+    else:
+        print("Cannot use Magic")
+
+    print("Favorite weapon type is", favWeapon, end = "\n")
     personalityTraits = Atributes()#Personality Traits being made
     physicalTraits = Traits()#Physical Traits being made, possibaly spirt chooser
-    #FinalizeValues()#Fixes any stat issues
+    FinalizeValues()#Fixes any stat issues
     print("Intuition:", intuition, end = "\n")
     print("Intelligence:", intelligence, end = "\n")
     print("Strength:", strength, end = "\n")

@@ -285,7 +285,7 @@ MonoBehaviour:
   _map: {fileID: 0}
   maxSpeed: 2.6
   mass: 20
-  stoppingDistance: 0
+  stoppingDistance: 0.1
   slowingDistance: 0.1
   accelerationRate: 5
   decelerationRate: 5
