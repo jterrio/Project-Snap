@@ -7,7 +7,7 @@ http://forum.unity3d.com/threads/released-free-pixel-perfect-camera.416141/
 How to use video:
 https://www.youtube.com/watch?v=OuTMcY3H2j8
 
-Please read the documentation inside the scripts for more in-depth information: PixelPerfectCamera.cs, PixelSnap.cs, CanvasWorldScaler.cs, CanvasScreenSpaceScaler.
+Please read the documentation inside the scripts for more in-depth information: PixelPerfectCamera.cs, PixelSnap.cs, CanvasWorldScaler.cs, CanvasScreenSpaceScaler.cs
 
 ## Instructions for Pixel Perfect Camera:
 
@@ -47,7 +47,7 @@ Note that under Unity's editor, the Game view may appear scaled if the "Scale" s
 
 ## Instructions for Canvas:
 
-The following assume that you have placed the PixelPerfectCamera.cs script on the camera.
+The following assume that you have placed the PixelPerfectCamera.cs script on the camera. Also, use the "Script execution order" to place CanvasWorldScaler.cs and CanvasScreenSpaceScaler.cs after PixelPerfectCamera.cs .
 
 If you use a Canvas that has "World Space" render mode, you will get a pixel-perfect result out of the box (assuming that you have enabled "pixel perfect"). If you want the canvas size to match the camera's size, do the following:
 
