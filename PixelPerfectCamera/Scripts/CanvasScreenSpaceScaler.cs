@@ -53,11 +53,6 @@ public class CanvasScreenSpaceScaler : MonoBehaviour {
         Initialize(true);
     }
 
-    void OnValidate()
-    {
-        Initialize(true);
-    }
-
 	//#if UNITY_EDITOR
 	void Update ()
     {
