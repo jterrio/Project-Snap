@@ -1601,7 +1601,7 @@ GameObject:
   - component: {fileID: 187231656}
   - component: {fileID: 187231655}
   - component: {fileID: 187231657}
-  m_Layer: 10
+  m_Layer: 2
   m_Name: Unwalk_Layer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
