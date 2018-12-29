@@ -11,6 +11,7 @@ public class CombatManager : MonoBehaviour {
     public PlayerDrawCombatMovePosition combatDrawMovePosition;
     public static GameObject playerCombatHandler; //the combat handler that the player is particpating in, if they are in combat;
     public List<GameObject> allCombatHandlers;
+    public float joinDistance = 10f;
 
     public LayerMask obstacleTest;
     public LayerMask characterTest;
@@ -33,15 +34,12 @@ public class CombatManager : MonoBehaviour {
 
     void Update() {
         RemoveHandlers(); //remove destroyed combat handlers
-        if(playerCombatHandler == null) {
-            return; //we dont need to worry about merging handlers if the player is not in combat
-        }
-        CheckRange(); //see if we need to merge
+        CheckRange(); //see if we need to merge and player needs to join
     }
 
 
     /// <summary>
-    /// remove handlers that were destroyed, meaning that combat ended for them
+    /// Remove handlers that were destroyed, meaning that combat ended for them
     /// </summary>
     void RemoveHandlers() {
         List<GameObject> handlers = new List<GameObject>(allCombatHandlers);
@@ -53,30 +51,57 @@ public class CombatManager : MonoBehaviour {
     }
 
     /// <summary>
-    /// check range of handlers to the player's and see if they need to merge with it
+    /// Check range of handlers to the player's and see if they need to merge with it
     /// </summary>
     void CheckRange() {
-        foreach (GameObject handler in allCombatHandlers) {
-            if (handler == playerCombatHandler) {
-                continue; //dont need to check playerCombatHandler since we are comparing everything to it
-            }
-            //check positions relative to each other if the player is in combat
-            if (Vector3.Distance(handler.transform.position, playerCombatHandler.transform.position) <= 20) {
-                playerCombatHandler.GetComponent<CombatHandler>().AddLateCharacters(handler.GetComponent<CombatHandler>().charactersInCombat); //It should just add them to combat
-                allCombatHandlers.Remove(handler);
-                Destroy(handler);
-                return;
+
+        //Test to see if any handlers can merge into the player's handler, given that it exists
+        if (playerCombatHandler != null) {
+            foreach (GameObject handler in allCombatHandlers) {
+                if (handler == playerCombatHandler) {
+                    continue; //dont need to check playerCombatHandler since we are comparing everything to it
+                }
+                //check positions relative to each other if the player is in combat
+                if (Vector3.Distance(handler.transform.position, playerCombatHandler.transform.position) <= joinDistance) {
+                    MergeHandler(playerCombatHandler, handler);
+                    break;
+                }
             }
         }
+
+        //Test to see if anyone can get pulled in
+        foreach (GameObject handler in allCombatHandlers) {
+            Collider2D[] hitColliders = Physics2D.OverlapCircleAll(transform.position, joinDistance, CombatManager.ins.characterTest);
+            foreach (Collider2D c in hitColliders) {
+                if (!c.GetComponent<CharacterInfo>().inCombat) {
+                    if (c.gameObject == GameManagerScript.ins.player) {
+                        InitCombat(GameManagerScript.ins.player);
+                    } else {
+                        handler.GetComponent<CombatHandler>().AddLateCharacter(c.gameObject);
+                    }
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Merge handlers together into one big combat zone
+    /// </summary>
+    /// <param name="to">Handler to merge into</param>
+    /// <param name="from">Handler to merge from</param>
+    void MergeHandler(GameObject to, GameObject from) {
+        to.GetComponent<CombatHandler>().AddLateCharacters(from.GetComponent<CombatHandler>().charactersInCombat, from);
+        allCombatHandlers.Remove(from);
+        Destroy(from);
     }
 
     public void ManualEndTurnButton() {
         GameManagerScript.ins.player.GetComponent<CombatScript>().EndTurn();
     }
 
-    public void InitCombat(GameObject npc) {
+    public void InitCombat(GameObject c) {
         GameObject handler = Instantiate(combatHandler);
-        handler.gameObject.transform.position = npc.transform.position; 
+        handler.gameObject.transform.position = c.transform.position; 
     }
 
     public void SetPlayerHandler(GameObject handler) {

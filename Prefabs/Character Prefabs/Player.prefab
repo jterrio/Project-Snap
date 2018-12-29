@@ -201,10 +201,10 @@ GameObject:
   - component: {fileID: 95305690674099656}
   - component: {fileID: 50832860038896480}
   - component: {fileID: 114412876011535646}
-  - component: {fileID: 114569187881809124}
   - component: {fileID: 114379264451516218}
   - component: {fileID: 114843199992253482}
   - component: {fileID: 70924165830439798}
+  - component: {fileID: 1459207477}
   m_Layer: 9
   m_Name: Player
   m_TagString: Player
@@ -440,29 +440,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sr: {fileID: 212987113094775800}
---- !u!114 &114569187881809124
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1935789441055798}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7c8f0297ae070ad418238af8aea592ea, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  myStats: {fileID: 114583318065831654}
-  isReady: 0
-  endTurn: 0
-  targets: []
-  movementQueue: []
-  debugPoint: {fileID: 0}
-  difficulty: 1
-  hasAttackedRecently: 0
-  inCover: 0
-  inPartialCover: 0
-  state: 0
 --- !u!114 &114379264451516218
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -478,7 +455,7 @@ MonoBehaviour:
   _map: {fileID: 0}
   maxSpeed: 2.6
   mass: 20
-  stoppingDistance: 0.1
+  stoppingDistance: 0
   slowingDistance: 0.1
   accelerationRate: 5
   decelerationRate: 5
@@ -531,3 +508,26 @@ CapsuleCollider2D:
   m_Offset: {x: 0.017211385, y: -0.061474234}
   m_Size: {x: 0.53442276, y: 0.97705156}
   m_Direction: 0
+--- !u!114 &1459207477
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1935789441055798}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c8f0297ae070ad418238af8aea592ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  myStats: {fileID: 114583318065831654}
+  isReady: 0
+  endTurn: 0
+  targets: []
+  movementQueue: []
+  debugPoint: {fileID: 0}
+  difficulty: 1
+  hasAttackedRecently: 0
+  inCover: 0
+  inPartialCover: 0
+  state: 0

@@ -200,6 +200,7 @@ public class CharacterInfo : MonoBehaviour {
     }
 
 
+
     public void CastSpell() {
         spellCastCoroutine = StartCoroutine(SpellCoroutine());
     }

@@ -36,13 +36,15 @@ public class FieldOfVisionScript : MonoBehaviour {
     }
 
     void CheckSight() {
-        Vector3 targetDir = player.transform.position - transform.position; //get direction that we need to test
-        float distance = Vector3.Distance(player.transform.position, transform.position); //get distance from us to the player
-        float angle = Vector3.Angle(targetDir, degreeVector); //get the angle offset from our view to the players position
-        if (angle <= (npcInfo.FOV / 2) && distance <= npcInfo.ViewDistance) { //check if the player is in our view and if they are close enough in our view
-            canSee = true;
-        } else {
-            canSee = false;
+        Collider2D[] hitColliders = Physics2D.OverlapCircleAll(transform.position, npcInfo.ViewDistance, CombatManager.ins.characterTest);
+        foreach(Collider2D c in hitColliders) {
+            if(c.gameObject == player) {
+                canSee = CanSeeTarget(player);
+            } else {
+                if (CanSeeTarget(c.gameObject) && FactionManagerScript.ins.DoesHate(npcInfo.faction, c.gameObject.GetComponent<NPCInfo>().faction) && !npcInfo.inCombat) {
+                    CombatManager.ins.InitCombat(gameObject);
+                }
+            }
         }
 
     }
