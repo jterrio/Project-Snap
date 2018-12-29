@@ -8,7 +8,6 @@ public class CombatHandler : MonoBehaviour {
     public List<GameObject> currentCharactersTurn; //list of characters who are currently turning
     public List<GameObject> charactersChecked; //characters check to join combat
     public List<GameObject> charactersToCheck; //characters queued to check to join combat
-    private bool combatStarted = false; //if the first turn has started yet
     public TurnStage turnStage; //turn of stage - MAY BE LEGACY AND NOT USED
 
     public EdgeCollider2D combatBounds; // Never used to my knowlage -Ryan
@@ -34,8 +33,6 @@ public class CombatHandler : MonoBehaviour {
         //CheckCharacters();
         CombatManager.ins.allCombatHandlers.Add(this.gameObject);
         StartWaiting();
-        combatStarted = true;
-
 	}
 
     void Update() {
