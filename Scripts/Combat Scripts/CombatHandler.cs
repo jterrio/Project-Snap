@@ -6,7 +6,6 @@ public class CombatHandler : MonoBehaviour {
 
     public List<GameObject> charactersInCombat; //list of all characters participating, actively
     public List<GameObject> currentCharactersTurn; //list of characters who are currently turning
-    public List<GameObject> charactersJoinLate; //list of characters who joined late -NEED TO CHECK: MAY BE LEGACY AND NOT USED
     public List<GameObject> charactersChecked; //characters check to join combat
     public List<GameObject> charactersToCheck; //characters queued to check to join combat
     public int COMBAT_RANGE = 5; //random of combat to pull and check
@@ -66,10 +65,18 @@ public class CombatHandler : MonoBehaviour {
     /// <summary>
     /// Start of combat function to begin the turn process for each character in combat
     /// </summary>
-    void StartWaiting() { //Needs to be a second fuction that calls a specific character. 
+    void StartWaiting() {
         foreach(GameObject c in charactersInCombat) {
-            c.GetComponent<CombatScript>().StartWaiting();
+            StartWaiting(c);
         }
+    }
+
+    /// <summary>
+    /// Begins combat for a single characer; used for joining late
+    /// </summary>
+    /// <param name="c"></param>
+    void StartWaiting(GameObject c) {
+        c.GetComponent<CombatScript>().StartWaiting();
     }
 
     /// <summary>
@@ -252,7 +259,8 @@ public class CombatHandler : MonoBehaviour {
     }
 
     public void AddLateCharacter(GameObject c) {
-        charactersJoinLate.Add(c);
+        charactersInCombat.Add(c);
+        StartWaiting(c);
     }
 
 
