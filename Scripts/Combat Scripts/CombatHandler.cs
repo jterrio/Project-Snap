@@ -8,7 +8,6 @@ public class CombatHandler : MonoBehaviour {
     public List<GameObject> currentCharactersTurn; //list of characters who are currently turning
     public List<GameObject> charactersChecked; //characters check to join combat
     public List<GameObject> charactersToCheck; //characters queued to check to join combat
-    public int COMBAT_RANGE = 5; //random of combat to pull and check
     private bool combatStarted = false; //if the first turn has started yet
     public TurnStage turnStage; //turn of stage - MAY BE LEGACY AND NOT USED
 
@@ -30,7 +29,7 @@ public class CombatHandler : MonoBehaviour {
     void Start () {
 
         //search for players to add to combat
-        Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, COMBAT_RANGE, (1 << 8) | (1 << 9)); //player is 9, npc is 8
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, CombatManager.ins.joinDistance, CombatManager.ins.characterTest); //player is 9, npc is 8
         CheckCollider(colliders);
         //CheckCharacters();
         CombatManager.ins.allCombatHandlers.Add(this.gameObject);
@@ -83,14 +82,10 @@ public class CombatHandler : MonoBehaviour {
     /// Remove null (Dead) game object from characters in combat
     /// </summary>
     void RemoveDeadCharacters() {
-        List<GameObject> toDelete = new List<GameObject>();
-        foreach(GameObject c in charactersInCombat) {
+        foreach(GameObject c in new List<GameObject>(charactersInCombat)) {
             if(c == null) {
-                toDelete.Add(c);
+                charactersInCombat.Remove(c);
             }
-        }
-        foreach(GameObject d in toDelete) {
-            charactersInCombat.Remove(d);
         }
     }
 
@@ -103,7 +98,7 @@ public class CombatHandler : MonoBehaviour {
         foreach(GameObject self in characters) {
             foreach(GameObject c in characters) {
                 if (self.GetComponent<CharacterInfo>().DoHate(c)) {
-                    if(Vector3.Distance(self.transform.position, c.transform.position) < COMBAT_RANGE * 2.5) {
+                    if(Vector3.Distance(self.transform.position, c.transform.position) < CombatManager.ins.joinDistance * 2.5) {
                         doRemove = false;
                     }
                 }
@@ -145,19 +140,17 @@ public class CombatHandler : MonoBehaviour {
     bool CanEndCombat() {
         foreach(GameObject c in charactersInCombat) {
             foreach(GameObject d in charactersInCombat) {
-                if(d != GameManagerScript.ins.player) {
-                    if(c != GameManagerScript.ins.player) {
+                if (d != GameManagerScript.ins.player) {
+                    if (c != GameManagerScript.ins.player) {
                         //both characters are AI
                         if (FactionManagerScript.ins.DoesDislike(c.GetComponent<NPCInfo>().faction, d.GetComponent<NPCInfo>().faction)) {
                             return false;
                         }
-                    } else { 
-                        if(d.GetComponent<Stats>().attitude <= -30) {
+                    } else {
+                        if (d.GetComponent<Stats>().attitude <= -30) {
                             return false;
                         }
                     }
-
-
                 }
                 
             }
@@ -173,6 +166,7 @@ public class CombatHandler : MonoBehaviour {
     /// <returns></returns>
     IEnumerator TurnCheck() {
         yield return new WaitForEndOfFrame();
+        RemoveDeadCharacters();
         foreach (GameObject c in charactersInCombat) {
             if (c.GetComponent<CombatScript>().isReady) {
                 Time.timeScale = 0f;
@@ -247,20 +241,38 @@ public class CombatHandler : MonoBehaviour {
     void CheckCharacters() {
         foreach(GameObject n in charactersInCombat) {
             charactersChecked.Add(n);
-            Collider2D[] colliders = Physics2D.OverlapCircleAll(n.transform.position, COMBAT_RANGE, (1 << 8) | (1 << 9));
+            Collider2D[] colliders = Physics2D.OverlapCircleAll(n.transform.position, CombatManager.ins.joinDistance, CombatManager.ins.characterTest);
             CheckCollider(colliders);
         }
     }
 
-    public void AddLateCharacters(List<GameObject> characters) {
+    public void AddLateCharacters(List<GameObject> characters, GameObject handler) {
         foreach(GameObject c in characters) {
-            AddLateCharacter(c);
+            if (!charactersInCombat.Contains(c)) {
+
+                if (handler.GetComponent<CombatHandler>().currentCharactersTurn.Contains(c)) {
+                    AddLateCharacterTurn(c);
+                } else {
+                    AddLateCharacter(c);
+                }
+            }
         }
     }
 
     public void AddLateCharacter(GameObject c) {
         charactersInCombat.Add(c);
-        StartWaiting(c);
+        if (!c.GetComponent<CharacterInfo>().inCombat) {
+            if (c != GameManagerScript.ins.player) {
+                c.GetComponent<NPCInfo>().EnterCombat();
+            } else {
+                c.GetComponent<PlayerInfo>().EnterCombat();
+            }
+            StartWaiting(c);
+        }
+    }
+
+    public void AddLateCharacterTurn(GameObject c) {
+        currentCharactersTurn.Add(c);
     }
 
 

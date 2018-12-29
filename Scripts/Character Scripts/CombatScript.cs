@@ -73,7 +73,10 @@ public class CombatScript : MonoBehaviour {
     }
 
     //called for init
-    void Awake() {
+    void Start() {
+        if(gameObject == GameManagerScript.ins.player) {
+            return;
+        }
         npcInfo = GetComponent<NPCInfo>(); //get its own info
         /*
         for (int i = 0; i < 40; i++) { //instantiate debug points
@@ -84,10 +87,12 @@ public class CombatScript : MonoBehaviour {
 
     //called every frame
     void Update() {
+        if (gameObject == GameManagerScript.ins.player) {
+            return;
+        }
 
-
-        if(npcInfo == null) { //check to see if initilization went wrong
-            Awake(); //re-init
+        if (npcInfo == null) { //check to see if initilization went wrong
+            Start(); //re-init
             return;
         }else if (!npcInfo.inCombat) {
             return;
@@ -357,7 +362,7 @@ public class CombatScript : MonoBehaviour {
 
         }
         //validation check to remove characters from memory if they are not in combat. Need to change to make sure AI knows they are dead (for instance)
-        foreach(GameObject c in memory.Keys) {
+        foreach(GameObject c in new List<GameObject>(memory.Keys)) {
             if (!charactersInCombat.Contains(c)) {
                 memory.Remove(c);
             }
@@ -428,6 +433,7 @@ public class CombatScript : MonoBehaviour {
     /// check whether two points have unbroken LOS to each other
     /// </summary>
     void Move() {
+        
         Vector3 feet = new Vector3(transform.position.x, transform.position.y - 0.45f, 0); //get position of feet
         //print(Vector3.Distance(feet, movementQueue[0]));
         if(movementQueue.Count > 0) { //if we have points to move
@@ -435,8 +441,7 @@ public class CombatScript : MonoBehaviour {
             for (int i = 0; i < movementQueue.Count; i++) { //set debug points positions
                 testRotationPoints[i].transform.position = movementQueue[i];
                 lastRunAwayPosition = feet;
-            }
-            */
+            } */
             if (Vector3.Distance(feet, movementQueue[0]) <= 0.2f) { //check to see if we have reached
                 movementQueue.RemoveAt(0); //remove reached point
                 Move(); //recursive call
@@ -447,6 +452,7 @@ public class CombatScript : MonoBehaviour {
             npcInfo.polyNav.Stop(); //if we dont have points to move to, stop the ai from moving
             return;
         }
+            
 
 
     }

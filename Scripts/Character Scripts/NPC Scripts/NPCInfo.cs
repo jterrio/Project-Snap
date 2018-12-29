@@ -119,6 +119,7 @@ public class NPCInfo : CharacterInfo {
 
     public void EnterCombat() {
         polyNav.Stop();
+        polyNav.stoppingDistance = 0f;
         inCombat = true;
         if (waitCoroutine != null) {
             StopCoroutine(waitCoroutine);
@@ -127,6 +128,7 @@ public class NPCInfo : CharacterInfo {
 
     public void LeaveCombat() {
         polyNav.Stop();
+        polyNav.stoppingDistance = 0.1f;
         inCombat = false;
         spellQueue.Clear();
         if(spellCastCoroutine != null) {
