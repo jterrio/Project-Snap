@@ -44,6 +44,9 @@ public class CombatHUDLog : MonoBehaviour {
     }
 
     void DrawLineFromMovement(Vector2[] des) {
+        if(des == null) {
+            return;
+        }
         Vector3[] temp = new Vector3[des.Length];
         for(int i = 0; i <des.Length; i++) {
             temp[i] = new Vector3(des[i].x, des[i].y, 0);
