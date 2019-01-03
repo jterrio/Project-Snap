@@ -358,7 +358,7 @@ public class CombatHUDAttack : MonoBehaviour {
                                     }
                                 }
                                 selectedNPC = hit.collider.gameObject;
-                                if (!IsVisible(hit.collider.gameObject, loggedAttacks[loggedAttacks.Count - 1].attackPoint)) {
+                                if (!GameManagerScript.ins.player.GetComponent<CharacterInfo>().IsVisible(hit.collider.gameObject, loggedAttacks[loggedAttacks.Count - 1].attackPoint)) {
                                     selectedNPC.GetComponent<Renderer>().material.color = Color.red;
                                 } else {
                                     selectedNPC.GetComponent<Renderer>().material.color = Color.yellow;
@@ -418,7 +418,7 @@ public class CombatHUDAttack : MonoBehaviour {
             if(c == null) {
                 memory.Remove(c);
             }
-            if (IsVisible(c)) {
+            if (GameManagerScript.ins.player.GetComponent<CharacterInfo>().IsVisible(c)) {
                 memory[c] = c.transform.position;
             }
         }
@@ -434,53 +434,6 @@ public class CombatHUDAttack : MonoBehaviour {
         } else {
             memory.Add(c, c.transform.position);
         }
-    }
-
-    /// <summary>
-    /// checks whether we can directly see them
-    /// </summary>
-    /// <param name="target"></param>
-    /// <returns></returns>
-    public bool IsVisible(GameObject target) {
-        if(target == null) {
-            return false;
-        }
-        int selfOldLayer = GameManagerScript.ins.player.layer;
-        gameObject.layer = LayerMask.NameToLayer("Ignore Raycast"); //change to ignore raycast
-        int targetOldLayer = target.layer;
-        target.layer = LayerMask.NameToLayer("SightTest"); //change to what we test
-        RaycastHit2D hit = Physics2D.Raycast(GameManagerScript.ins.player.transform.position, target.transform.position - GameManagerScript.ins.player.transform.position, Mathf.Infinity, CombatManager.ins.characterVisibleTest); //raycast
-        //Debug.DrawRay(GameManagerScript.ins.player.transform.position, target.transform.position - GameManagerScript.ins.player.transform.position, Color.green);
-        GameManagerScript.ins.player.layer = selfOldLayer; //Set layer back to normal
-        target.layer = targetOldLayer; //Set layer back to normal
-        if (hit.collider != null) {
-            if (hit.collider.gameObject == target) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /// <summary>
-    /// checks whether the location of the attack can see them
-    /// </summary>
-    /// <param name="target"></param>
-    /// <param name="attackPosition"></param>
-    /// <returns></returns>
-    public bool IsVisible(GameObject target, Vector3 attackPosition) {
-        if(target == null) {
-            return false;
-        }
-        int targetOldLayer = target.layer;
-        target.layer = LayerMask.NameToLayer("SightTest"); //change to what we test
-        RaycastHit2D hit = Physics2D.Raycast(attackPosition, target.transform.position - attackPosition, Mathf.Infinity, CombatManager.ins.characterVisibleTest); //raycast
-        target.layer = targetOldLayer; //Set layer back to normal
-        if (hit.collider != null) {
-            if (hit.collider.gameObject == target) {
-                return true;
-            }
-        }
-        return false;
     }
 
     /// <summary>

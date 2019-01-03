@@ -128,7 +128,7 @@ public class CombatScript : MonoBehaviour {
     /// Called when a selected spell has finished its progress (= 1)
     /// </summary>
     void Cast() {
-        if (SpellStaminaCheck(selectedSpell.energyToCast * 0.25f) && IsVisible(focusTarget)) { //check to see if the target is visible and if we have enough energy to finish the cast
+        if (SpellStaminaCheck(selectedSpell.energyToCast * 0.25f) && GetComponent<CharacterInfo>().IsVisible(focusTarget)) { //check to see if the target is visible and if we have enough energy to finish the cast
             switch (selectedSpell.type) {
                 case Spell.Type.Projectile:
                     Projectile a = selectedSpell as Projectile;
@@ -291,7 +291,7 @@ public class CombatScript : MonoBehaviour {
         if(memory.Count > 0) { //check to see if we have a memory
             if(targets.Count == 1) { //if there is only one target, we have a special case for calculating cover and partial cover
                 foreach(GameObject c in memory.Keys) {
-                    if (IsVisible(c)) { //checks if we can see; if we can, we are in partial cover; if not, full cover
+                    if (GetComponent<CharacterInfo>().IsVisible(c)) { //checks if we can see; if we can, we are in partial cover; if not, full cover
                         inCover = false;
                         inPartialCover = true;
                     } else {
@@ -304,7 +304,7 @@ public class CombatScript : MonoBehaviour {
             } else {
                 int count = 0;
                 foreach(GameObject c in memory.Keys) { //check how many of our memory objects are NOT visible to us currently
-                    if (!IsVisible(c)) {
+                    if (!GetComponent<CharacterInfo>().IsVisible(c)) {
                         count += 1;
                     }
                 }
@@ -351,7 +351,7 @@ public class CombatScript : MonoBehaviour {
                 }
             }
             //unit should be hostile to current object
-            if (IsVisible(c)) { //if they are visible, add them to current targets and update/add their position in the memory
+            if (GetComponent<CharacterInfo>().IsVisible(c)) { //if they are visible, add them to current targets and update/add their position in the memory
                 targets.Add(c);
                 if (memory.ContainsKey(c)) {
                     memory[c] = c.transform.position;
@@ -370,62 +370,6 @@ public class CombatScript : MonoBehaviour {
         }
 
 
-
-    }
-
-    /// <summary>
-    /// checks whether we can directly see them
-    /// </summary>
-    /// <param name="target"></param>
-    /// <returns></returns>
-    public bool IsVisible(GameObject target) {
-        if(target == null) {
-            return false;
-        }
-        gameObject.layer = LayerMask.NameToLayer("Ignore Raycast"); //change to ignore raycast
-        int targetOldLayer = target.layer;
-        target.layer = LayerMask.NameToLayer("SightTest"); //change to what we are testing
-        Vector3 feet = new Vector3(transform.position.x, transform.position.y - 0.45f, 0);
-        RaycastHit2D hit = Physics2D.Raycast(feet, target.transform.position - feet, Mathf.Infinity, CombatManager.ins.characterVisibleTest); //raycast
-        gameObject.layer = LayerMask.NameToLayer("NPC"); //set back to npc
-        target.layer = targetOldLayer; //set back to normal
-        if(hit.collider != null) {
-            if(hit.collider.gameObject == target) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /// <summary>
-    /// check whether a gameobject has unbroken LOS to a point
-    /// </summary>
-    /// <param name="target"></param>
-    /// <param name="point"></param>
-    /// <returns></returns>
-    public bool IsVisible(GameObject target, Vector3 point) {
-        gameObject.layer = 2; // change to ignore raycast
-        RaycastHit2D hit = Physics2D.Raycast(point, target.transform.position - point, Mathf.Infinity, CombatManager.ins.characterVisibleTest); //raycast
-        gameObject.layer = 8; //set back to npc
-        if(hit.collider != null) {
-            if(hit.collider.gameObject == target) {
-                return true;
-            }
-        }
-        return false;
-    }
-    /// <summary>
-    /// check whether two points have unbroken LOS to each other
-    /// </summary>
-    /// <param name="point1"></param>
-    /// <param name="point2"></param>
-    /// <returns></returns>
-    public bool IsVisible(Vector3 point1, Vector3 point2) {
-        RaycastHit2D hit = Physics2D.Raycast(point1, point2 - point1, Vector3.Distance(point1, point2), CombatManager.ins.obstacleTest); //raycast from point 1 to point 2
-        if(hit.collider == null) {
-            return true;
-        }
-        return false;
 
     }
 
@@ -680,7 +624,7 @@ public class CombatScript : MonoBehaviour {
                         //add a little buffer room from the wall to our position/direction
                         testPoint += (transform.position - testPoint).normalized;
                         if (hit.collider != null) { //if we hit something
-                            if (!IsVisible(focusTarget, testPoint)) { //check to see if we are in cover
+                            if (!GetComponent<CharacterInfo>().IsVisible(focusTarget, testPoint)) { //check to see if we are in cover
                                 pointsInCover.Add(testPoint); //in cover
                             } else {
                                 pointsOpen.Add(testPoint); //in the open (in the future tests, this one will be iffy)
@@ -696,14 +640,14 @@ public class CombatScript : MonoBehaviour {
                         //add our direction/position to the hit as a buffer
                         testPoint += (transform.position - testPoint).normalized / 2;
                         if (hit.collider != null) { //we hit something
-                            if (!IsVisible(focusTarget, testPoint)) { //check to see if we are in cover
+                            if (!GetComponent<CharacterInfo>().IsVisible(focusTarget, testPoint)) { //check to see if we are in cover
                                 pointsInCover.Add(testPoint);
                             } else {
                                 /*If we are NOT in cover, check:
                                  *-if this test point and the last test point can see each other
                                  * -if the distance between this point and us is greater than the distance between last point and us
                                  * */
-                                if (!IsVisible(testPoint, lastPoint) && (Vector3.Distance(testPoint, transform.position) > Vector3.Distance(lastPoint, transform.position))) {
+                                if (!GetComponent<CharacterInfo>().IsVisible(testPoint, lastPoint) && (Vector3.Distance(testPoint, transform.position) > Vector3.Distance(lastPoint, transform.position))) {
                                     pointsPossibleCover.Add(testPoint); //in possible cover
                                 } else { //in cover
                                     pointsOpen.Add(point);
@@ -711,7 +655,7 @@ public class CombatScript : MonoBehaviour {
                             }
                         } else { //the point is out in the open
                             testPoint = point + ((point - transform.position).normalized * 10f); //distance of 10 in the direction of point (the current degree)
-                            if (!IsVisible(focusTarget, testPoint)) { //check to see if in cover
+                            if (!GetComponent<CharacterInfo>().IsVisible(focusTarget, testPoint)) { //check to see if in cover
                                 pointsInCover.Add(point + ((point - transform.position.normalized) * 3f)); //in cover
                             } else {
                                 /*If we are NOT in cover, check:
@@ -719,7 +663,7 @@ public class CombatScript : MonoBehaviour {
                                  * -if the distance between this point and us is greater than the distance between last point and us
                                  * -if the point is within 90 degree of our LOS (so we dont just make 180 flip judgements)
                                  * */
-                                if (IsVisible(testPoint, lastPoint) && (Vector3.Distance(testPoint, transform.position) > Vector3.Distance(lastPoint, transform.position)) && !RangeTest(transform.position, memory[focusTarget], testPoint, 90)) {
+                                if (GetComponent<CharacterInfo>().IsVisible(testPoint, lastPoint) && (Vector3.Distance(testPoint, transform.position) > Vector3.Distance(lastPoint, transform.position)) && !RangeTest(transform.position, memory[focusTarget], testPoint, 90)) {
                                     pointsPossibleCover.Add(point + ((point - transform.position.normalized) * 3f)); //in possible cover
                                 } else {
                                     pointsOpen.Add(point); //open
@@ -802,7 +746,7 @@ public class CombatScript : MonoBehaviour {
             case CombatState.AVOIDING: //avoiding
                 Vector3 movementVector = Vector3.zero;
                 foreach(GameObject t in targets) {
-                    if (IsVisible(t)) {
+                    if (GetComponent<CharacterInfo>().IsVisible(t)) {
                         if (Vector3.Distance(t.transform.position, gameObject.transform.position) <= safeDistance) {
                             movementVector += gameObject.transform.position - t.transform.position;
                         }
@@ -935,7 +879,7 @@ public class CombatScript : MonoBehaviour {
             case CombatState.AVOIDING:
                 state = CombatState.ATTACKING;
                 foreach(GameObject t in targets) {
-                    if (IsVisible(t)) {
+                    if (GetComponent<CharacterInfo>().IsVisible(t)) {
                         if(Vector3.Distance(t.transform.position, gameObject.transform.position) <= safeDistance) {
                             state = CombatState.AVOIDING;
                             break;
@@ -1075,7 +1019,7 @@ public class CombatScript : MonoBehaviour {
 
     void TryAvoid() {
         foreach(GameObject t in targets) {
-            if (IsVisible(t)) {
+            if (GetComponent<CharacterInfo>().IsVisible(t)) {
                 if(Vector3.Distance(t.transform.position, gameObject.transform.position) <= tooCloseDistance) {
                     turnsToClose += 1;
                     break;
@@ -1098,7 +1042,7 @@ public class CombatScript : MonoBehaviour {
             List<GameObject> memoryKeys = new List<GameObject>(memory.Keys);
             foreach(GameObject c in memoryKeys) {
                 //if we can still see the character in question, we should update its position into the memory
-                if (IsVisible(c)) {
+                if (GetComponent<CharacterInfo>().IsVisible(c)) {
                     memory[c] = c.transform.position;
                 }
             }          
