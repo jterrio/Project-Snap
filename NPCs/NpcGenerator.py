@@ -174,7 +174,7 @@ def NpcType():
                 archetype = "Jock Sudent"
 
             #Intellectual Study
-            elif(rando < 60 and rando >= 35):
+            elif(rando < 60 and rando >= 40):
                 updateUnd(5)
                 updateInt(5)
                 updatePer(2)
@@ -263,6 +263,7 @@ def NpcType():
 
 #creates an array of atributes to define an npc
 def Atributes():
+    global archetype
     atributes = [0] * 20
     for x in atributes:
         atributes[x] = "0"
@@ -283,6 +284,9 @@ def Atributes():
     
     #Their Creativity
     rando = RandomNum()
+    if archetype in("Government Person", "Mage Student","Intellectual Student","Study Magic Student"):
+        rando += 10
+        
     if(rando >= top):
         atributes[1] = "Creative"
         updateChr(2)
@@ -335,6 +339,12 @@ def Atributes():
     
     #How they think, body or mind, think how they react to things
     rando = RandomNum()
+    if archetype in("Intellectual Student", "Hero", "Government Person", "Study Magic Student"):
+        rando -= 10
+
+    if(archetype == "Jock Sudent" or "Lower Class"):
+        rando += 10
+        
     if(rando >= top):
         atributes[4] = "Meat-Head"
         updateUnd(10)
@@ -354,6 +364,12 @@ def Atributes():
     
     #How they learn, via experience or books
     rando = RandomNum()
+    if archetype in("Intellectual Student", "Study Magic Student"):
+        rando += 10
+
+    if archetype in("Mage Student", "Jock Sudent", "Lower Class"):
+        rando -= 10
+        
     if(rando >= top):
         atributes[5] = "Book-Worm"
         updateInt(4)
@@ -372,16 +388,22 @@ def Atributes():
     
     #Can they follow orders
     rando = RandomNum()
+    if archetype in("Lower Class", "Average Person"):
+        rando -= 10
+
+    if archetype in("Government Person", "Mage Student"):
+        rando += 10
+        
     if(rando >= top):
         atributes[6] = "Obedient"
-        updatePrc(2)
+        updatePrc(3)
     
     elif(rando < top and rando > midBot):
         atributes[6] = "Average"
     
     else:
         atributes[6] = "Disobedient"
-        updateDex(2)
+        updateDex(3)
     
     #Can they lead
     rando = RandomNum()
@@ -411,6 +433,9 @@ def Atributes():
     
     #Thinking speed
     rando = RandomNum()
+    if archetype in("Intellectual Student", "Government Person", "Study Magic Student"):
+        rando += 20
+        
     if(rando >= top):
         atributes[9] = "Quick-Thinker"
         updateInt(5)
@@ -457,6 +482,15 @@ def Atributes():
     
     #Their Intelligence
     rando = RandomNum()
+    if archetype in("Intellectual Student", "Hero", "Government Person", "Study Magic Student"):
+        rando += 10
+
+    if archetype in("Lower Class", "Jock Sudent"):
+        rando -= 10
+
+    if(atributes[9] == "Slow"):
+        rando -= 20
+        
     if(rando >= top):
         atributes[12] = "Intelligent"
         updateInt(5)
@@ -472,6 +506,9 @@ def Atributes():
     
     #Their reluctance to leave home
     rando = RandomNum()
+    if archetype in("Lower Class", "Hero", "Mage Student"):
+        rando += 10
+        
     if(rando >= top):
         atributes[13] = "Wonderlust"
         updateDex(4)
@@ -489,6 +526,9 @@ def Atributes():
     
     #Are they fun to be around aka Charismatic
     rando = RandomNum()
+    if archetype in("Jock Sudent","Government Person"):
+        rando += 10
+        
     if(rando >= top):
         atributes[14] = "Charismatic"
         updateChr(10)
@@ -560,29 +600,7 @@ def Traits():
     else:
         traits[2] = "Short"
         updateDex(4)
-
-    #Hair Type
-    rando = RandomNum()
-    if(rando > 84):
-        traits[4] = "Long-Curly"
         
-    elif(rando <= 84 and rando > 67):
-        traits[4] = "Short-Straight"
-        
-    elif(rando <= 67 and rando > 51):
-        traits[4] = "Short-Curly"
-        
-    elif(rando <= 51 and rando > 34):
-        traits[4] = "Long-Straight"
-        
-    elif(rando <= 34 and rando > 17):
-        traits[4] = "Bald"
-        if(traits[0] == "Female"):
-            traits[4] = "Thinning"
-        
-    else:
-        traits[4] = "Receding"
-
     #Hair Color
     rando = RandomNum()
     if(rando > 84):
@@ -604,6 +622,28 @@ def Traits():
         
     else:
         traits[3] = "Red"
+        
+    #Hair Type
+    rando = RandomNum()
+    if(rando > 84):
+        traits[4] = "Long-Curly"
+        
+    elif(rando <= 84 and rando > 67):
+        traits[4] = "Short-Straight"
+        
+    elif(rando <= 67 and rando > 51):
+        traits[4] = "Short-Curly"
+        
+    elif(rando <= 51 and rando > 34):
+        traits[4] = "Long-Straight"
+        
+    elif(rando <= 32 and rando > 15):
+        traits[4] = "Bald"
+        if(traits[0] == "Female"):
+            traits[4] = "Thinning"
+        
+    else:
+        traits[4] = "Receding"
 
     #Skin Tone
     rando = RandomNum()
@@ -613,7 +653,7 @@ def Traits():
     elif(rando < 30 and rando >= 20):
         traits[5] = "Light-Brown"
 
-    elif(rando < 30 and rando >= 20):
+    elif(rando < 20 and rando >= 10):
         traits[5] = "Brown"
     
     else:
@@ -651,14 +691,21 @@ def Run():
     print("Precision", precision, end = "\n")
     print("Dextarity:", dexterity, end = "\n")
     print("Perception:", perception, end = "\n")
+    count = 0
     for x in personalityTraits:
         if(x != 0 and x != "Average"):
-            print(x, "" , end = '')
+            print(x, "" , end = "")
     print(end = "\n")
     #print(personalityTraits)
     for x in physicalTraits:
+        count += 1
         if(x != 0 and x != "Average"):
-            print(x, "" , end = '')
+            if(count == 6):
+                print("Hair,", end = " ")
+                
+            print(x, "" , end = "")
+
+    print("Skin Tone", end = "")
     #print(physicalTraits)
 
 
