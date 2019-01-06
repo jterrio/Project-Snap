@@ -42,6 +42,7 @@ public class CombatScript : MonoBehaviour {
     private Coroutine spellCoroutine; //coroutine for casting spell
     private float progress = 0; //progress from 0 to 1 of the spell being cast
     public CombatState state; //current state in combat for the ai
+    public EnergyState energyState; //current state for energy in combat for the ai
 
     public void AIEndCombat() {
         targets.Clear();
@@ -61,15 +62,41 @@ public class CombatScript : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Called at the beginning of an AI's turn (NOT THE PLAYER)
+    /// </summary>
+    /// <param name="charactersInCombat"></param>
+    /// <param name="isPlayerInCombat"></param>
+    public void AI(List<GameObject> charactersInCombat, bool isPlayerInCombat) {
+        //print("AI STARTING!");
+        TryStuck(); //test to see if we are stuck trying to get to a point
+        EnergyCheck(); //check the state of the ai's energy
+        GetTargets(charactersInCombat); //get all active targets
+        TryAvoid(); //test if we have been too close to an enemy for too long
+        CoverTest(); //tests to see if there are any changes to cover and partial cover
+        SelectTarget(); //selects a target
+        GetSpell(); //get a spell to perform
+        SetMove(); //sets movement based on target and spell selected
+        TrySpell(); //Trys to see if it can cast, if not, begins casting
+        EnergyRecharge(); //recharge energy, if possible
+        EndTurn(); //end turn
+    }
+
+
 
     public enum CombatState {
         ATTACKING, //ai is seeking to be aggresive
-        RUNNING, //ai is running from an active threat, could have either intent to stay in fight or leave; mostly used for recharging
+        RUNNING, //ai is running from an active threat, with intent to leave the fight
         DEFENDING, //ai is trying to defend itself
-        RECHARGING, //ai is in cover and is recharging stamina
         AVOIDING, //ai is running from an active threat, with intent to stay in the fight
         DYING, //ai is dead; hp = 0; animation needs to play
         DEAD //animation for dying is done
+    }
+
+    public enum EnergyState {
+        FREE, //use as much as they would like
+        CONSERVATIVE, //use less than normal
+        REPRESS //cannot use any energy
     }
 
     //called for init
@@ -97,6 +124,8 @@ public class CombatScript : MonoBehaviour {
         }else if (!npcInfo.inCombat) {
             return;
         }
+        SetWalkState();
+        CheckOutOfEnergy();
 
         UpdateMemory();
         SetState(); //get info about self and world and set the ai state accordingly
@@ -108,6 +137,82 @@ public class CombatScript : MonoBehaviour {
         } else { //the ai is dead
             Dead();
         }
+    }
+
+
+
+    void CheckOutOfEnergy() {
+        if(npcInfo.currentStamina < 1) {
+            npcInfo.IsWalking = true;
+        }
+    }
+
+    void SetWalkState() {
+        switch (state) {
+            case CombatState.ATTACKING:
+                switch (energyState) {
+                    case EnergyState.FREE:
+                        if (Random.Range(1, 100) <= 5) {
+                            npcInfo.IsWalking = !npcInfo.IsWalking;
+                        }
+                        break;
+                    case EnergyState.CONSERVATIVE:
+                        if (npcInfo.IsWalking) {
+                            if (Random.Range(1, 100) <= 1) {
+                                npcInfo.IsWalking = false;
+                            }
+                        } else {
+                            if (Random.Range(1, 100) <= 50) {
+                                npcInfo.IsWalking = true;
+                            }
+                        }
+                        break;
+                    case EnergyState.REPRESS:
+                        npcInfo.IsWalking = true;
+                        break;
+                }
+                        break;
+    }
+    }
+
+    void EnergyRecharge() {
+        if(movementQueue.Count == 0) {
+            npcInfo.RecoverStamina();
+            npcInfo.RecoverStamina();
+            npcInfo.RecoverStamina();
+        }else if (npcInfo.IsWalking) {
+            npcInfo.RecoverStamina();
+            npcInfo.RecoverStamina();
+        }
+    }
+
+
+    void EnergyCheck() {
+        float energyPercentage = npcInfo.GetStaminaPercentage();
+        switch (energyState) {
+            case EnergyState.FREE:
+                if (energyPercentage <= 0.2f) {
+                    energyState = EnergyState.REPRESS;
+                }else if(energyPercentage <= 0.65f) {
+                    energyState = EnergyState.CONSERVATIVE;
+                }
+                break;
+            case EnergyState.CONSERVATIVE:
+                if (energyPercentage <= 0.2f) {
+                    energyState = EnergyState.REPRESS;
+                } else if (energyPercentage >= 0.85f) {
+                    energyState = EnergyState.FREE;
+                }
+                break;
+            case EnergyState.REPRESS:
+                if (energyPercentage >= 0.85f) {
+                    energyState = EnergyState.FREE;
+                } else if (energyPercentage >= 0.5f) {
+                    energyState = EnergyState.CONSERVATIVE;
+                }
+                break;
+        }
+
     }
 
     /// <summary>
@@ -173,25 +278,6 @@ public class CombatScript : MonoBehaviour {
     public void EndTurn() {
         //print(gameObject + " has ended their turn at " + Time.time);
         endTurn = true; //combat handler will handle the rest
-    }
-
-
-    /// <summary>
-    /// Called at the beginning of an AI's turn (NOT THE PLAYER)
-    /// </summary>
-    /// <param name="charactersInCombat"></param>
-    /// <param name="isPlayerInCombat"></param>
-    public void AI(List<GameObject> charactersInCombat, bool isPlayerInCombat) {
-        //print("AI STARTING!");
-        TryStuck(); //test to see if we are stuck trying to get to a point
-        GetTargets(charactersInCombat); //get all active targets
-        TryAvoid(); //test if we have been too close to an enemy for too long
-        CoverTest(); //tests to see if there are any changes to cover and partial cover
-        SelectTarget(); //selects a target
-        GetSpell(); //get a spell to perform
-        SetMove(); //sets movement based on target and spell selected
-        TrySpell(); //Trys to see if it can cast, if not, begins casting
-        EndTurn(); //end turn
     }
 
     /// <summary>
@@ -734,14 +820,8 @@ public class CombatScript : MonoBehaviour {
                     movementQueue.Add(pointsOpen[index]); //add a random point using the index
                 
                 //if somehow, no points were valid, then we may as well have the ai recover stamina
-                } else {
-                    npcInfo.RecoverStamina();
                 }
 
-                break;
-            case CombatState.RECHARGING: //recharging
-                //just recover stamina
-                npcInfo.RecoverStamina();
                 break;
             case CombatState.AVOIDING: //avoiding
                 Vector3 movementVector = Vector3.zero;
@@ -870,11 +950,6 @@ public class CombatScript : MonoBehaviour {
         switch (state) {
             case CombatState.ATTACKING:
                 //check to see if we need to not be attacking
-
-                //if we have too little stamina, we need to run to cover
-                if(npcInfo.currentStamina <= npcInfo.maxStamina * 0.25f) {
-                    state = CombatState.RUNNING;
-                }
                 break;
             case CombatState.AVOIDING:
                 state = CombatState.ATTACKING;
@@ -893,28 +968,8 @@ public class CombatScript : MonoBehaviour {
                 //PLAY ANIMATION FOR DYING
                 state = CombatState.DEAD;
                 break;
-            case CombatState.RECHARGING:
-                //check to see if we need to not be recharging
-
-                //we dont need to move if we are recharging
-                movementQueue.Clear();
-
-                //if we are not in cover, we need to run (targets came into our view)
-                if (!inCover || (memory.Count == 1 && inPartialCover)) {
-                    state = CombatState.RUNNING;
-                }
-                //if we have finished recharging, we need to be in attack mode
-                if(npcInfo.currentStamina >= npcInfo.maxStamina * 0.8f) {
-                    state = CombatState.ATTACKING;
-                }
-                break;
             case CombatState.RUNNING:
                 //we need to check to see if we need to stop running
-
-                //if we are in cover or we have enough stamina to be in the fight, change to recharge (it will handle the latter case to -> attack)
-                if (inCover || npcInfo.currentStamina >= npcInfo.maxStamina * 0.8f) {
-                    state = CombatState.RECHARGING;
-                }
                 break;
             case CombatState.DEAD:
                 print("I have died!");
@@ -989,24 +1044,30 @@ public class CombatScript : MonoBehaviour {
     /// Check to see if the AI is stuck and cannot move
     /// </summary>
     void TryStuck() {
-        if(state == CombatState.DEFENDING || state == CombatState.DYING || state == CombatState.RECHARGING) { //exclude these movement state when moving
+        if(state == CombatState.DEFENDING || state == CombatState.DYING) { //exclude these movement state when moving
             return;
         }
 
         //test precision of last point and current point
         if(Mathf.FloorToInt(transform.position.x * 100) == Mathf.FloorToInt(lastPosition.x * 100) && Mathf.FloorToInt(transform.position.y * 100) == Mathf.FloorToInt(lastPosition.y * 100)) {
-            print("isStuck");
             if (isStuck && Time.time >= stuckTimer) { //if we are stuck and it has been X ammount of seconds, clear our movement to start fresh
+                isStuck = false;
+                movementQueue.Clear();
                 if (state == CombatState.AVOIDING) {
                     state = CombatState.ATTACKING;
                 } else {
-                    isStuck = false;
-                    movementQueue.Clear();
                     state = CombatState.AVOIDING;
                 }
             } else { //if not stuck, set the timer and set stuck
+                print("isStuck");
                 isStuck = true;
                 stuckTimer = Time.time + stuckTimer;
+                movementQueue.Clear();
+                if (state == CombatState.AVOIDING) {
+                    state = CombatState.ATTACKING;
+                } else {
+                    state = CombatState.AVOIDING;
+                }
             }
 
 
