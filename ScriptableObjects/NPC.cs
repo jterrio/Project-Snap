@@ -6,16 +6,28 @@ using UnityEngine;
 public class NPC : ScriptableObject {
 
     public string characterName;
+    public string archetype;
     public int characterAge;
     public bool isTalkable;
     public bool isKeyNPC;
     public bool isMerchant;
     public bool hasQuests;
+    public bool canUseMagic;
+    public string weaponType;
     public int spawnChance; //if the npc is an enemy, what the spawn chance will be
 
     public Item[] itemPool;
     public FactionManagerScript.Faction faction;
     public string description;
+    public enum WeaponType {
+        GUN,
+        SWORD,
+        GUNSWORD,
+        GUNMAGE,
+        MAGESWORD,
+        MAGIC,
+        NOTHING
+    }
     public enum Integrity {
         GENUINE,
         AVERAGE,

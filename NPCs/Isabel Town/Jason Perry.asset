@@ -13,14 +13,16 @@ MonoBehaviour:
   m_Name: Jason Perry
   m_EditorClassIdentifier: 
   characterName: Jason Perry
+  archetype: Lower Class
   characterAge: 16
   isTalkable: 0
   isKeyNPC: 0
   isMerchant: 0
   hasQuests: 0
+  canUseMagic: 1
+  weaponType: MAGESWORD
   spawnChance: 0
   itemPool: []
   faction: 0
-  description: Peasant Ingenuine Creative Serious SelfDepricating Savvy Book-Worm
-    Disobedient Procrastinator Quick-Thinker Shut-in  Male Scrawny Short Short-Straight
-    Red
+  description: Ingenuine Creative Serious SelfDepricating Savvy Book-Worm Disobedient
+    Procrastinator Quick-Thinker Shut-in  Male Scrawny Short Short-Straight Red

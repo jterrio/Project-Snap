@@ -10,20 +10,19 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 46b733aefa20d564b92daa0e08fe7f1a, type: 3}
-  m_Name: Shannon Hodges
+  m_Name: Robert Mathis
   m_EditorClassIdentifier: 
-  characterName: Shannon Hodges
-  archetype: Average Person
-  characterAge: 36
+  characterName: Robert Mathis
+  archetype: Government Person
+  characterAge: 55
   isTalkable: 0
   isKeyNPC: 0
   isMerchant: 0
   hasQuests: 0
   canUseMagic: 1
-  weaponType: GUNMAGE
+  weaponType: MAGIC
   spawnChance: 0
   itemPool: []
   faction: 0
-  description: Ingenuine Creative SelfDepricating Book-Worm Disobedient Direct Quick-Thinker
-    Unloyal Push-Over Shut-in Charismatic Friendly  Female Buff Short Short-Curly
-    Red
+  description: Genuine Uncreative Direct Quick-Thinker Loyal Intelligent Shut-in  Male
+    Black Bald Hair, White Skin Tone
