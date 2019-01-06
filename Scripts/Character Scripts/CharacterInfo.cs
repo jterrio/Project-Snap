@@ -14,7 +14,7 @@ public class CharacterInfo : MonoBehaviour {
     public Stats stats;
     protected SpriteRenderer sr;
     public bool canMove;
-    public bool isWalking = true;
+    private bool isWalking = true;
     public bool inCombat = false;
     public List<CombatHUDAttack.Attack> spellQueue = new List<CombatHUDAttack.Attack>();
     public Coroutine spellCastCoroutine;
@@ -335,6 +335,14 @@ public class CharacterInfo : MonoBehaviour {
   
     public void ResetStamina() {
         currentStamina = maxStamina;
+    }
+
+    public float GetStaminaPercentage() {
+        return currentStamina / maxStamina;
+    }
+
+    public float GetHealthPercentage() {
+        return currentHealth / maxHealth;
     }
 
     public bool IsWalking {
