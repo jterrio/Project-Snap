@@ -269,7 +269,7 @@ public class CharacterInfo : MonoBehaviour {
     }
 
     public void DrainStamina() {
-        currentStamina -= (maxStamina * 0.01f);
+        currentStamina -= (maxStamina * 0.02f);
         if(currentStamina < 0) {
             currentStamina = 0;
         }
@@ -296,6 +296,18 @@ public class CharacterInfo : MonoBehaviour {
             currentHealth = 0;
         }
 
+    }
+
+    public void DrainStaminaTimes(int a) {
+        for(int i = 0; i < a; i++) {
+            DrainStamina();
+        }
+    }
+
+    public void RecoverStaminaTimes(int a) {
+        for (int i = 0; i < a; i++) {
+            RecoverStamina();
+        }
     }
 
     public void TryInsta(float chance) {

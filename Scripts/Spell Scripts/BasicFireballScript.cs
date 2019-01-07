@@ -11,16 +11,21 @@ public class BasicFireballScript : MonoBehaviour {
     private Projectile spell;
     public bool IsActive { get; set; }
     public Vector3 dir;
-
+    public SpellRecords spellRecords;
 
     public void SetSpell(Spell spell, Vector3 location, Vector3 direction, GameObject caster) {
         this.spell = spell as Projectile;
+        this.spell.dir = direction.normalized;
+        dir = direction.normalized;
+
         sr.sprite = spell.sprite;
         this.caster = caster;
         gameObject.transform.position = location;
         startLocation = location;
-        dir = direction.normalized;
         isActive = true;
+
+        spellRecords.dir = direction.normalized;
+        spellRecords.caster = caster;
     }
 
 

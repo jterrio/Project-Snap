@@ -10,6 +10,10 @@ public class GameManagerScript : MonoBehaviour {
     public Inventory playerInventory;
     public SpellInventory playerSpells;
 
+    //TAGS FOR SPELLS
+    public string projectileTag = "Projectile";
+    public string wallTag = "Wall";
+
     //KEYS FOR INPUT
     private KeyCode openMenu = KeyCode.Tab; public KeyCode OpenMenu { get { return openMenu; } }
     private KeyCode toggleFireMode = KeyCode.Q; public KeyCode ToggleFireMode {  get { return toggleFireMode; } }

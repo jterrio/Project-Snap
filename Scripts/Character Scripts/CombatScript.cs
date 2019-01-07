@@ -5,6 +5,7 @@ using UnityEngine;
 public class CombatScript : MonoBehaviour {
 
     private NPCInfo npcInfo; //ai info
+    private CharacterInfo charInfo; //ai and player info
     private Coroutine turnCoroutine; //ai's turn coroutine
     public Stats myStats; //ai stats
 
@@ -30,6 +31,7 @@ public class CombatScript : MonoBehaviour {
     private int turnsToClose = 0; //turns we are too close to an enemy
     private float tooCloseDistance = 1f;
     private float safeDistance = 2f;
+    private int safeSpellDistanceMultiplier = 5; //multiplier to put on safe distance to see what AI wants to be from spells to be considered safe (the ones that hurt)
 
     public int difficulty = 1; //difficulty doesnt do anything (it did do something on v1 of the AI)
     public bool hasAttackedRecently; //has attacked recently bool; used for cooldowns on casting spells
@@ -43,6 +45,10 @@ public class CombatScript : MonoBehaviour {
     private float progress = 0; //progress from 0 to 1 of the spell being cast
     public CombatState state; //current state in combat for the ai
     public EnergyState energyState; //current state for energy in combat for the ai
+
+    private float energyTimerValue = 1f;
+    private float energyTimer = 0f;
+    public float EnergyTimer { get { return energyTimerValue; } set { energyTimerValue = value; } }
 
     public void AIEndCombat() {
         targets.Clear();
@@ -78,7 +84,7 @@ public class CombatScript : MonoBehaviour {
         GetSpell(); //get a spell to perform
         SetMove(); //sets movement based on target and spell selected
         TrySpell(); //Trys to see if it can cast, if not, begins casting
-        EnergyRecharge(); //recharge energy, if possible
+        CheckEnergyTimer(); //recharge energy, if possible
         EndTurn(); //end turn
     }
 
@@ -101,6 +107,7 @@ public class CombatScript : MonoBehaviour {
 
     //called for init
     void Start() {
+        charInfo = GetComponent<CharacterInfo>();
         if(gameObject == GameManagerScript.ins.player) {
             return;
         }
@@ -115,6 +122,7 @@ public class CombatScript : MonoBehaviour {
     //called every frame
     void Update() {
         if (gameObject == GameManagerScript.ins.player) {
+            CheckEnergyTimer();
             return;
         }
 
@@ -172,19 +180,42 @@ public class CombatScript : MonoBehaviour {
                         break;
                 }
                         break;
-    }
+            case CombatState.AVOIDING:
+                switch (energyState) {
+                    case EnergyState.FREE:
+                        npcInfo.IsWalking = false;
+                        break;
+                    case EnergyState.CONSERVATIVE:
+                        npcInfo.IsWalking = false;
+                        break;
+                    case EnergyState.REPRESS:
+                        if (Random.Range(1, 100) <= 50) {
+                            npcInfo.IsWalking = false;
+                        }
+                        break;
+                }
+                break;
+        }
     }
 
     void EnergyRecharge() {
         if(movementQueue.Count == 0) {
-            npcInfo.RecoverStamina();
-            npcInfo.RecoverStamina();
-            npcInfo.RecoverStamina();
+            charInfo.RecoverStaminaTimes(3);
         }else if (npcInfo.IsWalking) {
-            npcInfo.RecoverStamina();
-            npcInfo.RecoverStamina();
+            charInfo.RecoverStaminaTimes(2);
+        } else {
+            charInfo.DrainStaminaTimes(2);
         }
     }
+
+    void CheckEnergyTimer() {
+        if(Time.time > energyTimer) {
+            EnergyRecharge();
+            SetEnergyTimer();
+        }
+    }
+
+    void SetEnergyTimer() { energyTimer = Time.time + energyTimerValue; }
 
 
     void EnergyCheck() {
@@ -491,10 +522,9 @@ public class CombatScript : MonoBehaviour {
     /// Set a movement pattern based on the unit's state
     /// </summary>
     void SetMove() {
+        movementQueue.Clear(); //clear our movement
         switch (state) { //switch statement for movement state so we know how to move
-            case CombatState.ATTACKING:
-
-                movementQueue.Clear(); //clear our movement
+            case CombatState.ATTACKING:            
                 if (selectedSpell == null || focusTarget == null) { //if we don't have a spell, we cant move; if we have no target who is are enemy, we cant move
                     return;
                 }
@@ -824,15 +854,136 @@ public class CombatScript : MonoBehaviour {
 
                 break;
             case CombatState.AVOIDING: //avoiding
-                Vector3 movementVector = Vector3.zero;
+                //Figure out if we are too close, if we are trying to move away from an enemy spell, or both
+                bool enemyIsClose = false;
+                bool spellIsClose = false;
+
+                //ENEMY TEST
                 foreach(GameObject t in targets) {
                     if (GetComponent<CharacterInfo>().IsVisible(t)) {
                         if (Vector3.Distance(t.transform.position, gameObject.transform.position) <= safeDistance) {
-                            movementVector += gameObject.transform.position - t.transform.position;
+                            enemyIsClose = true;
+                            break;
                         }
                     }
                 }
-                movementQueue.Add(gameObject.transform.position + movementVector);
+
+                //SPELL TEST
+                Collider2D[] closeSpells = Physics2D.OverlapCircleAll(transform.position, (safeDistance * safeSpellDistanceMultiplier), CombatManager.ins.spellTest);
+                foreach (Collider2D s in closeSpells) {
+                    if (s.tag.ToString() == GameManagerScript.ins.projectileTag) { //PROJECTILE
+                        if (s.GetComponent<SpellRecords>().caster == gameObject) {
+                            continue;
+                        }
+                        spellIsClose = true;
+                        break;
+                    }
+                }
+
+                if(enemyIsClose && !spellIsClose) {
+                    int quadOne = 0;
+                    int quadTwo = 0;
+                    int quadThree = 0;
+                    int quadFour = 0;
+                    int quadToRunFrom = 0; //if set 0, then they are all equal.
+                    Vector3 movementVector = Vector3.zero;
+                    foreach (GameObject t in targets) {
+                        if (GetComponent<CharacterInfo>().IsVisible(t)) {
+                            if (Vector3.Distance(t.transform.position, gameObject.transform.position) <= safeDistance) {
+                                int i = SetQuad(t.transform.position, gameObject.transform.position);
+                                switch (i) {
+                                    case 1:
+                                        quadOne += 1;
+                                        break;
+                                    case 2:
+                                        quadTwo += 1;
+                                        break;
+                                    case 3:
+                                        quadThree += 1;
+                                        break;
+                                    case 4:
+                                        quadFour += 1;
+                                        break;
+                                    default:
+                                        quadOne += 1;
+                                        break;
+                                }
+                            }
+                        }
+                    }
+                    if(quadOne == quadTwo && quadTwo == quadThree && quadThree == quadFour) {
+                        quadToRunFrom = 0;
+                    } else {
+                        if(quadOne > quadTwo) {
+                            if(quadOne > quadThree) {
+                                if (quadOne > quadFour) {
+                                    quadToRunFrom = 1;
+                                } else {
+                                    quadToRunFrom = 4;
+                                }
+                            } else if(quadThree > quadFour) {
+                                quadToRunFrom = 3;
+                            } else {
+                                quadToRunFrom = 4;
+                            }
+                        }else if(quadTwo > quadThree) {
+                            if(quadTwo > quadFour) {
+                                quadToRunFrom = 2;
+                            } else {
+                                quadToRunFrom = 4;
+                            }
+                        }else if(quadThree > quadFour) {
+                            quadToRunFrom = 3;
+                        } else {
+                            quadToRunFrom = 4;
+                        }
+                    }
+
+                    foreach(GameObject t in targets) {
+                        if (GetComponent<CharacterInfo>().IsVisible(t)) {
+                            if (Vector3.Distance(t.transform.position, gameObject.transform.position) <= safeDistance) {
+                                if(quadToRunFrom != 0) {
+                                    if(SetQuad(t.transform.position, gameObject.transform.position) == quadToRunFrom) {
+                                        movementVector += (gameObject.transform.position - t.transform.position).normalized;
+                                    }
+                                } else {
+                                    if(movementVector == Vector3.zero || Random.Range(0, 1) == 0) {
+                                        movementVector += (gameObject.transform.position - t.transform.position).normalized;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    movementQueue.Add(gameObject.transform.position + movementVector);
+                    movementQueue.Add(gameObject.transform.position + movementVector + movementVector);
+                    movementQueue.Add(gameObject.transform.position + movementVector + movementVector + movementVector);
+                } else if(!enemyIsClose && spellIsClose) {
+                    Vector3 movementVector = Vector3.zero;
+                    closeSpells = Physics2D.OverlapCircleAll(transform.position, (safeDistance * safeSpellDistanceMultiplier), CombatManager.ins.spellTest);
+                    foreach (Collider2D s in closeSpells) {
+                        if (s.tag.ToString() == GameManagerScript.ins.projectileTag) { //PROJECTILE
+                            if (s.GetComponent<SpellRecords>().caster == gameObject) {
+                                continue;
+                            }
+                            Vector3 spellDir = s.GetComponent<SpellRecords>().dir;
+                            Vector3 selfToProj = s.gameObject.transform.position - transform.position;
+                            Vector3 P3 = new Vector2(-selfToProj.y, selfToProj.x) / Mathf.Sqrt((selfToProj.x * selfToProj.x) + (selfToProj.y * selfToProj.y)) * 1;
+                            Vector3 P4 = new Vector2(-selfToProj.y, selfToProj.x) / Mathf.Sqrt((selfToProj.x * selfToProj.x) + (selfToProj.y * selfToProj.y)) * -1;
+                            //see if the spell is going toward any of those
+                            if(Vector3.Distance(transform.position + P3, s.gameObject.transform.position + spellDir) < Vector3.Distance(transform.position + P4, s.gameObject.transform.position + spellDir)) {
+                                movementVector += P4;
+                            } else {
+                                movementVector += P3;
+                            }
+                            break;
+                        }
+                    }
+                    movementQueue.Add(gameObject.transform.position + movementVector);
+                    movementQueue.Add(gameObject.transform.position + movementVector + movementVector);
+                    movementQueue.Add(gameObject.transform.position + movementVector + movementVector + movementVector);
+                }else if(enemyIsClose && spellIsClose) {
+
+                }
                 break;
             case CombatState.DEFENDING: //defending
                 break;
@@ -950,9 +1101,22 @@ public class CombatScript : MonoBehaviour {
         switch (state) {
             case CombatState.ATTACKING:
                 //check to see if we need to not be attacking
+
+                //check to see if we need to dodge
+                Collider2D[] closeSpells = Physics2D.OverlapCircleAll(transform.position, (safeDistance * safeSpellDistanceMultiplier), CombatManager.ins.spellTest);
+                foreach(Collider2D s in closeSpells) {
+                    if(s.tag.ToString() == GameManagerScript.ins.projectileTag) { //PROJECTILE
+                        if (s.GetComponent<SpellRecords>().caster == gameObject) {
+                            continue;
+                        }
+                        state = CombatState.AVOIDING;
+                        break;
+                    }
+                }
                 break;
             case CombatState.AVOIDING:
                 state = CombatState.ATTACKING;
+                //CHARACTER TEST
                 foreach(GameObject t in targets) {
                     if (GetComponent<CharacterInfo>().IsVisible(t)) {
                         if(Vector3.Distance(t.transform.position, gameObject.transform.position) <= safeDistance) {
@@ -961,6 +1125,19 @@ public class CombatScript : MonoBehaviour {
                         }
                     }
                 }
+
+                //SPELL TEST
+                closeSpells = Physics2D.OverlapCircleAll(transform.position, (safeDistance * safeSpellDistanceMultiplier), CombatManager.ins.spellTest);
+                foreach (Collider2D s in closeSpells) {
+                    if (s.tag.ToString() == GameManagerScript.ins.projectileTag) { //PROJECTILE
+                        if (s.GetComponent<SpellRecords>().caster == gameObject) {
+                            continue;
+                        }
+                        state = CombatState.AVOIDING;
+                        break;
+                    }
+                }
+
                 break;
             case CombatState.DEFENDING:
                 break;
@@ -1047,7 +1224,7 @@ public class CombatScript : MonoBehaviour {
         if(state == CombatState.DEFENDING || state == CombatState.DYING) { //exclude these movement state when moving
             return;
         }
-
+        /*
         //test precision of last point and current point
         if(Mathf.FloorToInt(transform.position.x * 100) == Mathf.FloorToInt(lastPosition.x * 100) && Mathf.FloorToInt(transform.position.y * 100) == Mathf.FloorToInt(lastPosition.y * 100)) {
             if (isStuck && Time.time >= stuckTimer) { //if we are stuck and it has been X ammount of seconds, clear our movement to start fresh
@@ -1075,7 +1252,7 @@ public class CombatScript : MonoBehaviour {
             isStuck = false;
             lastPosition = transform.position;
         }
-
+        */
     }
 
     void TryAvoid() {

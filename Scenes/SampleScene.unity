@@ -3710,6 +3710,8 @@ MonoBehaviour:
   playerInfo: {fileID: 0}
   playerInventory: {fileID: 0}
   playerSpells: {fileID: 0}
+  projectileTag: Projectile
+  wallTag: Wall
 --- !u!4 &379495714
 Transform:
   m_ObjectHideFlags: 0
@@ -7985,7 +7987,6 @@ MonoBehaviour:
   - {fileID: 21300014, guid: 08cdf570b3cfd3c47b5fc75bfbf295c8, type: 3}
   stats: {fileID: 776057294}
   canMove: 0
-  isWalking: 1
   inCombat: 0
   polyNav: {fileID: 776057291}
   currentHealth: 100
@@ -10549,7 +10550,6 @@ MonoBehaviour:
   - {fileID: 21300014, guid: 08cdf570b3cfd3c47b5fc75bfbf295c8, type: 3}
   stats: {fileID: 1114312533}
   canMove: 0
-  isWalking: 1
   inCombat: 0
   polyNav: {fileID: 1114312531}
   currentHealth: 100
@@ -11823,7 +11823,6 @@ MonoBehaviour:
   - {fileID: 21300014, guid: 08cdf570b3cfd3c47b5fc75bfbf295c8, type: 3}
   stats: {fileID: 1254768300}
   canMove: 0
-  isWalking: 1
   inCombat: 0
   polyNav: {fileID: 1254768297}
   currentHealth: 100
@@ -15174,6 +15173,9 @@ MonoBehaviour:
   characterVisibleTest:
     serializedVersion: 2
     m_Bits: 3072
+  spellTest:
+    serializedVersion: 2
+    m_Bits: 4096
 --- !u!4 &1619709817
 Transform:
   m_ObjectHideFlags: 0
@@ -17367,7 +17369,6 @@ MonoBehaviour:
   - {fileID: 21300014, guid: 08cdf570b3cfd3c47b5fc75bfbf295c8, type: 3}
   stats: {fileID: 1942604915}
   canMove: 0
-  isWalking: 1
   inCombat: 0
   polyNav: {fileID: 1942604913}
   currentHealth: 100
@@ -17526,7 +17527,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1942604905}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 3.14, y: 0.83, z: 0}
+  m_LocalPosition: {x: 3, y: -1.1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1369974161}
