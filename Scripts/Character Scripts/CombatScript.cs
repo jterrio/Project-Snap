@@ -9,9 +9,29 @@ public class CombatScript : MonoBehaviour {
     private Coroutine turnCoroutine; //ai's turn coroutine
     public Stats myStats; //ai stats
 
-    public bool isReady = false; //ready means that combat handler should give us a turn
-    public bool endTurn = false; //send to combat handler to know that we are done
 
+    [Header("AI Settings")]
+    public int difficulty = 1; //difficulty doesnt do anything (it did do something on v1 of the AI)
+    public CombatState state; //current state in combat for the ai
+    public EnergyState energyState; //current state for energy in combat for the ai
+
+    [Header("Stuck Variables")]
+    private Vector3 lastPosition = Vector3.zero; //last position, used for keeping track of being stuck
+    private float stuckTimer = 0f; //timer to keep track of when it began a thought process of being stuck
+    private float stuckTimerBase = 2f; //timer value before the ai says it is stuck
+    private bool isStuck = false; //if the ai can't move or is trying to move to impossible spot bool
+
+    private int turnsToClose = 0; //turns we are too close to an enemy
+    private float tooCloseDistance = 1f;
+    private float safeDistance = 2f;
+    private int safeSpellDistanceMultiplier = 5; //multiplier to put on safe distance to see what AI wants to be from spells to be considered safe (the ones that hurt)
+
+    [Header("Spell Variables")]
+    private Spell selectedSpell; //spell that is being casted (or attempted to)
+    private Coroutine spellCoroutine; //coroutine for casting spell
+    private float progress = 0; //progress from 0 to 1 of the spell being cast
+
+    [Header("Combat Variables")]
     public List<GameObject> targets; //list of all targets that we can currently see in combat
     private GameObject focusTarget; //target that we are focus on; the one that the spell will be cast in relation to
     private Dictionary<GameObject, Vector3> memory = new Dictionary<GameObject, Vector3>(); //keep track of the npc's memory of last seen locations
@@ -23,32 +43,24 @@ public class CombatScript : MonoBehaviour {
     private float lastAngle; //last angle we moved from (angle tests)
     private Vector3 lastRunAwayPosition = Vector3.zero; //last position
 
-    private Vector3 lastPosition = Vector3.zero; //last position, used for keeping track of being stuck
-    private float stuckTimer = 0f; //timer to keep track of when it began a thought process of being stuck
-    private float stuckTimerBase = 2f; //timer value before the ai says it is stuck
-    private bool isStuck = false; //if the ai can't move or is trying to move to impossible spot bool
-
-    private int turnsToClose = 0; //turns we are too close to an enemy
-    private float tooCloseDistance = 1f;
-    private float safeDistance = 2f;
-    private int safeSpellDistanceMultiplier = 5; //multiplier to put on safe distance to see what AI wants to be from spells to be considered safe (the ones that hurt)
-
-    public int difficulty = 1; //difficulty doesnt do anything (it did do something on v1 of the AI)
+    [Header("Cover Variables")]
     public bool hasAttackedRecently; //has attacked recently bool; used for cooldowns on casting spells
     public bool inCover; //in cover bool
     public bool inPartialCover; //in partial cover bool
-    
 
-    private int rotationDirection = -1; //0 is counter clockwise, 1 is clockwise. If on -1, then is it not set to anything
-    private Spell selectedSpell; //spell that is being casted (or attempted to)
-    private Coroutine spellCoroutine; //coroutine for casting spell
-    private float progress = 0; //progress from 0 to 1 of the spell being cast
-    public CombatState state; //current state in combat for the ai
-    public EnergyState energyState; //current state for energy in combat for the ai
 
+    [Header("Energy Variables")]
     private float energyTimerValue = 1f;
     private float energyTimer = 0f;
     public float EnergyTimer { get { return energyTimerValue; } set { energyTimerValue = value; } }
+
+    [Header("Movement Variables")]
+    private float dodgeChance = 1f; //maybe scale with difficult? 1= easy? 2=medium?...
+    private int rotationDirection = -1; //0 is counter clockwise, 1 is clockwise. If on -1, then is it not set to anything
+
+    [Header("Turn Variables")]
+    public bool isReady = false; //ready means that combat handler should give us a turn
+    public bool endTurn = false; //send to combat handler to know that we are done
 
     public void AIEndCombat() {
         targets.Clear();
@@ -1104,13 +1116,15 @@ public class CombatScript : MonoBehaviour {
 
                 //check to see if we need to dodge
                 Collider2D[] closeSpells = Physics2D.OverlapCircleAll(transform.position, (safeDistance * safeSpellDistanceMultiplier), CombatManager.ins.spellTest);
-                foreach(Collider2D s in closeSpells) {
-                    if(s.tag.ToString() == GameManagerScript.ins.projectileTag) { //PROJECTILE
-                        if (s.GetComponent<SpellRecords>().caster == gameObject) {
-                            continue;
+                if (Random.Range(1, 100) <= closeSpells.Length * dodgeChance) {
+                    foreach (Collider2D s in closeSpells) {
+                        if (s.tag.ToString() == GameManagerScript.ins.projectileTag) { //PROJECTILE
+                            if (s.GetComponent<SpellRecords>().caster == gameObject) {
+                                continue;
+                            }
+                            state = CombatState.AVOIDING;
+                            break;
                         }
-                        state = CombatState.AVOIDING;
-                        break;
                     }
                 }
                 break;
