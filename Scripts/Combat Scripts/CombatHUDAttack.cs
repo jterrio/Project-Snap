@@ -195,6 +195,15 @@ public class CombatHUDAttack : MonoBehaviour {
         //get all other spells
         List<Attack> toSortAttacks = new List<Attack>(loggedAttacks);
         List<Attack> onLineAttacks = new List<Attack>();
+
+        //sort those that are self cast
+        foreach(Attack a in new List<Attack>(toSortAttacks)) {
+            if (a.selfCast) {
+                toSortAttacks.Remove(a);
+                a.loggedInfo.SetParent(combatHUDLog.gridlayout);
+            }
+        }
+        //sort the rest
         foreach(CombatHUDLog.Movement m in combatHUDLog.loggedMoves) {
             foreach(Attack a in new List<Attack>(toSortAttacks)) {
                 //its on the line/path
