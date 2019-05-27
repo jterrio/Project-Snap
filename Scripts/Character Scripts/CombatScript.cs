@@ -394,7 +394,7 @@ public class CombatScript : MonoBehaviour {
     void GetSpell() {
         if(selectedSpell == null && state == CombatState.ATTACKING) { //check to make sure we dont have a spell selected and that we are ready to attack
             //get a new spell from npc's spell list
-            List<Spell> allSpells = npcInfo.spellInventory.Spells();
+            List<Spell> allSpells = new List<Spell>(npcInfo.spellInventory.Spells());
             //iterate through all spells, if needed
             while (allSpells.Count > 0) {
                 //get a random spell
