@@ -124,11 +124,10 @@ public class CombatScript : MonoBehaviour {
             return;
         }
         npcInfo = GetComponent<NPCInfo>(); //get its own info
-        /*
         for (int i = 0; i < 40; i++) { //instantiate debug points
             testRotationPoints[i] = Instantiate(debugPoint) as GameObject;
-
-        } */
+        
+        } 
     }
 
     //called every frame
@@ -503,18 +502,18 @@ public class CombatScript : MonoBehaviour {
     }
 
     /// <summary>
-    /// check whether two points have unbroken LOS to each other
+    /// Checks the movement queue by removing reached positioning and queuing the next possible position
     /// </summary>
     void Move() {
         
         Vector3 feet = new Vector3(transform.position.x, transform.position.y - 0.45f, 0); //get position of feet
         //print(Vector3.Distance(feet, movementQueue[0]));
         if(movementQueue.Count > 0) { //if we have points to move
-            /*
+            
             for (int i = 0; i < movementQueue.Count; i++) { //set debug points positions
                 testRotationPoints[i].transform.position = movementQueue[i];
                 lastRunAwayPosition = feet;
-            } */
+            } 
             if (Vector3.Distance(feet, movementQueue[0]) <= 0.2f) { //check to see if we have reached
                 movementQueue.RemoveAt(0); //remove reached point
                 Move(); //recursive call
@@ -621,11 +620,11 @@ public class CombatScript : MonoBehaviour {
                             }
                             //set direction or give chance to change. need to change later to account for spells and such
                             if (rotationDirection == 1) {
-                                if (Random.Range(1, 10) == 1) { //10% chance to change direction
+                                if (Random.Range(1, 100) <= 2) { //2% chance to change direction
                                     rotationDirection = 0;
                                 }
                             } else if (rotationDirection == 0) {
-                                if (Random.Range(1, 10) == 1) { //10% chance to change direction
+                                if (Random.Range(1, 100) <= 2) { //2% chance to change direction
                                     rotationDirection = 1;
                                 }
                             } else { //if we have not set a direction to go; base case
@@ -745,12 +744,12 @@ public class CombatScript : MonoBehaviour {
                     Vector3 point = new Vector3(x1, y1, 0);
                     if (i == 0) { //base case
                         lastPoint = point; //set base case
-                        //do a raycast
+                        //do a raycast from the point to us
                         RaycastHit2D hit = Physics2D.Raycast(transform.position, point - transform.position, 10f, CombatManager.ins.obstacleTest);
                         //get point from hit (if there is one)
                         Vector3 testPoint = new Vector3(hit.point.x, hit.point.y, 0);
                         //add a little buffer room from the wall to our position/direction
-                        testPoint += (transform.position - testPoint).normalized;
+                        testPoint += (transform.position - testPoint).normalized / 4;
                         if (hit.collider != null) { //if we hit something
                             if (!GetComponent<CharacterInfo>().IsVisible(focusTarget, testPoint)) { //check to see if we are in cover
                                 pointsInCover.Add(testPoint); //in cover
@@ -766,7 +765,7 @@ public class CombatScript : MonoBehaviour {
                         //create a point from the hit (if any)
                         Vector3 testPoint = new Vector3(hit.point.x, hit.point.y, 0);
                         //add our direction/position to the hit as a buffer
-                        testPoint += (transform.position - testPoint).normalized / 2;
+                        testPoint += (transform.position - testPoint).normalized / 4;
                         if (hit.collider != null) { //we hit something
                             if (!GetComponent<CharacterInfo>().IsVisible(focusTarget, testPoint)) { //check to see if we are in cover
                                 pointsInCover.Add(testPoint);
@@ -865,15 +864,21 @@ public class CombatScript : MonoBehaviour {
                 }
 
                 break;
-            case CombatState.AVOIDING: //avoiding
+            case CombatState.AVOIDING: case CombatState.DEFENDING: //defending//avoiding
                 //Figure out if we are too close, if we are trying to move away from an enemy spell, or both
+
+                float safeDistanceTest = safeDistance;
+                if (state == CombatState.DEFENDING) {
+                    safeDistanceTest *= safeSpellDistanceMultiplier;
+                }
+
                 bool enemyIsClose = false;
                 bool spellIsClose = false;
 
                 //ENEMY TEST
                 foreach(GameObject t in targets) {
                     if (GetComponent<CharacterInfo>().IsVisible(t)) {
-                        if (Vector3.Distance(t.transform.position, gameObject.transform.position) <= safeDistance) {
+                        if (Vector3.Distance(t.transform.position, gameObject.transform.position) <= safeDistanceTest) {
                             enemyIsClose = true;
                             break;
                         }
@@ -881,7 +886,7 @@ public class CombatScript : MonoBehaviour {
                 }
 
                 //SPELL TEST
-                Collider2D[] closeSpells = Physics2D.OverlapCircleAll(transform.position, (safeDistance * safeSpellDistanceMultiplier), CombatManager.ins.spellTest);
+                Collider2D[] closeSpells = Physics2D.OverlapCircleAll(transform.position, (safeDistanceTest * safeSpellDistanceMultiplier), CombatManager.ins.spellTest);
                 foreach (Collider2D s in closeSpells) {
                     if (s.tag.ToString() == GameManagerScript.ins.projectileTag) { //PROJECTILE
                         if (s.GetComponent<SpellRecords>().caster == gameObject) {
@@ -901,7 +906,7 @@ public class CombatScript : MonoBehaviour {
                     Vector3 movementVector = Vector3.zero;
                     foreach (GameObject t in targets) {
                         if (GetComponent<CharacterInfo>().IsVisible(t)) {
-                            if (Vector3.Distance(t.transform.position, gameObject.transform.position) <= safeDistance) {
+                            if (Vector3.Distance(t.transform.position, gameObject.transform.position) <= safeDistanceTest) {
                                 int i = SetQuad(t.transform.position, gameObject.transform.position);
                                 switch (i) {
                                     case 1:
@@ -953,7 +958,7 @@ public class CombatScript : MonoBehaviour {
 
                     foreach(GameObject t in targets) {
                         if (GetComponent<CharacterInfo>().IsVisible(t)) {
-                            if (Vector3.Distance(t.transform.position, gameObject.transform.position) <= safeDistance) {
+                            if (Vector3.Distance(t.transform.position, gameObject.transform.position) <= safeDistanceTest) {
                                 if(quadToRunFrom != 0) {
                                     if(SetQuad(t.transform.position, gameObject.transform.position) == quadToRunFrom) {
                                         movementVector += (gameObject.transform.position - t.transform.position).normalized;
@@ -996,8 +1001,6 @@ public class CombatScript : MonoBehaviour {
                 }else if(enemyIsClose && spellIsClose) {
 
                 }
-                break;
-            case CombatState.DEFENDING: //defending
                 break;
             case CombatState.DYING: //dying
                 //do nothing, you are dead!
@@ -1109,6 +1112,12 @@ public class CombatScript : MonoBehaviour {
         if(npcInfo.currentHealth <= 0 && state != CombatState.DYING && state != CombatState.DEAD) { //if we are no health, we are dead
             state = CombatState.DYING;
         }
+
+        //health check, regardless of current state
+        if ((npcInfo.currentHealth / npcInfo.maxHealth) < 0.25f) {
+            state = CombatState.RUNNING;
+        }
+
         //check what to do given our current state
         switch (state) {
             case CombatState.ATTACKING:
@@ -1125,6 +1134,15 @@ public class CombatScript : MonoBehaviour {
                             state = CombatState.AVOIDING;
                             break;
                         }
+                    }
+                }
+                if (energyState == EnergyState.REPRESS) {
+                    if((npcInfo.currentHealth/npcInfo.maxHealth) > 0.80f) {
+                        state = CombatState.DEFENDING;
+                    } else if ((npcInfo.currentHealth / npcInfo.maxHealth) > 0.45f) {
+                        state = CombatState.AVOIDING;
+                    } else {
+                        state = CombatState.RUNNING;
                     }
                 }
                 break;
@@ -1154,6 +1172,9 @@ public class CombatScript : MonoBehaviour {
 
                 break;
             case CombatState.DEFENDING:
+                if(energyState == EnergyState.FREE) {
+                    state = CombatState.ATTACKING;
+                }
                 break;
             case CombatState.DYING:
                 //PLAY ANIMATION FOR DYING
