@@ -4,11 +4,13 @@ using UnityEngine;
 
 public class CombatScript : MonoBehaviour {
 
+
+    [Header("NPC Info")]
     private NPCInfo npcInfo; //ai info
     private CharacterInfo charInfo; //ai and player info
     private Coroutine turnCoroutine; //ai's turn coroutine
     public Stats myStats; //ai stats
-
+    private FieldOfVisionScript fov; //ai fov
 
     [Header("AI Settings")]
     public int difficulty = 1; //difficulty doesnt do anything (it did do something on v1 of the AI)
@@ -124,6 +126,7 @@ public class CombatScript : MonoBehaviour {
             return;
         }
         npcInfo = GetComponent<NPCInfo>(); //get its own info
+        fov = GetComponentInChildren<FieldOfVisionScript>();
         for (int i = 0; i < 40; i++) { //instantiate debug points
             testRotationPoints[i] = Instantiate(debugPoint) as GameObject;
         
@@ -885,19 +888,14 @@ public class CombatScript : MonoBehaviour {
                     }
                 }
 
-                //SPELL TEST
-                Collider2D[] closeSpells = Physics2D.OverlapCircleAll(transform.position, (safeDistanceTest * safeSpellDistanceMultiplier), CombatManager.ins.spellTest);
-                foreach (Collider2D s in closeSpells) {
-                    if (s.tag.ToString() == GameManagerScript.ins.projectileTag) { //PROJECTILE
-                        if (s.GetComponent<SpellRecords>().caster == gameObject) {
-                            continue;
-                        }
-                        spellIsClose = true;
-                        break;
-                    }
+                //SPELL TEST - CHANGE LATER IMPORTANT
+                List<GameObject> tooCloseSpells = fov.GetVisibleSpells();
+                if(tooCloseSpells.Count > 0) {
+                    spellIsClose = true;
                 }
 
-                if(enemyIsClose && !spellIsClose) {
+
+                if (enemyIsClose && !spellIsClose) {
                     int quadOne = 0;
                     int quadTwo = 0;
                     int quadThree = 0;
@@ -976,10 +974,9 @@ public class CombatScript : MonoBehaviour {
                     movementQueue.Add(gameObject.transform.position + movementVector + movementVector + movementVector);
                 } else if(!enemyIsClose && spellIsClose) {
                     Vector3 movementVector = Vector3.zero;
-                    closeSpells = Physics2D.OverlapCircleAll(transform.position, (safeDistance * safeSpellDistanceMultiplier), CombatManager.ins.spellTest);
-                    foreach (Collider2D s in closeSpells) {
+                    foreach (GameObject s in tooCloseSpells) {
                         if (s.tag.ToString() == GameManagerScript.ins.projectileTag) { //PROJECTILE
-                            if (s.GetComponent<SpellRecords>().caster == gameObject) {
+                            if (s.GetComponent<SpellRecords>().caster == gameObject || !fov.CanSeeTarget(s)) {
                                 continue;
                             }
                             Vector3 spellDir = s.GetComponent<SpellRecords>().dir;
@@ -999,7 +996,7 @@ public class CombatScript : MonoBehaviour {
                     movementQueue.Add(gameObject.transform.position + movementVector + movementVector);
                     movementQueue.Add(gameObject.transform.position + movementVector + movementVector + movementVector);
                 }else if(enemyIsClose && spellIsClose) {
-
+                    print("BOTH ARE TOO CLOSE! HELP!");
                 }
                 break;
             case CombatState.DYING: //dying
@@ -1105,6 +1102,21 @@ public class CombatScript : MonoBehaviour {
 
     }
 
+
+    bool SetStateEnergyCheck() {
+        if (energyState == EnergyState.REPRESS) {
+            if ((npcInfo.currentHealth / npcInfo.maxHealth) > 0.80f) {
+                state = CombatState.DEFENDING;
+            } else if ((npcInfo.currentHealth / npcInfo.maxHealth) > 0.45f) {
+                state = CombatState.AVOIDING;
+            } else {
+                state = CombatState.RUNNING;
+            }
+            return true;
+        }
+        return false;
+    }
+
     /// <summary>
     /// Set the state of the ai given self and world state
     /// </summary>
@@ -1136,20 +1148,15 @@ public class CombatScript : MonoBehaviour {
                         }
                     }
                 }
-                if (energyState == EnergyState.REPRESS) {
-                    if((npcInfo.currentHealth/npcInfo.maxHealth) > 0.80f) {
-                        state = CombatState.DEFENDING;
-                    } else if ((npcInfo.currentHealth / npcInfo.maxHealth) > 0.45f) {
-                        state = CombatState.AVOIDING;
-                    } else {
-                        state = CombatState.RUNNING;
-                    }
-                }
+                SetStateEnergyCheck();
                 break;
             case CombatState.AVOIDING:
                 state = CombatState.ATTACKING;
+                if (SetStateEnergyCheck()) {
+                    break;
+                }
                 //CHARACTER TEST
-                foreach(GameObject t in targets) {
+                foreach (GameObject t in targets) {
                     if (GetComponent<CharacterInfo>().IsVisible(t)) {
                         if(Vector3.Distance(t.transform.position, gameObject.transform.position) <= safeDistance) {
                             state = CombatState.AVOIDING;
