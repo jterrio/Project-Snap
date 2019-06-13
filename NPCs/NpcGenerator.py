@@ -11,6 +11,8 @@ perception = 0
 canUseMagic = False
 weaponType = ["Gun","Sword","GunSword","GunMage","MageSword","Magic"]
 favWeapon = "Nothing"
+physicalTraits = 0 #made later
+personalityTraits = 0 #made later
 
 def Character(startingStat,startingPer):
     global intuition
@@ -112,10 +114,13 @@ def RandomNum():
 
 #returns what type of npc they are going to be and the starting stats
 def NpcType():
+    global physicalTraits
+    global personalityTraits
     global archetype
     global canUseMagic
     global weaponType
     global favWeapon
+    student = ["Mage Student","Study Magic Student","Jock Sudent","Intellectual Student","Student"]
     rando = RandomNum()
     #Goverment People
     if(rando >= 80):
@@ -129,9 +134,9 @@ def NpcType():
         else:
             canUseMagic = False
         #print("Goverment Person", end = '\n')
-
+            
     #Students: Mages, Non Mage but study magic, don't study magic
-    elif(rando < 80 and rando > 55):
+    elif(rando < 80 and rando > 60):
         rando = RandomNum()
         Character(40,8)
         #Mages
@@ -142,7 +147,7 @@ def NpcType():
             updateDex(5)
             updatePrc(5)
             updatePer(2)
-            archetype = "Mage Student"
+            archetype = student[0]
             canUseMagic = True
             
         #NonMage but sudy magic
@@ -151,7 +156,7 @@ def NpcType():
             updateInt(5)
             updatePrc(3)
             updatePer(2)
-            archetype = "Study Magic Student"
+            archetype = student[1]
             canUseMagic = False
 
         #Don't study magic
@@ -171,14 +176,14 @@ def NpcType():
                 updateDex(5)
                 updatePrc(5)
                 updatePer(1)
-                archetype = "Jock Sudent"
+                archetype = student[2]
 
             #Intellectual Study
             elif(rando < 60 and rando >= 40):
                 updateUnd(5)
                 updateInt(5)
                 updatePer(2)
-                archetype = "Intellectual Student"
+                archetype = student[3]
 
             #General Studies
             else:
@@ -187,7 +192,7 @@ def NpcType():
                 updateStr(2)
                 updateDex(2)
                 updatePrc(2)
-                archetype = "Average Student"
+                archetype = student[4]
                 
     #People on the streets
     elif(rando <= 60 and rando > 5):
@@ -201,13 +206,44 @@ def NpcType():
 
         rando = RandomNum()
         #Average Person
-        if(rando > 40):
+        if(rando >= 60):
+            People = ["Laborer","Soldier","Thug","BlackSmith","Banker"]
             Character(30,7)
-            archetype = "Average Person"
-            
-        #Lower Class    
-        else:
+            rando = RandomNum()
+            #Laborer
+            if(rando > 80):
+               archetype = People[0]
+
+            #Soldier
+            elif(rando >= 80 and rando < 60):
+                archetype = People[1]
+
+            #Thug
+            elif(rando >= 60 and rando < 40):
+                archetype = People[2]
+
+            #BlackSmith
+            elif(rando >= 40 and rando < 20):
+                archetype = People[3]
+
+            #Banker
+            else:
+                archetype = People[3]
+                
+                
+
+        elif(rando < 60 and rando >= 40):
+            Character(50,7)
+            updateStr(-5)
+            archetype = "Veteran"
+
+        elif(rando < 40 and rando >= 20):
             Character(10,4)
+            archetype = "Child"
+            
+        #Lower Class
+        else:
+            Character(20,4)
             archetype = "Lower Class"
             
     #Hero Type
@@ -261,8 +297,12 @@ def NpcType():
             updateStr(3)
             favWeapon = weaponType[2]
 
+
 #creates an array of atributes to define an npc
 def Atributes():
+    global top
+    global midBot
+    global physicalTraits
     global archetype
     atributes = [0] * 20
     for x in atributes:
@@ -323,6 +363,9 @@ def Atributes():
     
     #The way they hold themselves
     rando = RandomNum()
+    if(physicalTraits[1] == "Buff"):
+        rando += 15
+        
     if(rando >= top):
         atributes[3] = "Arrogant"
         updateChr(-3)
@@ -344,6 +387,9 @@ def Atributes():
 
     if(archetype == "Jock Sudent" or "Lower Class"):
         rando += 10
+
+    if(physicalTraits[1] == "Buff"):
+        rando += 15
         
     if(rando >= top):
         atributes[4] = "Meat-Head"
@@ -369,6 +415,9 @@ def Atributes():
 
     if archetype in("Mage Student", "Jock Sudent", "Lower Class"):
         rando -= 10
+
+    if(physicalTraits == "Buff"):
+        rando -= 20
         
     if(rando >= top):
         atributes[5] = "Book-Worm"
@@ -388,7 +437,7 @@ def Atributes():
     
     #Can they follow orders
     rando = RandomNum()
-    if archetype in("Lower Class", "Average Person"):
+    if archetype in("Lower Class"):
         rando -= 10
 
     if archetype in("Government Person", "Mage Student"):
@@ -558,6 +607,8 @@ def Atributes():
 
 
 def Traits():
+    global physicalTraits
+    global personalityTraits
     traits = [0] * 10
     for x in traits:#to give me empty spots
         traits[x] = "0"
@@ -602,48 +653,50 @@ def Traits():
         updateDex(4)
         
     #Hair Color
+    List = ["Blonde","Brown","Black","Grey","White","Red"]
     rando = RandomNum()
     if(rando > 84):
-        traits[3] = "Blonde"
+        traits[3] = List[0]
         if(traits[0] == "Female"):
             updateInt(-20)
         
     elif(rando <= 84 and rando > 67):
-        traits[3] = "Brown"
+        traits[3] = List[1]
         
     elif(rando <= 67 and rando > 51):
-        traits[3] = "Black"
+        traits[3] = List[2]
         
     elif(rando <= 51 and rando > 34):
-        traits[3] = "Grey"
+        traits[3] = List[3]
         
     elif(rando <= 34 and rando > 17):
-        traits[3] = "White"
+        traits[3] = List[4]
         
     else:
-        traits[3] = "Red"
+        traits[3] = List[5]
         
     #Hair Type
+    List = ["Long-Curly","Short-Straight","Short-Curly","Long-Straight","Bald","Thinning","Receding"]
     rando = RandomNum()
     if(rando > 84):
-        traits[4] = "Long-Curly"
+        traits[4] = List[0]
         
     elif(rando <= 84 and rando > 67):
-        traits[4] = "Short-Straight"
+        traits[4] = List[1]
         
     elif(rando <= 67 and rando > 51):
-        traits[4] = "Short-Curly"
+        traits[4] = List[2]
         
     elif(rando <= 51 and rando > 34):
-        traits[4] = "Long-Straight"
+        traits[4] = List[3]
         
     elif(rando <= 32 and rando > 15):
-        traits[4] = "Bald"
+        traits[4] = List[4]
         if(traits[0] == "Female"):
-            traits[4] = "Thinning"
+            traits[4] = List[5]
         
     else:
-        traits[4] = "Receding"
+        traits[4] = List[6]
 
     #Skin Tone
     rando = RandomNum()
@@ -672,6 +725,8 @@ def Run():
     global archetype
     global canUseMagic
     global favWeapon
+    global physicalTraits
+    global personalityTraits
     NpcType()#Creating the Character base stats and Choosing What type they will be peasant Average Joe...
     print(archetype, end = "\n")
     if(canUseMagic):
@@ -681,8 +736,8 @@ def Run():
         print("Cannot use Magic")
 
     print("Favorite weapon type is", favWeapon, end = "\n")
-    personalityTraits = Atributes()#Personality Traits being made
     physicalTraits = Traits()#Physical Traits being made, possibaly spirt chooser
+    personalityTraits = Atributes()#Personality Traits being made
     FinalizeValues()#Fixes any stat issues
     print("Intuition:", intuition, end = "\n")
     print("Intelligence:", intelligence, end = "\n")
