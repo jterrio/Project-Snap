@@ -1,5 +1,6 @@
 import math
 import random
+import xml.etree.ElementTree as ET
 archetype = ""
 intuition = 0
 intelligence = 0
@@ -14,6 +15,75 @@ favWeapon = "Nothing"
 physicalTraits = 0 #made later
 personalityTraits = 0 #made later
 
+def ExportToXML(archetype, canUseMagic, favWeapon, physicalTraits, personalityTraits):
+    global intuition
+    global intelligence
+    global strength
+    global charisma
+    global precision
+    global dexterity
+    global perception
+    #create the file structure
+    npc = ET.Element('npc')
+    
+    attributes = ET.SubElement(npc,'attributes')
+    arch = ET.SubElement(attributes, 'archetype')
+    magic = ET.SubElement(attributes, 'canUseMagic')
+    weapon = ET.SubElement(attributes, 'favWeapon')
+    
+    #setting the values
+    arch.text = str(archetype)
+    magic.text = str(canUseMagic)
+    weapon.text = str(favWeapon)
+    
+    stats = ET.SubElement(npc, 'stats')
+    intu = ET.SubElement(stats, 'intuition')
+    intel = ET.SubElement(stats, 'intelligence')
+    stren = ET.SubElement(stats, 'strength')
+    char = ET.SubElement(stats, 'charisma')
+    pre = ET.SubElement(stats, 'precision')
+    dex = ET.SubElement(stats, 'dexterity')
+    per = ET.SubElement(stats, 'perception')
+
+    #setting the values
+    intu.text = str(intuition)
+    intel.text = str(intelligence)
+    stren.text = str(strength)
+    char.text = str(charisma)
+    pre.text = str(precision)
+    dex.text = str(dexterity)
+    per.text = str(perception)
+
+    physical = ET.SubElement(npc,'physicalTraits')
+    personality = ET.SubElement(npc,'personalityTraits')
+
+    count = 0
+    #Exporting Personality to XML
+    for x in personalityTraits:
+        if(x != 0 and x != "Average"):
+            traits = ET.SubElement(physical,'traits')
+            traits.text = str(x)
+
+    
+    #Exporting Physical to XML
+    for x in physicalTraits:
+        count += 1
+        if(x != 0 and x != "Average"):
+            if(count == 6):
+                trait = ET.SubElement(personality,'traits')
+                trait.text = str(x + "Hair")
+                
+            trait = ET.SubElement(personality,'traits')
+            trait.text = str(x)
+
+    # create a new XML file with the results
+    mydata = ET.tostring(npc)  
+    myfile = open("NpcGenerated.xml", "wb")  
+    myfile.write(mydata)
+    
+    
+    
+
 def Character(startingStat,startingPer):
     global intuition
     global intelligence
@@ -22,14 +92,22 @@ def Character(startingStat,startingPer):
     global precision
     global dexterity
     global perception
-    intuition = startingStat #und - ability to pickup skills in combat
-    intelligence = startingStat #int - ability to study skills outside of combat
-    strength = startingStat #str - ability to swing hard for physical attacks
-    charisma = startingStat #chr - ability to get people to like you
-    precision = startingStat #prc - ability to aim
-    spirituality = 0 #spr - ability to survive more attacks
-    dexterity = startingStat #dex - ability to use more attacks or move
-    perception = startingPer #per - ability to process info in combat (default time per turn is 0.75seconds. every level reduces this by 0.025, with a hard cap at 20 points)
+    #und - ability to pickup skills in combat
+    intuition = startingStat
+    #int - ability to study skills outside of combat
+    intelligence = startingStat
+    #str - ability to swing hard for physical attacks
+    strength = startingStat
+    #chr - ability to get people to like you
+    charisma = startingStat
+    #prc - ability to aim
+    precision = startingStat
+    #spr - ability to survive more attacks
+    spirituality = 0
+    #dex - ability to use more attacks or move
+    dexterity = startingStat
+    #per - ability to process info in combat (default time per turn is 0.75seconds. every level reduces this by 0.025, with a hard cap at 20 points)
+    perception = startingPer 
         
 #Updates Intuition
 def updateUnd(updatedValue):
@@ -761,6 +839,8 @@ def Run():
             print(x, "" , end = "")
 
     print("Skin Tone", end = "")
+    
+    ExportToXML(archetype, canUseMagic, favWeapon, physicalTraits, personalityTraits)
     #print(physicalTraits)
 
 
