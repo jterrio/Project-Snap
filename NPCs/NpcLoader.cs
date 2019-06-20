@@ -11,7 +11,7 @@ public class NpcLoader : MonoBehaviour{
 
     // Use this for initialization
     void Start () {
-        string data = "NpcGenerated.xml";
+        string data = "xmlRawFile.text";
         parseXmlFile(data);
     }
 

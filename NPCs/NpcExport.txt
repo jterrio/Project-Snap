@@ -1,0 +1,1 @@
+{"Archetype": "Hero", "canUseMagic": true, "favWeapon": "Magic", "Intuition": 71, "Intelligence": 71, "Strength": 78, "Charisma": 76, "Precision": 72, "Dexterity": 65, "Perception": 15, "physicalTraits": ["Male", "Brown", "Long-Straight-Hair", "Brown"], "personalityTraits": ["Jokester", "Direct", "Quick-Thinker", "Dull", "Friendly"]}

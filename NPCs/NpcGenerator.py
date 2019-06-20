@@ -1,6 +1,7 @@
 import math
 import random
 import xml.etree.ElementTree as ET
+import json
 archetype = ""
 intuition = 0
 intelligence = 0
@@ -14,6 +15,60 @@ weaponType = ["Gun","Sword","GunSword","GunMage","MageSword","Magic"]
 favWeapon = "Nothing"
 physicalTraits = 0 #made later
 personalityTraits = 0 #made later
+
+def ExportToJson(archetype, canUseMagic, favWeapon, physicalTraits, personalityTraits):
+    global intuition
+    global intelligence
+    global strength
+    global charisma
+    global precision
+    global dexterity
+    global perception
+    count = 0
+    #figureing out how many traits to make the array.
+    for x in personalityTraits:
+        if(x != 0 and x != "Average"):
+            count+= 1
+
+    #set the array again with updated values ready to be exported
+    personalityArray = [0] * count
+    i = 0
+    for x in personalityTraits:#setting the array
+        if(x != 0 and x != "Average"):
+            personalityArray[i] = x
+            i+= 1
+
+    #setting the Physical traits to an updated array
+    count = 0
+    for x in physicalTraits:
+        if(x != 0 and x != "Average"):
+            count+= 1
+
+    i = 0
+    physicalArray = [0] * count
+    for x in physicalTraits:
+        if(x != 0 and x != "Average"):
+            physicalArray[i] = x
+            i+= 1
+
+
+    npc = {
+        'Archetype': archetype,
+        'canUseMagic': canUseMagic,
+        'favWeapon': favWeapon,
+        'Intuition': intuition,
+        'Intelligence': intelligence,
+        'Strength': strength,
+        'Charisma': charisma,
+        'Precision': precision,
+        'Dexterity': dexterity,
+        'Perception': perception,
+        'physicalTraits': physicalArray,
+        'personalityTraits': personalityArray,
+        }
+
+    with open('NpcExport.txt','w') as outfile:
+       json.dump(npc,outfile)
 
 def ExportToXML(archetype, canUseMagic, favWeapon, physicalTraits, personalityTraits):
     global intuition
@@ -754,7 +809,7 @@ def Traits():
         traits[3] = List[5]
         
     #Hair Type
-    List = ["Long-Curly","Short-Straight","Short-Curly","Long-Straight","Bald","Thinning","Receding"]
+    List = ["Long-Curly-Hair","Short-Straight-Hair","Short-Curly-Hair","Long-Straight-Hair","Bald-Hair","Thinning-Hair","Receding-Hair"]
     rando = RandomNum()
     if(rando > 84):
         traits[4] = List[0]
@@ -841,6 +896,7 @@ def Run():
     print("Skin Tone", end = "")
     
     ExportToXML(archetype, canUseMagic, favWeapon, physicalTraits, personalityTraits)
+    ExportToJson(archetype, canUseMagic, favWeapon, physicalTraits, personalityTraits)
     #print(physicalTraits)
 
 
