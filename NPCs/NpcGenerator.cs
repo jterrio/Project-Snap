@@ -1,8 +1,30 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
+using UnityEngine.UI;
 
 public class NpcGenerator : MonoBehaviour {
+    //Misc
+    public Text archeText;
+    public Text Magic;
+    public Text FavWeapon;
+    //Stats
+    public Text intuText;
+    public Text intText;
+    public Text strText;
+    public Text charText;
+    public Text preText;
+    public Text dexText;
+    public Text perText;
+    public Text spirText;
+    //Traits
+    public Text physicalText;
+    public Text personalityText;
+
+    public string name = "Steve";
+    public Text MyName;
+
     private string archetype = "";
     private int intuition = 0;
     private int intelligence = 0;
@@ -21,46 +43,67 @@ public class NpcGenerator : MonoBehaviour {
 
     // Start is called before the first frame update
     void Start() {
-        int count;
-        NpcType(); //Creating the Character base stats and Choosing What type they will be peasant Average Joe...
-        print(archetype, end = "\n");
-        if (canUseMagic) {
-            print("Can use Magic");
-        }
-        else {
-            print("Cannot use Magic");
-        }
-        print("Favorite weapon type is", favWeapon, end = "\n");
-        physicalTraits = Traits();//Physical Traits being made, possibaly spirt chooser
-        personalityTraits = Atributes();//Personality Traits being made
-        FinalizeValues();//#Fixes any stat issues
-        print("Intuition:", intuition, end = "\n");
-        print("Intelligence:", intelligence, end = "\n");
-        print("Strength:", strength, end = "\n");
-        print("Charisma:", charisma, end = "\n");
-        print("Precision", precision, end = "\n");
-        print("Dextarity:", dexterity, end = "\n");
-        print("Perception:", perception, end = "\n");
-        count = 0;
-        for x in personalityTraits{
-            if (x != 0 and x != "Average"){
-            print(x, "", end = "");
-        }
-        print(end = "\n");
-        //print(personalityTraits)
-        for x in physicalTraits{
-            count += 1;
-            if (x != 0 and x != "Average"){
-            if (count == 6) {
-                print("Hair,", end = " ");
-            }
-        }
-        print(x, "", end = "");
-
-        print("Skin Tone", end = "");
+        name = "Steve";
+        Run();
     }
 
+    // Update is called once per frame
+    void Update(){
+        LoadData();
+        updateName();
+    }
 
+    /// <summary>
+    /// Updates the name for Your character
+    /// </summary>
+    public void updateName(){
+        name = MyName.text;
+    }
+
+    /// <summary>
+    /// Loads the data into the text objects in Unity inspector.
+    /// </summary>
+    public void LoadData(){
+        //Misc Loading
+        MyName.text = name;
+        archeText.text = archetype;
+        if (canUseMagic){
+            Magic.text = name + " can use Magic.";
+        }
+        else{
+            Magic.text = name + " cannot use Magic.";
+        }
+        FavWeapon.text = favWeapon + " is the favorite weapon of " + name;
+
+        //Stats Loading
+        intuText.text = "Intuition: " + intuition.ToString();
+        intText.text = "Intelligence: " + intelligence.ToString();
+        strText.text = "Strength: " + strength.ToString();
+        charText.text = "Charisma: " + charisma.ToString();
+        preText.text = "Precision: " + precision.ToString();
+        dexText.text = "Dexterity: " + dexterity.ToString();
+        perText.text = "Perception: " + perception.ToString();
+        spirText.text = "Spirituality: " + spirituality.ToString();
+
+        //Traits Loading
+        string physicalTemp = "The Physical Traits of " + name + " are:";
+        for(int i = 0; i < physicalTraits.Length; i++){
+            if (physicalTraits[i] != "0" && physicalTraits[i] != "Average"){
+                physicalTemp += (" " + physicalTraits[i] + ".");
+            }
+        }
+        physicalText.text = physicalTemp;
+
+        string personalityTemp = "The Personality Traits of " + name + " are:";
+        for (int i = 0; i < personalityTraits.Length; i++)
+        {
+            if (personalityTraits[i] != "0" && personalityTraits[i] != "Average")
+            {
+                personalityTemp += (" " + personalityTraits[i] + ".");
+            }
+        }
+        personalityText.text = personalityTemp;
+    }
 
 
     private void Character(int startingStat, int startingPer) {
@@ -82,45 +125,73 @@ public class NpcGenerator : MonoBehaviour {
         perception = startingPer;
     }
 
-    // Updates Intuition
+    /// <summary>
+    /// Updates Intuition
+    /// </summary>
+    /// <param name="updatedValue"></param>
     private void updateUnd(int updatedValue) {
         intuition += updatedValue;
     }
 
-    // Updates Intelligence
+    /// <summary>
+    /// Updates Intelligence
+    /// </summary>
+    /// <param name="updatedValue"></param>
     private void updateInt(int updatedValue) {
         intelligence += updatedValue;
     }
 
-    // Updates Strength
+    /// <summary>
+    /// Updates Strength
+    /// </summary>
+    /// <param name="updatedValue"></param>
     private void updateStr(int updatedValue) {
         strength += updatedValue;
     }
 
-    // Updates Charisma
+    /// <summary>
+    /// Updates Charisma
+    /// </summary>
+    /// <param name="updatedValue"></param>
     private void updateChr(int updatedValue) {
         charisma += updatedValue;
     }
 
-    // Updates Precision
+    /// <summary>
+    /// Updates Precision
+    /// </summary>
+    /// <param name="updatedValue"></param>
     private void updatePrc(int updatedValue) {
         precision += updatedValue;
     }
 
-    // Updates Spirituality
+    /// <summary>
+    /// Updates Spirituality
+    /// </summary>
+    /// <param name="updatedValue"></param>
     private void updateSpr(int updatedValue) {
         spirituality += updatedValue;
     }
-    // Updates Dexterity
+    /// <summary>
+    /// Updates Dexterity
+    /// </summary>
+    /// <param name="updatedValue"></param>
     private void updateDex(int updatedValue) {
         dexterity += updatedValue;
     }
-    // Updates Perception
+    /// <summary>
+    /// Updates Perception
+    /// </summary>
+    /// <param name="updatedValue"></param>
     private void updatePer(int updatedValue) {
         perception += updatedValue;
     }
 
-    // Checks to see if the value is greater than 100 or less than 0 and corrects it
+    /// <summary>
+    /// Checks to see if the value is greater than 100 or less than 0 and corrects it
+    /// </summary>
+    /// <param name="valueToCheck"></param>
+    /// <returns></returns>
     private int CheckMaxMin(int valueToCheck) {
         if (valueToCheck > 100) {
             return 100;
@@ -135,7 +206,9 @@ public class NpcGenerator : MonoBehaviour {
         }
     }
 
-    //Finalizing all the values so they are not over max or under min
+    /// <summary>
+    /// Finalizing all the values so they are not over max or under min
+    /// </summary>
     private void FinalizeValues() {
         intuition = CheckMaxMin(intuition);
         intelligence = CheckMaxMin(intelligence);
@@ -155,12 +228,17 @@ public class NpcGenerator : MonoBehaviour {
     private int midBot = 16;
 
     System.Random rnd = new System.Random();
-    //returns a number bewtween 1 and 100
+
+    /// <summary>
+    /// returns a number bewtween 1 and 100
+    /// </summary>
     public int RandomNum() {
-        return System.Math.Floor(rnd.Next(1, 100));
+        return rnd.Next(1, 100);
     }
 
-    // returns what type of npc they are going to be and the starting stats
+    /// <summary>
+    /// returns what type of npc they are going to be and the starting stats
+    /// </summary>
     private void NpcType() {
         string[] student = { "Mage Student", "Study Magic Student", "Jock Sudent", "Intellectual Student", "Student" };
         int rando = RandomNum();
@@ -359,7 +437,10 @@ public class NpcGenerator : MonoBehaviour {
         }
     }
 
-    // creates an array of atributes to define an npc
+    /// <summary>
+    /// creates an array of Personality Atributes to define a npc
+    /// </summary>
+    /// <returns></returns>
     private string[] Atributes() {
         int count = 0 ;
         string[] atributes = new string[20];//make it work
@@ -385,9 +466,9 @@ public class NpcGenerator : MonoBehaviour {
         }
         // Their Creativity
         rando = RandomNum();
-        if archetype in("Government Person", "Mage Student", "Intellectual Student", "Study Magic Student"):
+        if (new string[] {"Government Person", "Mage Student", "Intellectual Student", "Study Magic Student"}.Contains(archetype)) {
             rando += 10;
-
+        }
 
         if (rando >= top) {
             atributes[1] = "Creative";
@@ -449,11 +530,11 @@ public class NpcGenerator : MonoBehaviour {
             updateChr(-1);
         }
         // How they think, body or mind, think how they react to things
-        rando = RandomNum()
-        if archetype in("Intellectual Student", "Hero", "Government Person", "Study Magic Student"){
+        rando = RandomNum();
+        if (new string[] { "Intellectual Student", "Hero", "Government Person", "Study Magic Student" }.Contains(archetype)){
             rando -= 10;
         }
-        if (archetype == "Jock Sudent" || archetype == "Lower Class") {
+        if (new string[] { "Jock Sudent", "Lower Class" }.Contains(archetype)) {
             rando += 10;
         }
         if (physicalTraits[1] == "Buff") {
@@ -480,12 +561,12 @@ public class NpcGenerator : MonoBehaviour {
         }
         // How they learn, via experience or books
         rando = RandomNum();
-        if archetype in("Intellectual Student", "Study Magic Student"):
+        if (new string[] { "Intellectual Student", "Study Magic Student" }.Contains(archetype)){
             rando += 10;
-
-        if archetype in("Mage Student", "Jock Sudent", "Lower Class"):
+        }
+        if (new string[] { "Mage Student", "Jock Sudent", "Lower Class" }.Contains(archetype)){
             rando -= 10;
-
+        }
         if (physicalTraits[1] == "Buff") {
             rando -= 20;
         }
@@ -508,13 +589,13 @@ public class NpcGenerator : MonoBehaviour {
         }
 
         // Can they follow orders
-        rando = RandomNum()
-        if archetype in("Lower Class"){
+        rando = RandomNum();
+        if (new string[] { "Lower Class" }.Contains(archetype)){
             rando -= 10;
         }
-        if archetype in("Government Person", "Mage Student"):
+        if (new string[] { "Government Person", "Mage Student" }.Contains(archetype)){
             rando += 10;
-
+        }
 
         if (rando >= top) {
             atributes[6] = "Obedient";
@@ -558,9 +639,9 @@ public class NpcGenerator : MonoBehaviour {
         }
         // Thinking speed
         rando = RandomNum();
-        if archetype in("Intellectual Student", "Government Person", "Study Magic Student"):
+        if (new string[] { "Intellectual Student", "Government Person", "Study Magic Student" }.Contains(archetype)){
             rando += 20;
-
+        }
 
         if (rando >= top) {
             atributes[9] = "Quick-Thinker";
@@ -611,10 +692,10 @@ public class NpcGenerator : MonoBehaviour {
         }
         // Their Intelligence
         rando = RandomNum();
-        if archetype in("Intellectual Student", "Hero", "Government Person", "Study Magic Student"):
+        if (new string[] { "Intellectual Student", "Hero", "Government Person", "Study Magic Student" }.Contains(archetype)){
             rando += 10;
-
-        if archetype in("Lower Class", "Jock Sudent"){
+        }
+        if (new string[] { "Lower Class", "Jock Sudent" }.Contains(archetype)){
             rando -= 10;
         }
         if (atributes[9] == "Slow") {
@@ -637,9 +718,9 @@ public class NpcGenerator : MonoBehaviour {
         }
         // Their reluctance to leave home
         rando = RandomNum();
-        if archetype in("Lower Class", "Hero", "Mage Student"):
+        if (new string[] { "Lower Class", "Hero", "Mage Student" }.Contains(archetype)){
             rando += 10;
-
+        }
 
         if (rando >= top) {
             atributes[13] = "Wonderlust";
@@ -651,17 +732,17 @@ public class NpcGenerator : MonoBehaviour {
         else if (rando < top && rando > midBot) {
             atributes[13] = "Average";
         }
-        else:
+        else {
             atributes[13] = "Shut-in";
-        updateStr(-4);
-        updateDex(-4);
-        updatePer(2);
-
+            updateStr(-4);
+            updateDex(-4);
+            updatePer(2);
+        }
         // Are they fun to be around aka Charismatic
         rando = RandomNum();
-        if archetype in("Jock Sudent", "Government Person"):
+        if (new string[] { "Jock Sudent", "Government Person" }.Contains(archetype)){
             rando += 10;
-
+        }
 
         if (rando >= top) {
             atributes[14] = "Charismatic";
@@ -694,10 +775,17 @@ public class NpcGenerator : MonoBehaviour {
         return atributes;
     }
 
+    /// <summary>
+    /// creates and array of Physical Atributes to define a npc
+    /// </summary>
+    /// <returns></returns>
     private string[] Traits() {
-        string[] traits = [0] * 10;
-        for x in traits{//to give me empty spots
-            traits[x] = "0";
+        string[] traits = new string[10];
+        int count = 0;
+        foreach (string x in traits)
+        {//to give me empty spots
+            traits[count] = "0";
+            count++;
         }
         rando = RandomNum();
         if (rando > 50) {
@@ -769,23 +857,29 @@ public class NpcGenerator : MonoBehaviour {
         // Hair Type
         string[] hariList = { "Long-Curly-Hair", "Short-Straight-Hair", "Short-Curly-Hair", "Long-Straight-Hair", "Bald-Hair", "Thinning-Hair", "Receding-Hair" };
         rando = RandomNum();
-        if (rando > 84) {
+        if (rando > 84)
+        {
             traits[4] = hariList[0];
         }
-        else if (rando <= 84 && rando > 67) {
+        else if (rando <= 84 && rando > 67)
+        {
             traits[4] = hariList[1];
         }
-        else if (rando <= 67 && rando > 51) {
+        else if (rando <= 67 && rando > 51)
+        {
             traits[4] = hariList[2];
         }
-        else if (rando <= 51 && rando > 34) {
+        else if (rando <= 51 && rando > 34)
+        {
             traits[4] = hariList[3];
         }
-        else if (rando <= 32 && rando > 15) {
+        else if (rando <= 32 && rando > 15){
             traits[4] = hariList[4];
-            if (traits[0] == "Female"):
+            if (traits[0] == "Female"){
                 traits[4] = hariList[5];
+            }
         }
+
         else {
             traits[4] = hariList[6];
         }
@@ -807,60 +901,49 @@ public class NpcGenerator : MonoBehaviour {
 
     }
 
-    def Run(){
-    global intuition
-    global intelligence
-    global strength
-    global charisma
-    global precision
-    global dexterity
-    global perception
-    global archetype
-    global canUseMagic
-    global favWeapon
-    global physicalTraits
-    global personalityTraits
-    NpcType()#Creating the Character base stats and Choosing What type they will be peasant Average Joe...
-    print(archetype, end = "\n")
-    if(canUseMagic):
-        print("Can use Magic")
+    /// <summary>
+    /// Runs the whole function and is the basic controller that updates values
+    /// </summary>
+    public void Run() {
+        NpcType();//Creating the Character base stats and Choosing What type they will be peasant Average Joe...
+        /*print(archetype);
+        if (canUseMagic) {
+            print("Can use Magic");
+        }
+        else {
+            print("Cannot use Magic");
+        }
+        print("Favorite weapon type is");*/
+        physicalTraits = Traits();//Physical Traits being made, possibaly spirt chooser
+        personalityTraits = Atributes();//Personality Traits being made
+        FinalizeValues();//Fixes any stat issues
+        /*print("Intuition:" + intuition);
+        print("Intelligence:" + intelligence);
+        print("Strength:" + strength);
+        print("Charisma:" + charisma);
+        print("Precision" + precision);
+        print("Dextarity:" + dexterity);
+        print("Perception:" + perception);
+        int count = 0;
+        foreach( string x in personalityTraits){
+            if (x != "0" && x != "Average"){
+                print(x + "");
+            }
+        }
+        print("");
+        //print(personalityTraits);
+        foreach (string x in physicalTraits) {
+            count++;
+            if (x != "0" && x != "Average"){
+                if (count == 6) {
+                    print("Hair,");
+                }
 
-    else:
-        print("Cannot use Magic")
-
-    print("Favorite weapon type is", favWeapon, end = "\n")
-    physicalTraits = Traits()#Physical Traits being made, possibaly spirt chooser
-    personalityTraits = Atributes()#Personality Traits being made
-    FinalizeValues()#Fixes any stat issues
-    print("Intuition:", intuition, end = "\n")
-    print("Intelligence:", intelligence, end = "\n")
-    print("Strength:", strength, end = "\n")
-    print("Charisma:", charisma, end = "\n")
-    print("Precision", precision, end = "\n")
-    print("Dextarity:", dexterity, end = "\n")
-    print("Perception:", perception, end = "\n")
-    count = 0
-    for x in personalityTraits:
-        if(x != 0 and x != "Average"):
-            print(x, "" , end = "")
-    print(end = "\n")
-    #print(personalityTraits)
-    for x in physicalTraits:
-        count += 1
-        if(x != 0 and x != "Average"):
-            if(count == 6):
-                print("Hair,", end = " ")
-
-
-            print(x, "" , end = "")
-
-    print("Skin Tone", end = "")
-
+                print(x);
+            }
+        }
+        print("Skin Tone");
+        */
 
 }
-    /*// Update is called once per frame
-    void Update()
-    {
-        
-    }*/
 }
