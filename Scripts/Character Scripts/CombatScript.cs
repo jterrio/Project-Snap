@@ -25,19 +25,22 @@ public class CombatScript : MonoBehaviour {
 
     private int turnsToClose = 0; //turns we are too close to an enemy
     private float tooCloseDistance = 1f;
-    private float safeDistance = 2f;
-    private int safeSpellDistanceMultiplier = 5; //multiplier to put on safe distance to see what AI wants to be from spells to be considered safe (the ones that hurt)
+    private float safeDistance = 5f;
+    private int safeSpellDistanceMultiplier = 30; //multiplier to put on safe distance to see what AI wants to be from spells to be considered safe (the ones that hurt)
+
 
     [Header("Spell Variables")]
     private Spell selectedSpell; //spell that is being casted (or attempted to)
     private Coroutine spellCoroutine; //coroutine for casting spell
     private float progress = 0; //progress from 0 to 1 of the spell being cast
+    private float spellMemoryCooldown = 0.25f;
+    
 
     [Header("Combat Variables")]
     public List<GameObject> targets; //list of all targets that we can currently see in combat
     private GameObject focusTarget; //target that we are focus on; the one that the spell will be cast in relation to
     private Dictionary<GameObject, Vector3> memory = new Dictionary<GameObject, Vector3>(); //keep track of the npc's memory of last seen locations
-    private Dictionary<Spell, Vector3> spellMemory = new Dictionary<Spell, Vector3>(); //keep track of spells and their last seen location
+    private Dictionary<GameObject, float> spellMemory = new Dictionary<GameObject, float>(); //keep track of spells and their last seen location
     private List<Spell> usedSpellMemory = new List<Spell>(); //keep track of spells that have been casted to know what to expect
     public List<Vector3> movementQueue = new List<Vector3>(); //queue in movements for the ai to move in a single turn, if possible
     public GameObject debugPoint; //points that can be instantiated for debuging purposes
@@ -57,13 +60,19 @@ public class CombatScript : MonoBehaviour {
     public float EnergyTimer { get { return energyTimerValue; } set { energyTimerValue = value; } }
 
     [Header("Movement Variables")]
-    private float dodgeChance = 1f; //maybe scale with difficult? 1= easy? 2=medium?...
+    public float dodgeChance = 1f; //maybe scale with difficult? 1= easy? 2=medium?...
     private int rotationDirection = -1; //0 is counter clockwise, 1 is clockwise. If on -1, then is it not set to anything
 
     [Header("Turn Variables")]
     public bool isReady = false; //ready means that combat handler should give us a turn
     public bool endTurn = false; //send to combat handler to know that we are done
 
+    public GameObject FocusTarget {
+        get {
+            return focusTarget;
+        }
+    }
+    
     public void AIEndCombat() {
         targets.Clear();
         focusTarget = null;
@@ -146,10 +155,11 @@ public class CombatScript : MonoBehaviour {
         }else if (!npcInfo.inCombat) {
             return;
         }
+
         SetWalkState();
         CheckOutOfEnergy();
-
         UpdateMemory();
+        UpdateSpellMemory();
         SetState(); //get info about self and world and set the ai state accordingly
         if (state != CombatState.DYING) { //check if it isnt dead
             Move(); //move the ai every frame
@@ -159,9 +169,58 @@ public class CombatScript : MonoBehaviour {
         } else { //the ai is dead
             Dead();
         }
+        SetDirection();
     }
 
 
+    void UpdateSpellMemory() {
+        Collider2D[] closeSpells;
+        if (state == CombatState.DEFENDING) {
+            closeSpells = Physics2D.OverlapCircleAll(transform.position, (safeDistance * safeSpellDistanceMultiplier), CombatManager.ins.spellTest);
+        } else {
+            closeSpells = Physics2D.OverlapCircleAll(transform.position, (safeDistance), CombatManager.ins.spellTest);
+        }
+
+        //remove old spells
+        foreach (GameObject s in new Dictionary<GameObject, float>(spellMemory).Keys) {
+            if (s == null) {
+                spellMemory.Remove(s);
+                continue;
+            }
+            if (!fov.CanSeeTarget(s) && (Time.time - spellMemory[s]) >= spellMemoryCooldown) {
+                spellMemory.Remove(s);
+            }
+        }
+
+        //add new spells and update
+        foreach (Collider2D c in closeSpells) {
+            GameObject g = c.gameObject;
+            if (fov.CanSeeTarget(g) && g.GetComponent<SpellRecords>().caster != gameObject) {
+                if (spellMemory.ContainsKey(g)) {
+                    spellMemory[g] = Time.time;
+                } else {
+                    spellMemory.Add(g, Time.time);
+                }
+            }
+        }
+
+    }
+
+    void SetDirection() {
+        switch (state) {
+            case CombatState.ATTACKING:
+            case CombatState.DEFENDING:
+                if (focusTarget != null) {
+                    npcInfo.direction = npcInfo.FaceDirection(focusTarget.transform.position);
+                }
+                break;
+            case CombatState.AVOIDING:
+            case CombatState.RUNNING:
+                npcInfo.SetDirection();
+                break;
+        }
+        npcInfo.SetSprite();
+    }
 
     void CheckOutOfEnergy() {
         if(npcInfo.currentStamina < 1) {
@@ -538,466 +597,14 @@ public class CombatScript : MonoBehaviour {
     void SetMove() {
         movementQueue.Clear(); //clear our movement
         switch (state) { //switch statement for movement state so we know how to move
-            case CombatState.ATTACKING:            
-                if (selectedSpell == null || focusTarget == null) { //if we don't have a spell, we cant move; if we have no target who is are enemy, we cant move
-                    return;
-                }
-                Vector3 dir = Vector3.zero; //init dir vec3
-                switch (selectedSpell.type) { //switch statement for spell type to know what to do
-                    case Spell.Type.Projectile: //projectile
-
-                        Projectile p = selectedSpell as Projectile; //create instance of the spell as our type
-                        Vector3 f = new Vector3(transform.position.x, transform.position.y - 0.45f, 0); //get feet position (point of AI)
-                        float disFromTarget = Vector3.Distance(memory[focusTarget], f); //get current distance from focusTarget
-                        Vector3 directionFromTargetToAI = f - memory[focusTarget]; //get current direction from focusTarget to us (feet)
-                        float targetDistance = disFromTarget;
-
-                        //raycast from focusTarget to us by p distance, which is the distance of the max range of the projectile
-                        RaycastHit2D hit = Physics2D.Raycast(memory[focusTarget], f - memory[focusTarget], p.distance * 1.05f, CombatManager.ins.obstacleTest);
-                        float wallDistance = Vector3.Distance(memory[focusTarget], hit.point) * 0.95f;
-                        if (disFromTarget >= p.distance) {
-                            targetDistance = p.distance * 0.9f;
-                        } else if (disFromTarget <= p.distance * 0.35f) {
-                            targetDistance = p.distance * 0.45F;
-                        }
-                        if (hit.collider != null) {
-                            if (targetDistance >= wallDistance) {
-                                targetDistance = wallDistance;
-                            }
-                        }
-
-                        if (true) {
-                            float angle = Vector2.Angle(Vector2.right, directionFromTargetToAI); 
-                            if (transform.position.y - 0.45f < memory[focusTarget].y) { //we are bottom half of the y-axis, so add 180 since it is absolute
-                                angle = 360 - angle;
-                            }
-                            //angle = Mathf.Round(angle);
-                            //print(angle);
-                            int counterClockwiseResult = 0;
-                            int clockwiseResult = 0;
-
-                            /*
-                             * Raycast counter clockwise and test results  to get a rotation around the focusTarget
-                             * Record how many successful paths
-                             * */
-                            for (int i = 0; i < 90; i++) {
-                                float counterClockwiseAngle = angle + i; //increment the angle
-                                if (counterClockwiseAngle > 360) { //validation check
-                                    counterClockwiseAngle -= 360;
-                                }
-
-                                //check the point on the edge of the circle
-                                float x1 = memory[focusTarget].x + targetDistance * Mathf.Cos(Mathf.Deg2Rad * counterClockwiseAngle);
-                                float y1 = memory[focusTarget].y + targetDistance * Mathf.Sin(Mathf.Deg2Rad * counterClockwiseAngle);
-                                //test the point
-                                bool[] counterClockwiseTest = TryAttackPoint(x1, y1, targetDistance);
-                                //if we cant reach the point or the focusTarget cant see, we have reached the farthest point
-                                if (!counterClockwiseTest[0] || !counterClockwiseTest[1]) {
-                                    break;
-                                } else {
-                                    counterClockwiseResult += 1;
-                                }
-                            }
-
-                            /*
-                             * Raycast clockwise and test results  to get a rotation around the focusTarget
-                             * Record how many successful paths
-                             * */
-                            for (int i = 0; i < 90; i++) {
-                                float clockwiseAngle = angle - i; //increment
-                                if (clockwiseAngle > 360) { //validation check
-                                    clockwiseAngle -= 360;
-                                }
-
-                                //create point on circle
-                                float x2 = memory[focusTarget].x + targetDistance * Mathf.Cos(Mathf.Deg2Rad * clockwiseAngle);
-                                float y2 = memory[focusTarget].y + targetDistance * Mathf.Sin(Mathf.Deg2Rad * clockwiseAngle);
-                                //test the point
-                                bool[] clockwiseTest = TryAttackPoint(x2, y2, targetDistance);
-                                //if we cant reach the point or the focusTarget cant see, we have reached the farthest point
-                                if (!clockwiseTest[0] || !clockwiseTest[1]) {
-                                    break;
-                                } else {
-                                    clockwiseResult += 1;
-                                }
-                            }
-                            //set direction or give chance to change. need to change later to account for spells and such
-                            if (rotationDirection == 1) {
-                                if (Random.Range(1, 100) <= 2) { //2% chance to change direction
-                                    rotationDirection = 0;
-                                }
-                            } else if (rotationDirection == 0) {
-                                if (Random.Range(1, 100) <= 2) { //2% chance to change direction
-                                    rotationDirection = 1;
-                                }
-                            } else { //if we have not set a direction to go; base case
-                                //check which results are greater and go that way. If they are the same, we random.
-                                if (clockwiseResult < counterClockwiseResult) {
-                                    rotationDirection = 0; //go cc
-                                } else if (counterClockwiseResult > clockwiseResult) {
-                                    rotationDirection = 1; // go c
-                                } else {
-                                    rotationDirection = Random.Range(0, 1); //random
-                                }
-                            }
-
-                            //go after the last point, if first, then go the direction we were told.
-                            //do check, because first may be turna round, which means first = second. So always do a check to see if have at least one point recorded.
-                            //if not, then we can just move normally, because that means we have moved, so just move the normal way and record that, if possible
-
-                            //we want 40 points in our queue
-                            for (int i = 0; i < 40; i++) {
-                                float newAngle = angle; //init
-                                if (rotationDirection == 1) { //if we are going clockwise, increment
-                                    if (movementQueue.Count != 0) {
-                                        newAngle = lastAngle - 1;
-                                    } else {
-                                        newAngle -= 1;
-                                    }
-                                    if (newAngle < 0) {
-                                        newAngle += 360;
-                                    }
-
-                                } else {
-                                    if (movementQueue.Count != 0) { //if we are going counter-clockwise, increment
-                                        newAngle = lastAngle + 1;
-                                    } else {
-                                        newAngle += 1;
-                                    }
-                                    if (newAngle > 360) {
-                                        newAngle -= 360;
-                                    }
-
-                                }
-
-                                //create new point on circle
-
-                                //randomize the movement slightly
-                                if(Random.Range(0, 4) == 0) {
-                                    targetDistance = targetDistance + Random.Range(targetDistance * -0.05f, targetDistance * 0.05f);
-                                    if (targetDistance >= p.distance) {
-                                        targetDistance = p.distance * 0.9f;
-                                    } else if (disFromTarget <= p.distance * 0.35f) {
-                                        targetDistance = p.distance * 0.45F;
-                                    }
-                                    if (hit.collider != null) {
-                                        if (targetDistance >= wallDistance) {
-                                            targetDistance = wallDistance;
-                                        }
-                                    }
-                                }
-                                
-                                float newX = memory[focusTarget].x + targetDistance * Mathf.Cos(Mathf.Deg2Rad * newAngle);
-                                float newY = memory[focusTarget].y + targetDistance * Mathf.Sin(Mathf.Deg2Rad * newAngle);
-
-                                //try the point
-                                bool[] turnAroundTest = TryAttackPoint(newX, newY, targetDistance);
-
-                                //if the someone cant see it, then we need to turn around and continue
-                                if (!turnAroundTest[1]) {
-                                    //turn around
-                                    if (rotationDirection == 0) {
-                                        rotationDirection = 1;
-                                    } else {
-                                        rotationDirection = 0;
-                                    }
-                                    continue;
-                                } else {
-                                    //we dont need to turn around, add the point and continue
-                                    movementQueue.Add(new Vector3(newX, newY, 0));
-                                    lastAngle = newAngle;
-                                }
-
-
-                            }
-
-                        }
-                        break;
-                    case Spell.Type.Beam:
-                        break;
-                    case Spell.Type.Enhancement:
-                        break;
-                    case Spell.Type.Forbidden:
-                        break;
-                    case Spell.Type.Ring:
-                        break;
-                    case Spell.Type.Utility:
-                        break;
-                    case Spell.Type.Wall:
-                        break;
-                }
+            case CombatState.ATTACKING:
+                AddAttackQueue();
                 break;
             case CombatState.RUNNING: //running
-                int selfQuad = SetQuad(transform.position, memory[focusTarget]); //get our current quadrant in reference to focusTarget
-                Vector3 feet = new Vector3(transform.position.x, transform.position.y - 0.45f, 0); //get feet position (AI)
-                Vector3 lastDirection = feet - lastRunAwayPosition; //get lastRunAwayPosition to feet direction
-                float currentAngle = Vector2.Angle(Vector2.right, lastDirection); //get current Angle we are running
-                currentAngle = AngleCheck(currentAngle, lastRunAwayPosition, feet); //validation
-                List<Vector3> pointsInCover = new List<Vector3>(); //points in cover
-                List<Vector3> pointsPossibleCover = new List<Vector3>(); //points that may lead us to cover, such as against walls
-                List<Vector3> pointsOpen = new List<Vector3>(); //points that are not cover and will probably not lead to cover; in the open
-
-                Vector3 lastPoint = Vector3.zero;
-
-                //test every angle around us
-                for (int i = 0; i < 360; i++) {
-                    //make the circle
-                    float x1 = transform.position.x + 1f * Mathf.Cos(Mathf.Deg2Rad * i);
-                    float y1 = transform.position.y + 1f * Mathf.Sin(Mathf.Deg2Rad * i);
-                    Vector3 point = new Vector3(x1, y1, 0);
-                    if (i == 0) { //base case
-                        lastPoint = point; //set base case
-                        //do a raycast from the point to us
-                        RaycastHit2D hit = Physics2D.Raycast(transform.position, point - transform.position, 10f, CombatManager.ins.obstacleTest);
-                        //get point from hit (if there is one)
-                        Vector3 testPoint = new Vector3(hit.point.x, hit.point.y, 0);
-                        //add a little buffer room from the wall to our position/direction
-                        testPoint += (transform.position - testPoint).normalized / 4;
-                        if (hit.collider != null) { //if we hit something
-                            if (!GetComponent<CharacterInfo>().IsVisible(focusTarget, testPoint)) { //check to see if we are in cover
-                                pointsInCover.Add(testPoint); //in cover
-                            } else {
-                                pointsOpen.Add(testPoint); //in the open (in the future tests, this one will be iffy)
-                            }
-                        } else {
-                            pointsOpen.Add(point);
-                        }
-                    } else { //recursive
-                        //raycast for cover
-                        RaycastHit2D hit = Physics2D.Raycast(transform.position, point - transform.position, 10f, CombatManager.ins.obstacleTest);
-                        //create a point from the hit (if any)
-                        Vector3 testPoint = new Vector3(hit.point.x, hit.point.y, 0);
-                        //add our direction/position to the hit as a buffer
-                        testPoint += (transform.position - testPoint).normalized / 4;
-                        if (hit.collider != null) { //we hit something
-                            if (!GetComponent<CharacterInfo>().IsVisible(focusTarget, testPoint)) { //check to see if we are in cover
-                                pointsInCover.Add(testPoint);
-                            } else {
-                                /*If we are NOT in cover, check:
-                                 *-if this test point and the last test point can see each other
-                                 * -if the distance between this point and us is greater than the distance between last point and us
-                                 * */
-                                if (!GetComponent<CharacterInfo>().IsVisible(testPoint, lastPoint) && (Vector3.Distance(testPoint, transform.position) > Vector3.Distance(lastPoint, transform.position))) {
-                                    pointsPossibleCover.Add(testPoint); //in possible cover
-                                } else { //in cover
-                                    pointsOpen.Add(point);
-                                }
-                            }
-                        } else { //the point is out in the open
-                            testPoint = point + ((point - transform.position).normalized * 10f); //distance of 10 in the direction of point (the current degree)
-                            if (!GetComponent<CharacterInfo>().IsVisible(focusTarget, testPoint)) { //check to see if in cover
-                                pointsInCover.Add(point + ((point - transform.position.normalized) * 3f)); //in cover
-                            } else {
-                                /*If we are NOT in cover, check:
-                                 * -if this test point and the last test point can see each other
-                                 * -if the distance between this point and us is greater than the distance between last point and us
-                                 * -if the point is within 90 degree of our LOS (so we dont just make 180 flip judgements)
-                                 * */
-                                if (GetComponent<CharacterInfo>().IsVisible(testPoint, lastPoint) && (Vector3.Distance(testPoint, transform.position) > Vector3.Distance(lastPoint, transform.position)) && !RangeTest(transform.position, memory[focusTarget], testPoint, 90)) {
-                                    pointsPossibleCover.Add(point + ((point - transform.position.normalized) * 3f)); //in possible cover
-                                } else {
-                                    pointsOpen.Add(point); //open
-                                }
-
-                            }
-                        }
-                    }
-                    lastPoint = point; //set up for next iteration
-                } //end for loop
-                /*
-                print("Cover: " + pointsInCover.Count);
-                print("Possible: " + pointsPossibleCover.Count);
-                print("Open: " + pointsOpen.Count); */
-
-                //if we have points in cover, use them first
-                if (pointsInCover.Count != 0) {
-                    //print("Selected Cover!");
-                    movementQueue.Clear(); //clear past movementqueue
-                    Vector3 selectedPoint = pointsInCover[0]; //set base case
-                    foreach (Vector3 p in pointsInCover) {
-                        if (p == selectedPoint) { //if on base case, ignore
-                            continue;
-                        } else {
-                           /*Check:
-                            * -Distance is at least 2 (Arbitary number, just for movement purposes)
-                            * -Distance is smaller than point we are currently using
-                            * -It is within our LOS of 90 degrees (NOT DIRECTLY BEHIND US)
-                            * -We don't have to pass through the focusTarget
-                            * */
-                            if (Vector3.Distance(p, transform.position) >= 2f && Vector3.Distance(p, transform.position) < Vector3.Distance(selectedPoint, transform.position) && RangeTest(transform.position, selectedPoint, p, 90) && QuadTest(SetQuad(focusTarget.transform.
-                                position, p), SetQuad(memory[focusTarget], transform.position))) {
-                                selectedPoint = p;
-                            }
-                        }
-                    }
-                    //add to movementqueue
-                    movementQueue.Add(selectedPoint);
-                //if there are no points in cover, use possible points in cover next
-                } else if (pointsPossibleCover.Count != 0) {
-                    //print("Selected Possible!");
-                    movementQueue.Clear(); //clear our queue
-                    Vector3 selectedPoint = pointsPossibleCover[0]; //set the base case
-                    foreach (Vector3 p in pointsPossibleCover) { 
-                        if (p == selectedPoint) { //skip base case
-                            continue;
-                        } else {
-                            /*Check:
-                            * -Distance is at least 2 (Arbitary number, just for movement purposes)
-                            * -Distance is smaller than point we are currently using
-                            * -It is within our LOS of 90 degrees (NOT DIRECTLY BEHIND US)
-                            * -We don't have to pass through the focusTarget
-                            * */
-                            if (Vector3.Distance(p, transform.position) >= 2f && Vector3.Distance(p, transform.position) < Vector3.Distance(selectedPoint, transform.position) && RangeTest(transform.position, selectedPoint, p, 90) && QuadTest(SetQuad(focusTarget.transform.
-                                position, p), SetQuad(memory[focusTarget], transform.position))) {
-                                selectedPoint = p;
-                            }
-                        }
-                    }
-                    //add to movementqueue
-                    movementQueue.Add(selectedPoint);
-
-                //if no points in cover or possible cover, then we have to use a point out in the open
-                } else if (pointsOpen.Count != 0) {
-                    //print("Selected Open!");
-                    movementQueue.Clear(); //clear the movement queue
-                    int index = Random.Range(0, pointsOpen.Count - 1); //get a random index value
-                    movementQueue.Add(pointsOpen[index]); //add a random point using the index
-                
-                //if somehow, no points were valid, then we may as well have the ai recover stamina
-                }
-
+                AddRunningQueue();
                 break;
             case CombatState.AVOIDING: case CombatState.DEFENDING: //defending//avoiding
-                //Figure out if we are too close, if we are trying to move away from an enemy spell, or both
-
-                float safeDistanceTest = safeDistance;
-                if (state == CombatState.DEFENDING) {
-                    safeDistanceTest *= safeSpellDistanceMultiplier;
-                }
-
-                bool enemyIsClose = false;
-                bool spellIsClose = false;
-
-                //ENEMY TEST
-                foreach(GameObject t in targets) {
-                    if (GetComponent<CharacterInfo>().IsVisible(t)) {
-                        if (Vector3.Distance(t.transform.position, gameObject.transform.position) <= safeDistanceTest) {
-                            enemyIsClose = true;
-                            break;
-                        }
-                    }
-                }
-
-                //SPELL TEST - CHANGE LATER IMPORTANT
-                List<GameObject> tooCloseSpells = fov.GetVisibleSpells();
-                if(tooCloseSpells.Count > 0) {
-                    spellIsClose = true;
-                }
-
-
-                if (enemyIsClose && !spellIsClose) {
-                    int quadOne = 0;
-                    int quadTwo = 0;
-                    int quadThree = 0;
-                    int quadFour = 0;
-                    int quadToRunFrom = 0; //if set 0, then they are all equal.
-                    Vector3 movementVector = Vector3.zero;
-                    foreach (GameObject t in targets) {
-                        if (GetComponent<CharacterInfo>().IsVisible(t)) {
-                            if (Vector3.Distance(t.transform.position, gameObject.transform.position) <= safeDistanceTest) {
-                                int i = SetQuad(t.transform.position, gameObject.transform.position);
-                                switch (i) {
-                                    case 1:
-                                        quadOne += 1;
-                                        break;
-                                    case 2:
-                                        quadTwo += 1;
-                                        break;
-                                    case 3:
-                                        quadThree += 1;
-                                        break;
-                                    case 4:
-                                        quadFour += 1;
-                                        break;
-                                    default:
-                                        quadOne += 1;
-                                        break;
-                                }
-                            }
-                        }
-                    }
-                    if(quadOne == quadTwo && quadTwo == quadThree && quadThree == quadFour) {
-                        quadToRunFrom = 0;
-                    } else {
-                        if(quadOne > quadTwo) {
-                            if(quadOne > quadThree) {
-                                if (quadOne > quadFour) {
-                                    quadToRunFrom = 1;
-                                } else {
-                                    quadToRunFrom = 4;
-                                }
-                            } else if(quadThree > quadFour) {
-                                quadToRunFrom = 3;
-                            } else {
-                                quadToRunFrom = 4;
-                            }
-                        }else if(quadTwo > quadThree) {
-                            if(quadTwo > quadFour) {
-                                quadToRunFrom = 2;
-                            } else {
-                                quadToRunFrom = 4;
-                            }
-                        }else if(quadThree > quadFour) {
-                            quadToRunFrom = 3;
-                        } else {
-                            quadToRunFrom = 4;
-                        }
-                    }
-
-                    foreach(GameObject t in targets) {
-                        if (GetComponent<CharacterInfo>().IsVisible(t)) {
-                            if (Vector3.Distance(t.transform.position, gameObject.transform.position) <= safeDistanceTest) {
-                                if(quadToRunFrom != 0) {
-                                    if(SetQuad(t.transform.position, gameObject.transform.position) == quadToRunFrom) {
-                                        movementVector += (gameObject.transform.position - t.transform.position).normalized;
-                                    }
-                                } else {
-                                    if(movementVector == Vector3.zero || Random.Range(0, 1) == 0) {
-                                        movementVector += (gameObject.transform.position - t.transform.position).normalized;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    movementQueue.Add(gameObject.transform.position + movementVector);
-                    movementQueue.Add(gameObject.transform.position + movementVector + movementVector);
-                    movementQueue.Add(gameObject.transform.position + movementVector + movementVector + movementVector);
-                } else if(!enemyIsClose && spellIsClose) {
-                    Vector3 movementVector = Vector3.zero;
-                    foreach (GameObject s in tooCloseSpells) {
-                        if (s.tag.ToString() == GameManagerScript.ins.projectileTag) { //PROJECTILE
-                            if (s.GetComponent<SpellRecords>().caster == gameObject || !fov.CanSeeTarget(s)) {
-                                continue;
-                            }
-                            Vector3 spellDir = s.GetComponent<SpellRecords>().dir;
-                            Vector3 selfToProj = s.gameObject.transform.position - transform.position;
-                            Vector3 P3 = new Vector2(-selfToProj.y, selfToProj.x) / Mathf.Sqrt((selfToProj.x * selfToProj.x) + (selfToProj.y * selfToProj.y)) * 1;
-                            Vector3 P4 = new Vector2(-selfToProj.y, selfToProj.x) / Mathf.Sqrt((selfToProj.x * selfToProj.x) + (selfToProj.y * selfToProj.y)) * -1;
-                            //see if the spell is going toward any of those
-                            if(Vector3.Distance(transform.position + P3, s.gameObject.transform.position + spellDir) < Vector3.Distance(transform.position + P4, s.gameObject.transform.position + spellDir)) {
-                                movementVector += P4;
-                            } else {
-                                movementVector += P3;
-                            }
-                            break;
-                        }
-                    }
-                    movementQueue.Add(gameObject.transform.position + movementVector);
-                    movementQueue.Add(gameObject.transform.position + movementVector + movementVector);
-                    movementQueue.Add(gameObject.transform.position + movementVector + movementVector + movementVector);
-                }else if(enemyIsClose && spellIsClose) {
-                    print("BOTH ARE TOO CLOSE! HELP!");
-                }
+                AddDefendQueue();
                 break;
             case CombatState.DYING: //dying
                 //do nothing, you are dead!
@@ -1015,9 +622,494 @@ public class CombatScript : MonoBehaviour {
     }
 
 
+    void AddAttackQueue() {
+        if (selectedSpell == null || focusTarget == null) { //if we don't have a spell, we cant move; if we have no target who is are enemy, we cant move
+            return;
+        }
+        Vector3 dir = Vector3.zero; //init dir vec3
+        switch (selectedSpell.type) { //switch statement for spell type to know what to do
+            case Spell.Type.Projectile: //projectile
+
+                Projectile p = selectedSpell as Projectile; //create instance of the spell as our type
+                Vector3 f = new Vector3(transform.position.x, transform.position.y - 0.45f, 0); //get feet position (point of AI)
+                float disFromTarget = Vector3.Distance(memory[focusTarget], f); //get current distance from focusTarget
+                Vector3 directionFromTargetToAI = f - memory[focusTarget]; //get current direction from focusTarget to us (feet)
+                float targetDistance = disFromTarget;
+
+                //raycast from focusTarget to us by p distance, which is the distance of the max range of the projectile
+                RaycastHit2D hit = Physics2D.Raycast(memory[focusTarget], f - memory[focusTarget], p.distance * 1.05f, CombatManager.ins.obstacleTest);
+                float wallDistance = Vector3.Distance(memory[focusTarget], hit.point) * 0.95f;
+                if (disFromTarget >= p.distance) {
+                    targetDistance = p.distance * 0.9f;
+                } else if (disFromTarget <= p.distance * 0.35f) {
+                    targetDistance = p.distance * 0.45F;
+                }
+                if (hit.collider != null) {
+                    if (targetDistance >= wallDistance) {
+                        targetDistance = wallDistance;
+                    }
+                }
+
+                if (true) {
+                    float angle = Vector2.Angle(Vector2.right, directionFromTargetToAI);
+                    if (transform.position.y - 0.45f < memory[focusTarget].y) { //we are bottom half of the y-axis, so add 180 since it is absolute
+                        angle = 360 - angle;
+                    }
+                    //angle = Mathf.Round(angle);
+                    //print(angle);
+                    int counterClockwiseResult = 0;
+                    int clockwiseResult = 0;
+
+                    /*
+                     * Raycast counter clockwise and test results  to get a rotation around the focusTarget
+                     * Record how many successful paths
+                     * */
+                    for (int i = 0; i < 90; i++) {
+                        float counterClockwiseAngle = angle + i; //increment the angle
+                        if (counterClockwiseAngle > 360) { //validation check
+                            counterClockwiseAngle -= 360;
+                        }
+
+                        //check the point on the edge of the circle
+                        float x1 = memory[focusTarget].x + targetDistance * Mathf.Cos(Mathf.Deg2Rad * counterClockwiseAngle);
+                        float y1 = memory[focusTarget].y + targetDistance * Mathf.Sin(Mathf.Deg2Rad * counterClockwiseAngle);
+                        //test the point
+                        bool[] counterClockwiseTest = TryAttackPoint(x1, y1, targetDistance);
+                        //if we cant reach the point or the focusTarget cant see, we have reached the farthest point
+                        if (!counterClockwiseTest[0] || !counterClockwiseTest[1]) {
+                            break;
+                        } else {
+                            counterClockwiseResult += 1;
+                        }
+                    }
+
+                    /*
+                     * Raycast clockwise and test results  to get a rotation around the focusTarget
+                     * Record how many successful paths
+                     * */
+                    for (int i = 0; i < 90; i++) {
+                        float clockwiseAngle = angle - i; //increment
+                        if (clockwiseAngle > 360) { //validation check
+                            clockwiseAngle -= 360;
+                        }
+
+                        //create point on circle
+                        float x2 = memory[focusTarget].x + targetDistance * Mathf.Cos(Mathf.Deg2Rad * clockwiseAngle);
+                        float y2 = memory[focusTarget].y + targetDistance * Mathf.Sin(Mathf.Deg2Rad * clockwiseAngle);
+                        //test the point
+                        bool[] clockwiseTest = TryAttackPoint(x2, y2, targetDistance);
+                        //if we cant reach the point or the focusTarget cant see, we have reached the farthest point
+                        if (!clockwiseTest[0] || !clockwiseTest[1]) {
+                            break;
+                        } else {
+                            clockwiseResult += 1;
+                        }
+                    }
+                    //set direction or give chance to change. need to change later to account for spells and such
+                    if (rotationDirection == 1) {
+                        if (Random.Range(1, 100) <= 2) { //2% chance to change direction
+                            rotationDirection = 0;
+                        }
+                    } else if (rotationDirection == 0) {
+                        if (Random.Range(1, 100) <= 2) { //2% chance to change direction
+                            rotationDirection = 1;
+                        }
+                    } else { //if we have not set a direction to go; base case
+                             //check which results are greater and go that way. If they are the same, we random.
+                        if (clockwiseResult < counterClockwiseResult) {
+                            rotationDirection = 0; //go cc
+                        } else if (counterClockwiseResult > clockwiseResult) {
+                            rotationDirection = 1; // go c
+                        } else {
+                            rotationDirection = Random.Range(0, 1); //random
+                        }
+                    }
+
+                    //go after the last point, if first, then go the direction we were told.
+                    //do check, because first may be turna round, which means first = second. So always do a check to see if have at least one point recorded.
+                    //if not, then we can just move normally, because that means we have moved, so just move the normal way and record that, if possible
+
+                    //we want 40 points in our queue
+                    for (int i = 0; i < 40; i++) {
+                        float newAngle = angle; //init
+                        if (rotationDirection == 1) { //if we are going clockwise, increment
+                            if (movementQueue.Count != 0) {
+                                newAngle = lastAngle - 1;
+                            } else {
+                                newAngle -= 1;
+                            }
+                            if (newAngle < 0) {
+                                newAngle += 360;
+                            }
+
+                        } else {
+                            if (movementQueue.Count != 0) { //if we are going counter-clockwise, increment
+                                newAngle = lastAngle + 1;
+                            } else {
+                                newAngle += 1;
+                            }
+                            if (newAngle > 360) {
+                                newAngle -= 360;
+                            }
+
+                        }
+
+                        //create new point on circle
+
+                        //randomize the movement slightly
+                        if (Random.Range(0, 4) == 0) {
+                            targetDistance = targetDistance + Random.Range(targetDistance * -0.05f, targetDistance * 0.05f);
+                            if (targetDistance >= p.distance) {
+                                targetDistance = p.distance * 0.9f;
+                            } else if (disFromTarget <= p.distance * 0.35f) {
+                                targetDistance = p.distance * 0.45F;
+                            }
+                            if (hit.collider != null) {
+                                if (targetDistance >= wallDistance) {
+                                    targetDistance = wallDistance;
+                                }
+                            }
+                        }
+
+                        float newX = memory[focusTarget].x + targetDistance * Mathf.Cos(Mathf.Deg2Rad * newAngle);
+                        float newY = memory[focusTarget].y + targetDistance * Mathf.Sin(Mathf.Deg2Rad * newAngle);
+
+                        //try the point
+                        bool[] turnAroundTest = TryAttackPoint(newX, newY, targetDistance);
+
+                        //if the someone cant see it, then we need to turn around and continue
+                        if (!turnAroundTest[1]) {
+                            //turn around
+                            if (rotationDirection == 0) {
+                                rotationDirection = 1;
+                            } else {
+                                rotationDirection = 0;
+                            }
+                            continue;
+                        } else {
+                            //we dont need to turn around, add the point and continue
+                            movementQueue.Add(new Vector3(newX, newY, 0));
+                            lastAngle = newAngle;
+                        }
+
+
+                    }
+
+                }
+                break;
+            case Spell.Type.Beam:
+                break;
+            case Spell.Type.Enhancement:
+                break;
+            case Spell.Type.Forbidden:
+                break;
+            case Spell.Type.Ring:
+                break;
+            case Spell.Type.Utility:
+                break;
+            case Spell.Type.Wall:
+                break;
+        }
+
+    }
+
+    void AddRunningQueue() {
+        int selfQuad = SetQuad(transform.position, memory[focusTarget]); //get our current quadrant in reference to focusTarget
+        Vector3 feet = new Vector3(transform.position.x, transform.position.y - 0.45f, 0); //get feet position (AI)
+        Vector3 lastDirection = feet - lastRunAwayPosition; //get lastRunAwayPosition to feet direction
+        float currentAngle = Vector2.Angle(Vector2.right, lastDirection); //get current Angle we are running
+        currentAngle = AngleCheck(currentAngle, lastRunAwayPosition, feet); //validation
+        List<Vector3> pointsInCover = new List<Vector3>(); //points in cover
+        List<Vector3> pointsPossibleCover = new List<Vector3>(); //points that may lead us to cover, such as against walls
+        List<Vector3> pointsOpen = new List<Vector3>(); //points that are not cover and will probably not lead to cover; in the open
+
+        Vector3 lastPoint = Vector3.zero;
+
+        //test every angle around us
+        for (int i = 0; i < 360; i++) {
+            //make the circle
+            float x1 = transform.position.x + 1f * Mathf.Cos(Mathf.Deg2Rad * i);
+            float y1 = transform.position.y + 1f * Mathf.Sin(Mathf.Deg2Rad * i);
+            Vector3 point = new Vector3(x1, y1, 0);
+            if (i == 0) { //base case
+                lastPoint = point; //set base case
+                //do a raycast from the point to us
+                RaycastHit2D hit = Physics2D.Raycast(transform.position, point - transform.position, 10f, CombatManager.ins.obstacleTest);
+                //get point from hit (if there is one)
+                Vector3 testPoint = new Vector3(hit.point.x, hit.point.y, 0);
+                //add a little buffer room from the wall to our position/direction
+                testPoint += (transform.position - testPoint).normalized / 4;
+                if (hit.collider != null) { //if we hit something
+                    if (!GetComponent<CharacterInfo>().IsVisible(focusTarget, testPoint)) { //check to see if we are in cover
+                        pointsInCover.Add(testPoint); //in cover
+                    } else {
+                        pointsOpen.Add(testPoint); //in the open (in the future tests, this one will be iffy)
+                    }
+                } else {
+                    pointsOpen.Add(point);
+                }
+            } else { //recursive
+                     //raycast for cover
+                RaycastHit2D hit = Physics2D.Raycast(transform.position, point - transform.position, 10f, CombatManager.ins.obstacleTest);
+                //create a point from the hit (if any)
+                Vector3 testPoint = new Vector3(hit.point.x, hit.point.y, 0);
+                //add our direction/position to the hit as a buffer
+                testPoint += (transform.position - testPoint).normalized / 4;
+                if (hit.collider != null) { //we hit something
+                    if (!GetComponent<CharacterInfo>().IsVisible(focusTarget, testPoint)) { //check to see if we are in cover
+                        pointsInCover.Add(testPoint);
+                    } else {
+                        /*If we are NOT in cover, check:
+                         *-if this test point and the last test point can see each other
+                         * -if the distance between this point and us is greater than the distance between last point and us
+                         * */
+                        if (!GetComponent<CharacterInfo>().IsVisible(testPoint, lastPoint) && (Vector3.Distance(testPoint, transform.position) > Vector3.Distance(lastPoint, transform.position))) {
+                            pointsPossibleCover.Add(testPoint); //in possible cover
+                        } else { //in cover
+                            pointsOpen.Add(point);
+                        }
+                    }
+                } else { //the point is out in the open
+                    testPoint = point + ((point - transform.position).normalized * 10f); //distance of 10 in the direction of point (the current degree)
+                    if (!GetComponent<CharacterInfo>().IsVisible(focusTarget, testPoint)) { //check to see if in cover
+                        pointsInCover.Add(point + ((point - transform.position.normalized) * 3f)); //in cover
+                    } else {
+                        /*If we are NOT in cover, check:
+                         * -if this test point and the last test point can see each other
+                         * -if the distance between this point and us is greater than the distance between last point and us
+                         * -if the point is within 90 degree of our LOS (so we dont just make 180 flip judgements)
+                         * */
+                        if (GetComponent<CharacterInfo>().IsVisible(testPoint, lastPoint) && (Vector3.Distance(testPoint, transform.position) > Vector3.Distance(lastPoint, transform.position)) && !RangeTest(transform.position, memory[focusTarget], testPoint, 90)) {
+                            pointsPossibleCover.Add(point + ((point - transform.position.normalized) * 3f)); //in possible cover
+                        } else {
+                            pointsOpen.Add(point); //open
+                        }
+
+                    }
+                }
+            }
+            lastPoint = point; //set up for next iteration
+        } //end for loop
+          /*
+          print("Cover: " + pointsInCover.Count);
+          print("Possible: " + pointsPossibleCover.Count);
+          print("Open: " + pointsOpen.Count); */
+
+        //if we have points in cover, use them first
+        if (pointsInCover.Count != 0) {
+            //print("Selected Cover!");
+            movementQueue.Clear(); //clear past movementqueue
+            Vector3 selectedPoint = pointsInCover[0]; //set base case
+            foreach (Vector3 p in pointsInCover) {
+                if (p == selectedPoint) { //if on base case, ignore
+                    continue;
+                } else {
+                    /*Check:
+                     * -Distance is at least 2 (Arbitary number, just for movement purposes)
+                     * -Distance is smaller than point we are currently using
+                     * -It is within our LOS of 90 degrees (NOT DIRECTLY BEHIND US)
+                     * -We don't have to pass through the focusTarget
+                     * */
+                    if (Vector3.Distance(p, transform.position) >= 2f && Vector3.Distance(p, transform.position) < Vector3.Distance(selectedPoint, transform.position) && RangeTest(transform.position, selectedPoint, p, 90) && QuadTest(SetQuad(focusTarget.transform.
+                        position, p), SetQuad(memory[focusTarget], transform.position))) {
+                        selectedPoint = p;
+                    }
+                }
+            }
+            //add to movementqueue
+            movementQueue.Add(selectedPoint);
+            //if there are no points in cover, use possible points in cover next
+        } else if (pointsPossibleCover.Count != 0) {
+            //print("Selected Possible!");
+            movementQueue.Clear(); //clear our queue
+            Vector3 selectedPoint = pointsPossibleCover[0]; //set the base case
+            foreach (Vector3 p in pointsPossibleCover) {
+                if (p == selectedPoint) { //skip base case
+                    continue;
+                } else {
+                    /*Check:
+                    * -Distance is at least 2 (Arbitary number, just for movement purposes)
+                    * -Distance is smaller than point we are currently using
+                    * -It is within our LOS of 90 degrees (NOT DIRECTLY BEHIND US)
+                    * -We don't have to pass through the focusTarget
+                    * */
+                    if (Vector3.Distance(p, transform.position) >= 2f && Vector3.Distance(p, transform.position) < Vector3.Distance(selectedPoint, transform.position) && RangeTest(transform.position, selectedPoint, p, 90) && QuadTest(SetQuad(focusTarget.transform.
+                        position, p), SetQuad(memory[focusTarget], transform.position))) {
+                        selectedPoint = p;
+                    }
+                }
+            }
+            //add to movementqueue
+            movementQueue.Add(selectedPoint);
+
+            //if no points in cover or possible cover, then we have to use a point out in the open
+        } else if (pointsOpen.Count != 0) {
+            //print("Selected Open!");
+            movementQueue.Clear(); //clear the movement queue
+            int index = Random.Range(0, pointsOpen.Count - 1); //get a random index value
+            movementQueue.Add(pointsOpen[index]); //add a random point using the index
+
+            //if somehow, no points were valid, then we may as well have the ai recover stamina
+        }
+
+    }
+
+    void AddDefendQueue() {
+        //Figure out if we are too close, if we are trying to move away from an enemy spell, or both
+
+        float safeDistanceTest = safeDistance;
+        if (state == CombatState.DEFENDING) {
+            safeDistanceTest *= safeSpellDistanceMultiplier;
+        }
+
+        bool enemyIsClose = false;
+        bool spellIsClose = false;
+
+        //ENEMY TEST
+        foreach (GameObject t in targets) {
+            if (GetComponent<CharacterInfo>().IsVisible(t)) {
+                if (Vector3.Distance(t.transform.position, gameObject.transform.position) <= safeDistanceTest) {
+                    enemyIsClose = true;
+                    break;
+                }
+            }
+        }
 
 
 
+        List<GameObject> spellsTooClose = new List<GameObject>();
+        //SPELL TEST - CHANGE LATER IMPORTANT
+        foreach(GameObject g in spellMemory.Keys) {
+            if (g.GetComponent<SpellRecords>().caster == gameObject || !fov.CanSeeTarget(g)) {
+                continue;
+            }
+            float distance = Vector3.Distance(g.transform.position, gameObject.transform.position);
+            Vector3 startPoint = g.transform.position;
+            Vector3 endPoint = g.transform.position + (g.GetComponent<SpellRecords>().dir.normalized * (distance * 2));
+            Vector3 lineDir = (endPoint - startPoint);
+            Vector3 selfEndDir = (endPoint - gameObject.transform.position);
+            Vector3 selfStartDir = (gameObject.transform.position - startPoint);
+            float a = Vector3.Dot(selfStartDir, lineDir);
+            float b = (gameObject.transform.position.x - startPoint.x) * (gameObject.transform.position.x - startPoint.x) + (gameObject.transform.position.y - startPoint.y) * (gameObject.transform.position.y - startPoint.y);
+
+            if ((Vector3.SqrMagnitude(Vector3.Cross(lineDir, selfEndDir)) < (safeDistance * safeSpellDistanceMultiplier)) && (a >= 0) && (a >= (b - 0.1f))) {
+                spellsTooClose.Add(g);
+            }
+            
+        }
+        if(spellsTooClose.Count > 0) {
+            spellIsClose = true;
+        }
+
+
+        if (enemyIsClose && !spellIsClose) {
+            int quadOne = 0;
+            int quadTwo = 0;
+            int quadThree = 0;
+            int quadFour = 0;
+            int quadToRunFrom = 0; //if set 0, then they are all equal.
+            Vector3 movementVector = Vector3.zero;
+            foreach (GameObject t in targets) {
+                if (GetComponent<CharacterInfo>().IsVisible(t)) {
+                    if (Vector3.Distance(t.transform.position, gameObject.transform.position) <= safeDistanceTest) {
+                        int i = SetQuad(t.transform.position, gameObject.transform.position);
+                        switch (i) {
+                            case 1:
+                                quadOne += 1;
+                                break;
+                            case 2:
+                                quadTwo += 1;
+                                break;
+                            case 3:
+                                quadThree += 1;
+                                break;
+                            case 4:
+                                quadFour += 1;
+                                break;
+                            default:
+                                quadOne += 1;
+                                break;
+                        }
+                    }
+                }
+            }
+            if (quadOne == quadTwo && quadTwo == quadThree && quadThree == quadFour) {
+                quadToRunFrom = 0;
+            } else {
+                if (quadOne > quadTwo) {
+                    if (quadOne > quadThree) {
+                        if (quadOne > quadFour) {
+                            quadToRunFrom = 1;
+                        } else {
+                            quadToRunFrom = 4;
+                        }
+                    } else if (quadThree > quadFour) {
+                        quadToRunFrom = 3;
+                    } else {
+                        quadToRunFrom = 4;
+                    }
+                } else if (quadTwo > quadThree) {
+                    if (quadTwo > quadFour) {
+                        quadToRunFrom = 2;
+                    } else {
+                        quadToRunFrom = 4;
+                    }
+                } else if (quadThree > quadFour) {
+                    quadToRunFrom = 3;
+                } else {
+                    quadToRunFrom = 4;
+                }
+            }
+
+            foreach (GameObject t in targets) {
+                if (GetComponent<CharacterInfo>().IsVisible(t)) {
+                    if (Vector3.Distance(t.transform.position, gameObject.transform.position) <= safeDistanceTest) {
+                        if (quadToRunFrom != 0) {
+                            if (SetQuad(t.transform.position, gameObject.transform.position) == quadToRunFrom) {
+                                movementVector += (gameObject.transform.position - t.transform.position).normalized;
+                            }
+                        } else {
+                            if (movementVector == Vector3.zero || Random.Range(0, 1) == 0) {
+                                movementVector += (gameObject.transform.position - t.transform.position).normalized;
+                            }
+                        }
+                    }
+                }
+            }
+            movementQueue.Add(gameObject.transform.position + movementVector);
+            movementQueue.Add(gameObject.transform.position + movementVector + movementVector);
+            movementQueue.Add(gameObject.transform.position + movementVector + movementVector + movementVector);
+        } else if (spellIsClose) {
+            Vector3 movementVector = Vector3.zero;
+            foreach (GameObject s in spellsTooClose) {
+                if (s.tag.ToString() == GameManagerScript.ins.projectileTag) { //PROJECTILE
+                    if (s.GetComponent<SpellRecords>().caster == gameObject || !fov.CanSeeTarget(s)) {
+                        continue;
+                    }
+                    Vector3 spellDir = s.GetComponent<SpellRecords>().dir;
+                    Vector3 selfToProj = s.gameObject.transform.position - transform.position;
+                    Vector3 P3 = new Vector2(-selfToProj.y, selfToProj.x) / Mathf.Sqrt((selfToProj.x * selfToProj.x) + (selfToProj.y * selfToProj.y)) * 1;
+                    Vector3 P4 = new Vector2(-selfToProj.y, selfToProj.x) / Mathf.Sqrt((selfToProj.x * selfToProj.x) + (selfToProj.y * selfToProj.y)) * -1;
+                    //see if the spell is going toward any of those
+                    if (Vector3.Distance(transform.position + P3, s.gameObject.transform.position + spellDir) < Vector3.Distance(transform.position + P4, s.gameObject.transform.position + spellDir)) {
+                        movementVector += P4;
+                    } else {
+                        movementVector += P3;
+                    }
+                    break;
+                }
+            }
+            movementQueue.Add(gameObject.transform.position + movementVector);
+            movementQueue.Add(gameObject.transform.position + movementVector + movementVector);
+            movementQueue.Add(gameObject.transform.position + movementVector + movementVector + movementVector);
+        } else if (enemyIsClose && spellIsClose) {
+            print("BOTH ARE TOO CLOSE! HELP!");
+        }
+    }
+
+    void AddDyingQueue() {
+
+    }
 
     /// <summary>
     /// /return angle in full 360, opposed to 180, on basis that you used vector2.right
@@ -1136,16 +1228,24 @@ public class CombatScript : MonoBehaviour {
                 //check to see if we need to not be attacking
 
                 //check to see if we need to dodge
-                Collider2D[] closeSpells = Physics2D.OverlapCircleAll(transform.position, (safeDistance * safeSpellDistanceMultiplier), CombatManager.ins.spellTest);
-                if (Random.Range(1, 100) <= closeSpells.Length * dodgeChance) {
-                    foreach (Collider2D s in closeSpells) {
-                        if (s.tag.ToString() == GameManagerScript.ins.projectileTag) { //PROJECTILE
-                            if (s.GetComponent<SpellRecords>().caster == gameObject) {
-                                continue;
-                            }
-                            state = CombatState.AVOIDING;
-                            break;
+                if (Random.Range(1, 100) <= spellMemory.Keys.Count * dodgeChance) {
+                    foreach(GameObject g in spellMemory.Keys) {
+                        if (g.GetComponent<SpellRecords>().caster == gameObject || !fov.CanSeeTarget(g)) {
+                            continue;
                         }
+                        float distance = Vector3.Distance(g.transform.position, gameObject.transform.position);
+                        Vector3 startPoint = g.transform.position;
+                        Vector3 endPoint = g.transform.position + (g.GetComponent<SpellRecords>().dir.normalized * (distance * 2));
+                        Vector3 lineDir = (endPoint - startPoint);
+                        Vector3 selfEndDir = (endPoint - gameObject.transform.position);
+                        Vector3 selfStartDir = (gameObject.transform.position - startPoint);
+                        float a = Vector3.Dot(selfStartDir, lineDir);
+                        float b = (gameObject.transform.position.x - startPoint.x) * (gameObject.transform.position.x - startPoint.x) + (gameObject.transform.position.y - startPoint.y) * (gameObject.transform.position.y - startPoint.y);
+
+                        if ((Vector3.SqrMagnitude(Vector3.Cross(lineDir, selfEndDir)) < (safeDistance * safeSpellDistanceMultiplier)) && (a >= 0) && (a >= (b - 0.1f))) {
+                            state = CombatState.AVOIDING;
+                        }
+                        break;
                     }
                 }
                 SetStateEnergyCheck();
@@ -1166,17 +1266,24 @@ public class CombatScript : MonoBehaviour {
                 }
 
                 //SPELL TEST
-                closeSpells = Physics2D.OverlapCircleAll(transform.position, (safeDistance * safeSpellDistanceMultiplier), CombatManager.ins.spellTest);
-                foreach (Collider2D s in closeSpells) {
-                    if (s.tag.ToString() == GameManagerScript.ins.projectileTag) { //PROJECTILE
-                        if (s.GetComponent<SpellRecords>().caster == gameObject) {
-                            continue;
-                        }
-                        state = CombatState.AVOIDING;
-                        break;
+                foreach (GameObject g in spellMemory.Keys) {
+                    if (g.GetComponent<SpellRecords>().caster == gameObject || !fov.CanSeeTarget(g)) {
+                        continue;
                     }
-                }
+                    float distance = Vector3.Distance(g.transform.position, gameObject.transform.position);
+                    Vector3 startPoint = g.transform.position;
+                    Vector3 endPoint = g.transform.position + (g.GetComponent<SpellRecords>().dir.normalized * (distance * 2));
+                    Vector3 lineDir = (endPoint - startPoint);
+                    Vector3 selfEndDir = (endPoint - gameObject.transform.position);
+                    Vector3 selfStartDir = (gameObject.transform.position - startPoint);
+                    float a = Vector3.Dot(selfStartDir, lineDir);
+                    float b = (gameObject.transform.position.x - startPoint.x) * (gameObject.transform.position.x - startPoint.x) + (gameObject.transform.position.y - startPoint.y) * (gameObject.transform.position.y - startPoint.y);
 
+                    if ((Vector3.SqrMagnitude(Vector3.Cross(lineDir, selfEndDir)) < (safeDistance * safeSpellDistanceMultiplier)) && (a >= 0) && (a >= (b - 0.1f))) {
+                        state = CombatState.AVOIDING;
+                    }
+                    break;
+                }
                 break;
             case CombatState.DEFENDING:
                 if(energyState == EnergyState.FREE) {

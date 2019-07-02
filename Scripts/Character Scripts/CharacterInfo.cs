@@ -398,6 +398,7 @@ public class CharacterInfo : MonoBehaviour {
     /// Sets direction for when the character and used by player when in combat
     /// </summary>
     public void SetDirection() {
+        //player
         if (spellQueue.Count != 0) {
             if (spellQueue[0].fireMode == CombatHUDAttack.FireMode.TARGET) {
                 direction = FaceDirection(CombatManager.ins.combatHUDAttack.memory[spellQueue[0].attackTarget]);
@@ -409,6 +410,8 @@ public class CharacterInfo : MonoBehaviour {
                 direction = FaceDirection(spellQueue[0].attackDirection); 
             }
         }
+
+        //player movement and npc movement
         if (polyNav.movingDirection == Vector2.zero) {
             return;
         }
@@ -467,6 +470,9 @@ public class CharacterInfo : MonoBehaviour {
 
 
     }
+
+
+
 
     public Vector3 Feet() {
         return new Vector3(transform.position.x, transform.position.y - 0.45f, transform.position.z);
