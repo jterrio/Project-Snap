@@ -402,13 +402,12 @@ public class CharacterInfo : MonoBehaviour {
         if (spellQueue.Count != 0) {
             if (spellQueue[0].fireMode == CombatHUDAttack.FireMode.TARGET) {
                 direction = FaceDirection(CombatManager.ins.combatHUDAttack.memory[spellQueue[0].attackTarget]);
-                return;
             }else if(spellQueue[0].fireMode == CombatHUDAttack.FireMode.POINT) {
                 direction = FaceDirection(spellQueue[0].attackPointModePoint);
-                return;
             } else {
-                direction = FaceDirection(spellQueue[0].attackDirection); 
+                direction = FaceDirection(gameObject.transform.position + spellQueue[0].attackDirection); 
             }
+            return;
         }
 
         //player movement and npc movement
