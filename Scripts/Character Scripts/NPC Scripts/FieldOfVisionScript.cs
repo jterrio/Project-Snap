@@ -49,6 +49,17 @@ public class FieldOfVisionScript : MonoBehaviour {
 
     }
 
+    public List<GameObject> GetVisibleSpells() {
+        List<GameObject> returnList = new List<GameObject>();
+        Collider2D[] hitColliders = Physics2D.OverlapCircleAll(transform.position, npcInfo.ViewDistance, CombatManager.ins.spellTest);
+        foreach (Collider2D c in hitColliders) {
+            if (CanSeeTarget(c.gameObject)) {
+                returnList.Add(c.gameObject);
+            }
+        }
+        return returnList;
+    }
+
     void CheckCombat() {
         if (!canSee) {
             return;

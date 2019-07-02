@@ -14,7 +14,7 @@ public class CharacterInfo : MonoBehaviour {
     public Stats stats;
     protected SpriteRenderer sr;
     public bool canMove;
-    public bool isWalking = true;
+    private bool isWalking = true;
     public bool inCombat = false;
     public List<CombatHUDAttack.Attack> spellQueue = new List<CombatHUDAttack.Attack>();
     public Coroutine spellCastCoroutine;
@@ -269,7 +269,7 @@ public class CharacterInfo : MonoBehaviour {
     }
 
     public void DrainStamina() {
-        currentStamina -= (maxStamina * 0.01f);
+        currentStamina -= (maxStamina * 0.02f);
         if(currentStamina < 0) {
             currentStamina = 0;
         }
@@ -296,6 +296,18 @@ public class CharacterInfo : MonoBehaviour {
             currentHealth = 0;
         }
 
+    }
+
+    public void DrainStaminaTimes(int a) {
+        for(int i = 0; i < a; i++) {
+            DrainStamina();
+        }
+    }
+
+    public void RecoverStaminaTimes(int a) {
+        for (int i = 0; i < a; i++) {
+            RecoverStamina();
+        }
     }
 
     public void TryInsta(float chance) {
@@ -335,6 +347,14 @@ public class CharacterInfo : MonoBehaviour {
   
     public void ResetStamina() {
         currentStamina = maxStamina;
+    }
+
+    public float GetStaminaPercentage() {
+        return currentStamina / maxStamina;
+    }
+
+    public float GetHealthPercentage() {
+        return currentHealth / maxHealth;
     }
 
     public bool IsWalking {
@@ -378,6 +398,7 @@ public class CharacterInfo : MonoBehaviour {
     /// Sets direction for when the character and used by player when in combat
     /// </summary>
     public void SetDirection() {
+        //player
         if (spellQueue.Count != 0) {
             if (spellQueue[0].fireMode == CombatHUDAttack.FireMode.TARGET) {
                 direction = FaceDirection(CombatManager.ins.combatHUDAttack.memory[spellQueue[0].attackTarget]);
@@ -389,6 +410,8 @@ public class CharacterInfo : MonoBehaviour {
                 direction = FaceDirection(spellQueue[0].attackDirection); 
             }
         }
+
+        //player movement and npc movement
         if (polyNav.movingDirection == Vector2.zero) {
             return;
         }
@@ -446,6 +469,235 @@ public class CharacterInfo : MonoBehaviour {
         }
 
 
+    }
+
+
+
+
+    public Vector3 Feet() {
+        return new Vector3(transform.position.x, transform.position.y - 0.45f, transform.position.z);
+    }
+
+    /// <summary>
+    /// Checks whether we can see the targetObject
+    /// </summary>
+    /// <param name="targetObject"></param>
+    /// <returns></returns>
+    public bool IsVisible(GameObject targetObject) {
+        bool isVisible = false;
+        if (targetObject != null) {
+            int selfOldLayer = gameObject.layer;
+            gameObject.layer = LayerMask.NameToLayer("Ignore Raycast"); //change to ignore raycast
+            int targetOldLayer = targetObject.layer;
+            targetObject.layer = LayerMask.NameToLayer("SightTest"); //change to what we test
+
+            Vector3 selfTopLeft = new Vector3(transform.position.x - 0.135f, transform.position.y + 0.2f, transform.position.z);
+            Vector3 selfTopRight = new Vector3(transform.position.x + 0.135f, transform.position.y + 0.2f, transform.position.z);
+            Vector3 selfBottomLeft = new Vector3(transform.position.x - 0.135f, transform.position.y - 0.45f, transform.position.z);
+            Vector3 selfBottomRight = new Vector3(transform.position.x + 0.135f, transform.position.y - 0.45f, transform.position.z);
+
+            Vector3 targetTopLeft = new Vector3(targetObject.transform.position.x - 0.135f, targetObject.transform.position.y + 0.2f, targetObject.transform.position.z);
+            Vector3 targetTopRight = new Vector3(targetObject.transform.position.x + 0.135f, targetObject.transform.position.y + 0.2f, targetObject.transform.position.z);
+            Vector3 targetBottomLeft = new Vector3(targetObject.transform.position.x - 0.135f, targetObject.transform.position.y - 0.45f, targetObject.transform.position.z);
+            Vector3 targetBottomRight = new Vector3(targetObject.transform.position.x + 0.135f, targetObject.transform.position.y - 0.45f, targetObject.transform.position.z);
+            List<Vector3> targetPositions = new List<Vector3>();
+            targetPositions.Add(targetTopLeft);
+            targetPositions.Add(targetTopRight);
+            targetPositions.Add(targetBottomLeft);
+            targetPositions.Add(targetBottomRight);
+
+            bool topLeftCanSee = false;
+            bool topRightCanSee = false;
+            bool bottomLeftCanSee = false;
+            bool bottomRightCanSee = false;
+
+            //SELF TOPLEFT
+            foreach(Vector3 v in targetPositions) {
+                RaycastHit2D hit = Physics2D.Raycast(selfTopLeft, v - selfTopLeft, Mathf.Infinity, CombatManager.ins.characterVisibleTest); //raycast
+                if(hit.collider != null) {
+                    if((hit.collider.gameObject == targetObject) && (hit.collider.isTrigger)) {
+                        topLeftCanSee = true;
+                    }
+                }
+            }
+            //SELF TOPRIGHT
+            foreach (Vector3 v in targetPositions) {
+                RaycastHit2D hit = Physics2D.Raycast(selfTopRight, v - selfTopRight, Mathf.Infinity, CombatManager.ins.characterVisibleTest); //raycast
+                if (hit.collider != null) {
+                    if ((hit.collider.gameObject == targetObject) && (hit.collider.isTrigger)) {
+                        topRightCanSee = true;
+                    }
+                }
+            }
+            //SELF BOTTOMLEFT
+            foreach (Vector3 v in targetPositions) {
+                RaycastHit2D hit = Physics2D.Raycast(selfBottomLeft, v - selfBottomLeft, Mathf.Infinity, CombatManager.ins.characterVisibleTest); //raycast
+                if (hit.collider != null) {
+                    if ((hit.collider.gameObject == targetObject) && (hit.collider.isTrigger)) {
+                        bottomLeftCanSee = true;
+                    }
+                }
+            }
+            //SELF BOTTOMRIGHT
+            foreach (Vector3 v in targetPositions) {
+                RaycastHit2D hit = Physics2D.Raycast(selfBottomRight, v - selfBottomRight, Mathf.Infinity, CombatManager.ins.characterVisibleTest); //raycast
+                if (hit.collider != null) {
+                    if ((hit.collider.gameObject == targetObject) && (hit.collider.isTrigger)) {
+                        bottomRightCanSee = true;
+                    }
+                }
+            }
+
+            if((topLeftCanSee && topRightCanSee) || (topLeftCanSee && bottomLeftCanSee) || (topRightCanSee && bottomRightCanSee) || (bottomLeftCanSee && bottomRightCanSee)) {
+                isVisible = true;
+            }
+
+            gameObject.layer = selfOldLayer; //Set layer back to normal
+            targetObject.layer = targetOldLayer; //Set layer back to normal
+
+        }
+        return isVisible;
+    }
+
+    /// <summary>
+    /// checks whether the location of the attack can see them
+    /// </summary>
+    /// <param name="target"></param>
+    /// <param name="attackPosition"></param>
+    /// <returns></returns>
+    public bool IsVisible(GameObject targetObject, Vector3 attackPosition) {
+        bool isVisible = false;
+        if (targetObject != null) {
+            int selfOldLayer = gameObject.layer;
+            gameObject.layer = LayerMask.NameToLayer("Ignore Raycast"); //change to ignore raycast
+            int targetOldLayer = targetObject.layer;
+            targetObject.layer = LayerMask.NameToLayer("SightTest"); //change to what we test
+
+            Vector3 selfTopLeft = new Vector3(attackPosition.x - 0.135f, attackPosition.y + 0.65f, attackPosition.z);
+            Vector3 selfTopRight = new Vector3(attackPosition.x + 0.135f, attackPosition.y + 0.65f, attackPosition.z);
+            Vector3 selfBottomLeft = new Vector3(attackPosition.x - 0.135f, attackPosition.y, attackPosition.z);
+            Vector3 selfBottomRight = new Vector3(attackPosition.x + 0.135f, attackPosition.y, attackPosition.z);
+
+            Vector3 targetTopLeft = new Vector3(targetObject.transform.position.x - 0.135f, targetObject.transform.position.y + 0.2f, targetObject.transform.position.z);
+            Vector3 targetTopRight = new Vector3(targetObject.transform.position.x + 0.135f, targetObject.transform.position.y + 0.2f, targetObject.transform.position.z);
+            Vector3 targetBottomLeft = new Vector3(targetObject.transform.position.x - 0.135f, targetObject.transform.position.y - 0.45f, targetObject.transform.position.z);
+            Vector3 targetBottomRight = new Vector3(targetObject.transform.position.x + 0.135f, targetObject.transform.position.y - 0.45f, targetObject.transform.position.z);
+            List<Vector3> targetPositions = new List<Vector3>();
+            targetPositions.Add(targetTopLeft);
+            targetPositions.Add(targetTopRight);
+            targetPositions.Add(targetBottomLeft);
+            targetPositions.Add(targetBottomRight);
+
+            bool topLeftCanSee = false;
+            bool topRightCanSee = false;
+            bool bottomLeftCanSee = false;
+            bool bottomRightCanSee = false;
+
+            //SELF TOPLEFT
+            foreach (Vector3 v in targetPositions) {
+                RaycastHit2D hit = Physics2D.Raycast(selfTopLeft, v - selfTopLeft, Mathf.Infinity, CombatManager.ins.characterVisibleTest); //raycast
+                if (hit.collider != null) {
+                    if ((hit.collider.gameObject == targetObject) && (hit.collider.isTrigger)) {
+                        topLeftCanSee = true;
+                    }
+                }
+            }
+            //SELF TOPRIGHT
+            foreach (Vector3 v in targetPositions) {
+                RaycastHit2D hit = Physics2D.Raycast(selfTopRight, v - selfTopRight, Mathf.Infinity, CombatManager.ins.characterVisibleTest); //raycast
+                if (hit.collider != null) {
+                    if ((hit.collider.gameObject == targetObject) && (hit.collider.isTrigger)) {
+                        topRightCanSee = true;
+                    }
+                }
+            }
+            //SELF BOTTOMLEFT
+            foreach (Vector3 v in targetPositions) {
+                RaycastHit2D hit = Physics2D.Raycast(selfBottomLeft, v - selfBottomLeft, Mathf.Infinity, CombatManager.ins.characterVisibleTest); //raycast
+                if (hit.collider != null) {
+                    if ((hit.collider.gameObject == targetObject) && (hit.collider.isTrigger)) {
+                        bottomLeftCanSee = true;
+                    }
+                }
+            }
+            //SELF BOTTOMRIGHT
+            foreach (Vector3 v in targetPositions) {
+                RaycastHit2D hit = Physics2D.Raycast(selfBottomRight, v - selfBottomRight, Mathf.Infinity, CombatManager.ins.characterVisibleTest); //raycast
+                if (hit.collider != null) {
+                    if ((hit.collider.gameObject == targetObject) && (hit.collider.isTrigger)) {
+                        bottomRightCanSee = true;
+                    }
+                }
+            }
+
+            if ((topLeftCanSee && topRightCanSee) || (topLeftCanSee && bottomLeftCanSee) || (topRightCanSee && bottomRightCanSee) || (bottomLeftCanSee && bottomRightCanSee)) {
+                isVisible = true;
+            }
+
+            gameObject.layer = selfOldLayer; //Set layer back to normal
+            targetObject.layer = targetOldLayer; //Set layer back to normal
+
+        }
+        return isVisible;
+    }
+
+    public bool IsVisible(Vector3 targetPosition, Vector3 attackPosition) {
+        bool isVisible = false;
+
+        Vector3 selfTopLeft = new Vector3(attackPosition.x - 0.135f, attackPosition.y + 0.65f, attackPosition.z);
+        Vector3 selfTopRight = new Vector3(attackPosition.x + 0.135f, attackPosition.y + 0.65f, attackPosition.z);
+        Vector3 selfBottomLeft = new Vector3(attackPosition.x - 0.135f, attackPosition.y, attackPosition.z);
+        Vector3 selfBottomRight = new Vector3(attackPosition.x + 0.135f, attackPosition.y, attackPosition.z);
+
+        Vector3 targetTopLeft = new Vector3(targetPosition.x - 0.135f, targetPosition.y + 0.2f, targetPosition.z);
+        Vector3 targetTopRight = new Vector3(targetPosition.x + 0.135f, targetPosition.y + 0.2f, targetPosition.z);
+        Vector3 targetBottomLeft = new Vector3(targetPosition.x - 0.135f, targetPosition.y - 0.2f, targetPosition.z);
+        Vector3 targetBottomRight = new Vector3(targetPosition.x + 0.135f, targetPosition.y - 0.2f, targetPosition.z);
+        List<Vector3> targetPositions = new List<Vector3>();
+        targetPositions.Add(targetTopLeft);
+        targetPositions.Add(targetTopRight);
+        targetPositions.Add(targetBottomLeft);
+        targetPositions.Add(targetBottomRight);
+
+        bool topLeftCanSee = false;
+        bool topRightCanSee = false;
+        bool bottomLeftCanSee = false;
+        bool bottomRightCanSee = false;
+
+        //SELF TOPLEFT
+        foreach (Vector3 v in targetPositions) {
+            RaycastHit2D hit = Physics2D.Raycast(selfTopLeft, v - selfTopLeft, Mathf.Infinity, CombatManager.ins.characterVisibleTest); //raycast
+            if (hit.collider != null) {
+                topLeftCanSee = true;
+            }
+        }
+        //SELF TOPRIGHT
+        foreach (Vector3 v in targetPositions) {
+            RaycastHit2D hit = Physics2D.Raycast(selfTopRight, v - selfTopRight, Mathf.Infinity, CombatManager.ins.characterVisibleTest); //raycast
+            if (hit.collider != null) {
+                topRightCanSee = true;
+            }
+        }
+        //SELF BOTTOMLEFT
+        foreach (Vector3 v in targetPositions) {
+            RaycastHit2D hit = Physics2D.Raycast(selfBottomLeft, v - selfBottomLeft, Mathf.Infinity, CombatManager.ins.characterVisibleTest); //raycast
+            if (hit.collider != null) {
+                bottomLeftCanSee = true;
+            }
+        }
+        //SELF BOTTOMRIGHT
+        foreach (Vector3 v in targetPositions) {
+            RaycastHit2D hit = Physics2D.Raycast(selfBottomRight, v - selfBottomRight, Mathf.Infinity, CombatManager.ins.characterVisibleTest); //raycast
+            if (hit.collider != null) {
+                bottomRightCanSee = true;
+            }
+        }
+
+        if ((topLeftCanSee && topRightCanSee) || (topLeftCanSee && bottomLeftCanSee) || (topRightCanSee && bottomRightCanSee) || (bottomLeftCanSee && bottomRightCanSee)) {
+            isVisible = true;
+        }
+
+        return isVisible;
     }
 
 }

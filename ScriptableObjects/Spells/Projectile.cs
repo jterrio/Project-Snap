@@ -7,6 +7,7 @@ public class Projectile : Damage {
 
     public float distance; //distance the projectie will travel before ending. Put at -1 for infinite
     public float speed;
+    public Vector3 dir;
     //damage is only used when direct hit and explosion damage when caught in the blast
 
     new void Start() {

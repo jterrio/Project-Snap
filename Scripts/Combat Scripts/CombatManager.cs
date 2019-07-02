@@ -16,6 +16,7 @@ public class CombatManager : MonoBehaviour {
     public LayerMask obstacleTest;
     public LayerMask characterTest;
     public LayerMask characterVisibleTest;
+    public LayerMask spellTest;
 
 
     // Use this for initialization
