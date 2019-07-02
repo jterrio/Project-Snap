@@ -15319,7 +15319,7 @@ MonoBehaviour:
   stationaryPoint: {fileID: 2050847292}
   stationaryDirection: 6
   runDistance: 0
-  FOV: 210
+  FOV: 200
   ViewDistance: 0
 --- !u!50 &1114312526
 Rigidbody2D:
@@ -20878,7 +20878,7 @@ MonoBehaviour:
   stationaryPoint: {fileID: 1605157499}
   stationaryDirection: 0
   runDistance: 0
-  FOV: 240
+  FOV: 200
   ViewDistance: 10
 --- !u!50 &1748299863
 Rigidbody2D:
@@ -22503,7 +22503,7 @@ MonoBehaviour:
   stationaryPoint: {fileID: 1605157499}
   stationaryDirection: 0
   runDistance: 0
-  FOV: 240
+  FOV: 200
   ViewDistance: 10
 --- !u!50 &1942604907
 Rigidbody2D:
