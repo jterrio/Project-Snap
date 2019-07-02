@@ -519,7 +519,7 @@ public class CombatHUDAttack : MonoBehaviour {
                     float a = Vector3.Dot(mouseStartDir, lineDir);
                     float b = (mousePosition.x - startPoint.x) * (mousePosition.x - startPoint.x) + (mousePosition.y - startPoint.y) * (mousePosition.y - startPoint.y);
                     
-                    if ((Vector3.SqrMagnitude(Vector3.Cross(lineDir, mouseEndDir)) < 0.1f) && (a >= 0) && (a >= (b - 0.1f))) {
+                    if ((Vector3.SqrMagnitude(Vector3.Cross(lineDir, mouseEndDir)) < 0.5f) && (a >= 0) && (a >= (b - 0.1f))) {
                         selectedSelf = false;
                         float percentage = mouseStartDir.magnitude / lineDir.magnitude;
                         if (tempAttack == null) {
