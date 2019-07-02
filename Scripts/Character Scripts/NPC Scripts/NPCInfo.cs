@@ -34,9 +34,10 @@ public class NPCInfo : CharacterInfo {
     public Direction stationaryDirection; //direction to face when in the stationary mode
     private Coroutine waitCoroutine;
     private Rigidbody2D rb;
+    private CombatScript cs;
 
     public float runDistance; //distance required to be able to flee combat
-    public float FOV;
+    public float FOV = 200;
     public float ViewDistance;
 
     void Start() {
@@ -52,6 +53,7 @@ public class NPCInfo : CharacterInfo {
         sr = GetComponent<SpriteRenderer>();
         polyNav = GetComponent<PolyNav.PolyNavAgent>();
         rb = GetComponent<Rigidbody2D>();
+        cs = GetComponent<CombatScript>();
         InitPosition();
 
         speed = defaultSpeed;
@@ -98,8 +100,6 @@ public class NPCInfo : CharacterInfo {
                     break;
             }
         }
-        SetDirection();
-        SetSprite();
     }
 
     public void SetMovementType(NPC.MovementType ms) {
