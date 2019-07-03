@@ -155,8 +155,14 @@ public class FactionManagerScript : MonoBehaviour {
 
 
     // Begining of Relationship Methods 
-    
-    public bool DoesHate(Faction a, Faction b) { // if >= -100 or < -60 "Faction A hates Faction B." If not "they do not hate them."
+
+    /// <summary>
+    /// if >= -100 or < -60 "Faction A hates Faction B." If not "they do not hate them."
+    /// </summary>
+    /// <param name="a"></param>
+    /// <param name="b"></param>
+    /// <returns></returns>
+    public bool DoesHate(Faction a, Faction b) {
         if (a == b) {
             return false;
         }
@@ -167,7 +173,14 @@ public class FactionManagerScript : MonoBehaviour {
         }
         return false;
     }
-    public bool DoesDislike(Faction a, Faction b) { // if >= -60 or < -10 "Faction A dislikes Faction B." If not "they do not dislike them."
+
+    /// <summary>
+    /// if >= -60 or < -10 "Faction A dislikes Faction B." If not "they do not dislike them."
+    /// </summary>
+    /// <param name="a"></param>
+    /// <param name="b"></param>
+    /// <returns></returns>
+    public bool DoesDislike(Faction a, Faction b) {
         if (a == b) {
             return false;
         }
@@ -178,7 +191,14 @@ public class FactionManagerScript : MonoBehaviour {
         }
         return false;
     }
-    public bool IsNeutral(Faction a, Faction b) { // if >= -10 or <= 10 "Faction A is neutral towards Faction B." Or they are not.
+
+    /// <summary>
+    /// if >= -10 or <= 10 "Faction A is neutral towards Faction B." Or they are not.
+    /// </summary>
+    /// <param name="a"></param>
+    /// <param name="b"></param>
+    /// <returns></returns>
+    public bool IsNeutral(Faction a, Faction b) {
         if (a == b) {
             return false;
         }
@@ -189,7 +209,14 @@ public class FactionManagerScript : MonoBehaviour {
         }
         return false;
     }
-    public bool DoesLike(Faction a, Faction b) { // if > 10 or <= 60 "Faction A likes Faction B." Or they do not.
+
+    /// <summary>
+    /// if > 10 or <= 60 "Faction A likes Faction B." Or they do not.
+    /// </summary>
+    /// <param name="a"></param>
+    /// <param name="b"></param>
+    /// <returns></returns>
+    public bool DoesLike(Faction a, Faction b) {
         if (a == b) {
             return false;
         }
@@ -200,7 +227,14 @@ public class FactionManagerScript : MonoBehaviour {
         }
         return false;
     }
-    public bool DoesLove(Faction a, Faction b) { // if > 60 or <= 100 "Faction A loves Faction B." Or they do not.
+
+    /// <summary>
+    /// if > 60 or <= 100 "Faction A loves Faction B." Or they do not.
+    /// </summary>
+    /// <param name="a"></param>
+    /// <param name="b"></param>
+    /// <returns></returns>
+    public bool DoesLove(Faction a, Faction b) {
         if (a == b) {
             return false;
         }

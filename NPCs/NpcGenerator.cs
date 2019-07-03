@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using UnityEngine.UI;
+using System.IO;
 
 public class NpcGenerator : MonoBehaviour {
     //Misc
@@ -41,10 +42,17 @@ public class NpcGenerator : MonoBehaviour {
     private string[] personalityTraits = null; //made later
     private int rando = 0;
 
+    private void Awake(){
+        NpcSaver.Init();
+        name = "Steve";
+        MyName.text = name;
+    }
+
     // Start is called before the first frame update
     void Start() {
         name = "Steve";
         Run();
+        MyName.text = name;
     }
 
     // Update is called once per frame
@@ -52,6 +60,32 @@ public class NpcGenerator : MonoBehaviour {
         LoadData();
         updateName();
     }
+
+    /// <summary>
+    /// Exports to a Json file
+    /// </summary>
+    public void Save() {
+        NpcSave npcSave = new NpcSave();
+        npcSave.arch = archetype;
+        npcSave.intu = intuition;
+        npcSave.inte = intelligence;
+        npcSave.str = strength;
+        npcSave.cha = charisma;
+        npcSave.pre = precision;
+        npcSave.dex = dexterity;
+        npcSave.per = perception;
+        npcSave.spirit = spirituality;
+        npcSave.UseMagic = canUseMagic;
+        npcSave.favWeap = favWeapon;
+        npcSave.physical = physicalTraits;
+        npcSave.personality = personalityTraits;
+
+        string json = JsonUtility.ToJson(npcSave);
+        // To convert back to an object myObject = JsonUtility.FromJson<MyClass>(json);
+        Debug.Log(json);
+        NpcSaver.Save(json,MyName.text);
+    }
+
 
     /// <summary>
     /// Updates the name for Your character
@@ -914,8 +948,44 @@ public class NpcGenerator : MonoBehaviour {
             print("Cannot use Magic");
         }
         print("Favorite weapon type is");*/
-        physicalTraits = Traits();//Physical Traits being made, possibaly spirt chooser
-        personalityTraits = Atributes();//Personality Traits being made
+
+        //Physical Traits being made, possibaly spirt chooser
+        physicalTraits = Traits();
+        int physicalCount = 0;
+        for (int i = 0; i < physicalTraits.Length; i++){
+            if (physicalTraits[i] != "0" && physicalTraits[i] != "Average"){
+                physicalCount++;
+            }
+        }
+
+        string[] phTraits = new string[physicalCount];
+        physicalCount = 0;
+        for (int i = 0; i < physicalTraits.Length; i++){
+            if (physicalTraits[i] != "0" && physicalTraits[i] != "Average"){
+                phTraits[physicalCount] = physicalTraits[i];
+                physicalCount++;
+            }
+        }
+        physicalTraits = phTraits;
+
+        //Personality Traits being made
+        personalityTraits = Atributes();
+        int personalityCount = 0;
+        for (int i = 0; i < personalityTraits.Length; i++){
+            if (personalityTraits[i] != "0" && personalityTraits[i] != "Average"){
+                personalityCount++;
+            }
+        }
+
+        string[] perTraits = new string[personalityCount];
+        personalityCount = 0;
+        for (int i = 0; i < personalityTraits.Length; i++){
+            if (personalityTraits[i] != "0" && personalityTraits[i] != "Average"){
+                perTraits[personalityCount] = personalityTraits[i];
+                personalityCount++;
+            }
+        }
+        personalityTraits = perTraits;
         FinalizeValues();//Fixes any stat issues
         /*print("Intuition:" + intuition);
         print("Intelligence:" + intelligence);
@@ -946,4 +1016,24 @@ public class NpcGenerator : MonoBehaviour {
         */
 
 }
+
+    /// <summary>
+    /// NPC Class that is used to export the npc to Json
+    /// </summary>
+    [System.Serializable]
+    public class NpcSave{
+        public string arch;
+        public int intu;
+        public int inte;
+        public int str;
+        public int cha;
+        public int pre;
+        public int dex;
+        public int per;
+        public int spirit; //Not used for Npcs
+        public bool UseMagic;
+        public string favWeap;
+        public string[] physical;
+        public string[] personality;
+    }
 }

@@ -1,0 +1,1 @@
+{"arch":"Veteran","intu":54,"inte":54,"str":60,"cha":46,"pre":51,"dex":47,"per":9,"spirit":0,"UseMagic":true,"favWeap":"MageSword","physical":["Male","Grey","Short-Straight-Hair","White"],"personality":["Genuine","Creative","Jokester","Stubborn","Unfriendly"]}

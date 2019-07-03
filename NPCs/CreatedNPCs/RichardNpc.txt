@@ -1,0 +1,1 @@
+{"arch":"Jock Sudent","intu":41,"inte":41,"str":60,"cha":43,"pre":45,"dex":41,"per":9,"spirit":0,"UseMagic":false,"favWeap":"Sword","physical":["Male","Tall","Grey","Short-Curly-Hair","White"],"personality":["Genuine","Push-Over"]}

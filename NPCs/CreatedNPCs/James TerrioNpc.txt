@@ -1,0 +1,1 @@
+{"arch":"Child","intu":14,"inte":20,"str":22,"cha":3,"pre":17,"dex":9,"per":4,"spirit":0,"UseMagic":true,"favWeap":"GunMage","physical":["Male","White","Long-Straight-Hair","White"],"personality":["Book-Worm","Intelligent","Wonderlust","Unfriendly"]}
