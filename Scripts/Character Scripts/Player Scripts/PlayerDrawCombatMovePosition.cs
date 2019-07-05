@@ -8,7 +8,7 @@ public class PlayerDrawCombatMovePosition : MonoBehaviour {
 
     public bool isSelected;
     public LineRenderer lr;
-    private PolyNav.PolyNavAgent playerAgent;
+    public PolyNav.PolyNavAgent playerAgent;
     private CombatHUDLog log;
     private CombatHUDAttack attackLog;
     private Vector3[] loggedPath;
@@ -27,6 +27,44 @@ public class PlayerDrawCombatMovePosition : MonoBehaviour {
         DisplayLoggedPath();
 
         if (!isSelected) {
+            return;
+        }
+
+        if (Input.GetKey(KeyCode.LeftControl)) {
+            foreach (CombatHUDLog.Movement lines in CombatManager.ins.combatHUDLog.loggedMoves) {
+                Vector3 startPoint = GameManagerScript.ins.player.transform.position;
+                Vector3 endPoint = lines.destination[lines.destination.Length - 1];
+                Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                mousePosition = new Vector3(mousePosition.x, mousePosition.y, 0);
+                foreach (Vector3 v in lines.destination) {
+                    endPoint = v;
+                    Vector3 lineDir = (endPoint - startPoint);
+                    Vector3 mouseEndDir = (endPoint - mousePosition);
+                    Vector3 mouseStartDir = (mousePosition - startPoint);
+                    float a = Vector3.Dot(mouseStartDir, lineDir);
+                    float b = (mousePosition.x - startPoint.x) * (mousePosition.x - startPoint.x) + (mousePosition.y - startPoint.y) * (mousePosition.y - startPoint.y);
+
+                    if ((Vector3.SqrMagnitude(Vector3.Cross(lineDir, mouseEndDir)) < 0.5f) && (a >= 0) && (a >= (b - 0.1f))) {
+                        if (Input.GetMouseButtonDown(0)) {
+                            PointerEventData pointerData = new PointerEventData(EventSystem.current);
+                            pointerData.position = Input.mousePosition;
+                            List<RaycastResult> results = new List<RaycastResult>();
+                            EventSystem.current.RaycastAll(pointerData, results);
+                            if (results.Count > 0) {
+                                if (results[0].gameObject.layer == LayerMask.NameToLayer("UI")) {
+                                    return;
+                                }
+                            }
+                            MouseClickMiddle(startPoint, endPoint, mousePosition, lines.destination);
+                            if (!Input.GetKey(KeyCode.LeftShift) && canMove) {
+                                ChangeMovementValue();
+                            }
+                            return;
+                        }
+                    }
+                    startPoint = v;
+                }
+            }
             return;
         }
 
@@ -87,7 +125,11 @@ public class PlayerDrawCombatMovePosition : MonoBehaviour {
         }
     }
 
-    void LogPath(Vector2[] path) {
+    void MouseClickMiddle(Vector3 start, Vector3 end, Vector3 middle, Vector3[] des) {
+        log.InsertNode(middle, System.Array.IndexOf(des, start), System.Array.IndexOf(des, end), des);
+    }
+
+    public void LogPath(Vector2[] path) {
         if (path == null || path.Length == 0) {
             canMove = false;
             return;

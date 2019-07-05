@@ -57,6 +57,44 @@ public class CombatHUDLog : MonoBehaviour {
         
     }
 
+    public void InsertNode(Vector3 n, int startIndex, int endIndex, Vector3[] d) {
+        List<Movement> endofListMovement = new List<Movement>();
+        int index = 0;
+        Movement targetMovement = new Movement();
+        //get index
+        foreach(Movement m in loggedMoves) {
+            if(m.destination == d) {
+                index = loggedMoves.IndexOf(m);
+                targetMovement = m;
+            }
+        }
+        //remove everything after index
+        List<Movement> tempCopy = new List<Movement>(loggedMoves);
+        foreach (Movement m in tempCopy) {
+            if(tempCopy.IndexOf(m) > index) {
+                loggedMoves.Remove(m);
+                Destroy(m.path);
+                Destroy(m.pathLR);
+                endofListMovement.Add(m);
+            }
+        }
+        //add new logged moves
+        loggedMoves.Remove(targetMovement);
+        Destroy(targetMovement.path);
+        Destroy(targetMovement.pathLR);
+        if (!HasPosition()) {
+            CombatManager.ins.combatDrawMovePosition.playerAgent.map.FindPath(GameManagerScript.ins.player.transform.position, n, LogMovePosition);
+        } else {
+            CombatManager.ins.combatDrawMovePosition.playerAgent.map.FindPath(GetLastPosition(), n, LogMovePosition);
+        }
+        CombatManager.ins.combatDrawMovePosition.playerAgent.map.FindPath(GetLastPosition(), d[endIndex], LogMovePosition);
+
+        foreach(Movement m in endofListMovement) {
+            LogMovePosition(m.destination);
+        }
+
+    }
+
     public void UpdateLineFromMovement() {
 
         GameManagerScript.ins.playerInfo.polyNav.map.FindPath(GameManagerScript.ins.GetPlayerFeetPosition(), loggedMoves[0].destination[loggedMoves[0].destination.Length - 1], DrawLineFromMovement);
@@ -124,6 +162,16 @@ public class CombatHUDLog : MonoBehaviour {
             returnArray[i] = temp[i];
         }
         return returnArray;
+    }
+
+    public void LogMovePosition(Vector3[] des) {
+        Vector2[] temp = new Vector2[des.Length];
+        int x = 0;
+        foreach(Vector3 v in des) {
+            temp[x] = v.xy();
+            x++;
+        }
+        LogMovePosition(temp);
     }
 
     public void LogMovePosition(Vector2[] des) {
