@@ -12,6 +12,13 @@ public class CombatHUDLog : MonoBehaviour {
     private bool isEmpty;
     private List<int> randomHashList = new List<int>();
 
+    public bool IsEmpty {
+        get {
+            return isEmpty;
+        }
+    }
+
+
     public class Move {
         public MoveType mt;
         public string msg;
@@ -127,6 +134,7 @@ public class CombatHUDLog : MonoBehaviour {
         mvmt.hash = tempHash;
 
         loggedMoves.Add(mvmt);
+        isEmpty = false;
     }
 
     public void RemoveLastLogMovementPosition() {
@@ -140,6 +148,8 @@ public class CombatHUDLog : MonoBehaviour {
         }
         if(loggedMoves.Count == 0) {
             isEmpty = true;
+        } else {
+            isEmpty = false;
         }
     }
 
@@ -148,6 +158,7 @@ public class CombatHUDLog : MonoBehaviour {
             Destroy(m.path.gameObject);
         }
         loggedMoves.Clear();
+        isEmpty = true;
     }
 
     public void RemoveFirstLogMovementPosition() {
@@ -155,6 +166,8 @@ public class CombatHUDLog : MonoBehaviour {
         loggedMoves.RemoveAt(0);
         if (loggedMoves.Count == 0) {
             isEmpty = true;
+        } else {
+            isEmpty = false;
         }
     }
 }
