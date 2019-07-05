@@ -41,6 +41,22 @@ public class CombatHUDLog : MonoBehaviour {
         }
     }
 
+    public void ChangeNode(Vector3 o, Vector3 n) {
+        foreach(Movement m in loggedMoves) {
+            if(m.destination[m.destination.Length - 1] == o) {
+                m.destination[m.destination.Length - 1] = n;
+                m.pathLR.SetPositions(m.destination);
+                m.path.transform.position = n;
+            }
+            if(m.destination[0] == o) {
+                m.destination[0] = n;
+                m.pathLR.SetPositions(m.destination);
+                break;
+            }
+        }
+        
+    }
+
     public void UpdateLineFromMovement() {
 
         GameManagerScript.ins.playerInfo.polyNav.map.FindPath(GameManagerScript.ins.GetPlayerFeetPosition(), loggedMoves[0].destination[loggedMoves[0].destination.Length - 1], DrawLineFromMovement);
