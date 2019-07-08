@@ -295,6 +295,13 @@ public class UIManager : MonoBehaviour {
         //AITurnProgressImage.fillAmount = progress;
     }
 
+    public bool IsSelectingInCombat() {
+        if((!(ControllerPanel_MovementButton.IsActive()) || !(ControllerPanel_AttackButton.IsActive())) && GameManagerScript.ins.playerInfo.inCombat) {
+            return true;
+        }
+        return false;
+    }
+
 
 
 }

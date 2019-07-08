@@ -8,11 +8,12 @@ public class PlayerDrawCombatMovePosition : MonoBehaviour {
 
     public bool isSelected;
     public LineRenderer lr;
-    private PolyNav.PolyNavAgent playerAgent;
+    public PolyNav.PolyNavAgent playerAgent;
     private CombatHUDLog log;
     private CombatHUDAttack attackLog;
     private Vector3[] loggedPath;
     private bool canMove = false;
+    private CombatHUDLog.Movement selectedLine;
 
     void Start() {
         lr.startWidth = 0.05f;
@@ -24,13 +25,82 @@ public class PlayerDrawCombatMovePosition : MonoBehaviour {
 
 
     void Update() {
-        DisplayLoggedPath();
+        //DisplayLoggedPath();
 
         if (!isSelected) {
             return;
         }
 
-        if (Input.GetMouseButtonDown(0)) {
+        if (Input.GetKey(KeyCode.LeftControl)) {
+            bool isTouchingLine = false;
+            Vector3 startPoint = GameManagerScript.ins.player.transform.position;
+            Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            mousePosition = new Vector3(mousePosition.x, mousePosition.y, 0);
+            foreach (CombatHUDLog.Movement lines in CombatManager.ins.combatHUDLog.loggedMoves) {
+                foreach (Vector3 v in lines.destination) {
+                    Vector3 endPoint = v;
+                    Vector3 lineDir = (endPoint - startPoint);
+                    Vector3 mouseEndDir = (endPoint - mousePosition);
+                    Vector3 mouseStartDir = (mousePosition - startPoint);
+                    float a = Vector3.Dot(mouseStartDir, lineDir);
+                    float b = (mousePosition.x - startPoint.x) * (mousePosition.x - startPoint.x) + (mousePosition.y - startPoint.y) * (mousePosition.y - startPoint.y);
+
+                    if ((Vector3.SqrMagnitude(Vector3.Cross(lineDir, mouseEndDir)) < 0.02f) && (a >= 0) && (a >= (b - 0.1f))) {
+                        isTouchingLine = true;
+                        if (selectedLine == null) {
+                            selectedLine = lines;
+                            selectedLine.pathLR.startColor = Color.red;
+                            selectedLine.pathLR.endColor = Color.red;
+                        } else if (selectedLine != lines) {
+                            selectedLine.pathLR.startColor = Color.white;
+                            selectedLine.pathLR.endColor = Color.white;
+                            selectedLine = lines;
+                            selectedLine.pathLR.startColor = Color.red;
+                            selectedLine.pathLR.endColor = Color.red;
+                        }
+                        if (Input.GetMouseButtonDown(0)) {
+                            PointerEventData pointerData = new PointerEventData(EventSystem.current);
+                            pointerData.position = Input.mousePosition;
+                            List<RaycastResult> results = new List<RaycastResult>();
+                            EventSystem.current.RaycastAll(pointerData, results);
+                            if (results.Count > 0) {
+                                if (results[0].gameObject.layer == LayerMask.NameToLayer("UI")) {
+                                    return;
+                                }
+                            }
+                            float percentage = mouseStartDir.magnitude / lineDir.magnitude;
+                            Vector3 n = ((1 - percentage) * startPoint) + (percentage * endPoint);
+                            MouseClickMiddle(startPoint, endPoint, n, lines.destination, lines.hash);
+                            selectedLine = null;
+                            if (!Input.GetKey(KeyCode.LeftShift) && canMove) {
+                                ChangeMovementValue();
+                            }
+                            return; 
+                        }
+                        break;
+                    }
+                    startPoint = v;
+                }
+                if (isTouchingLine) {
+                    break;
+                }
+            }
+            if (!isTouchingLine) {
+                if (selectedLine != null) {
+                    selectedLine.pathLR.startColor = Color.white;
+                    selectedLine.pathLR.endColor = Color.white;
+                    selectedLine = null;
+                }
+            }
+        } else {
+            if(selectedLine != null) {
+                selectedLine.pathLR.startColor = Color.white;
+                selectedLine.pathLR.endColor = Color.white;
+                selectedLine = null;
+            }
+        }
+
+        if (Input.GetMouseButtonDown(0) && !Input.GetKey(KeyCode.LeftControl)) {
             PointerEventData pointerData = new PointerEventData(EventSystem.current);
             pointerData.position = Input.mousePosition;
             List<RaycastResult> results = new List<RaycastResult>();
@@ -47,7 +117,7 @@ public class PlayerDrawCombatMovePosition : MonoBehaviour {
             return;
         }
 
-        if (Input.GetMouseButtonDown(1)) {
+        if (Input.GetMouseButtonDown(1) && !Input.GetKey(KeyCode.LeftControl)) {
             PointerEventData pointerData = new PointerEventData(EventSystem.current);
             pointerData.position = Input.mousePosition;
             List<RaycastResult> results = new List<RaycastResult>();
@@ -87,7 +157,11 @@ public class PlayerDrawCombatMovePosition : MonoBehaviour {
         }
     }
 
-    void LogPath(Vector2[] path) {
+    void MouseClickMiddle(Vector3 start, Vector3 end, Vector3 middle, Vector3[] des, int desHash) {
+        log.InsertNode(middle, System.Array.IndexOf(des, start), System.Array.IndexOf(des, end), des, desHash);
+    }
+
+    public void LogPath(Vector2[] path) {
         if (path == null || path.Length == 0) {
             canMove = false;
             return;
@@ -99,6 +173,10 @@ public class PlayerDrawCombatMovePosition : MonoBehaviour {
 
     void DisplayPath(Vector2[] path) {
         if (path == null || path.Length == 0) {
+            return;
+        }
+        if (Input.GetKey(KeyCode.LeftControl)) {
+            lr.positionCount = 0;
             return;
         }
         lr.positionCount = path.Length;

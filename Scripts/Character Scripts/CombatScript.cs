@@ -26,7 +26,7 @@ public class CombatScript : MonoBehaviour {
     private int turnsToClose = 0; //turns we are too close to an enemy
     private float tooCloseDistance = 1f;
     private float safeDistance = 5f;
-    private int safeSpellDistanceMultiplier = 30; //multiplier to put on safe distance to see what AI wants to be from spells to be considered safe (the ones that hurt)
+    private int safeSpellDistanceMultiplier = 60; //multiplier to put on safe distance to see what AI wants to be from spells to be considered safe (the ones that hurt)
 
 
     [Header("Spell Variables")]

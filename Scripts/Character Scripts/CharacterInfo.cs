@@ -399,15 +399,19 @@ public class CharacterInfo : MonoBehaviour {
     /// </summary>
     public void SetDirection() {
         //player
-        if (spellQueue.Count != 0) {
-            if (spellQueue[0].fireMode == CombatHUDAttack.FireMode.TARGET) {
-                direction = FaceDirection(CombatManager.ins.combatHUDAttack.memory[spellQueue[0].attackTarget]);
+        if (gameObject == GameManagerScript.ins.player) {
+            if (spellQueue.Count != 0) {
+                if (spellQueue[0].fireMode == CombatHUDAttack.FireMode.TARGET) {
+                    direction = FaceDirection(CombatManager.ins.combatHUDAttack.memory[spellQueue[0].attackTarget]);
+                } else if (spellQueue[0].fireMode == CombatHUDAttack.FireMode.POINT) {
+                    direction = FaceDirection(spellQueue[0].attackPointModePoint);
+                } else {
+                    direction = FaceDirection(gameObject.transform.position + spellQueue[0].attackDirection);
+                }
                 return;
-            }else if(spellQueue[0].fireMode == CombatHUDAttack.FireMode.POINT) {
-                direction = FaceDirection(spellQueue[0].attackPointModePoint);
-                return;
-            } else {
-                direction = FaceDirection(spellQueue[0].attackDirection); 
+            }
+            if (CombatManager.ins.combatHUDLog.IsEmpty) {
+                polyNav.Stop();
             }
         }
 
