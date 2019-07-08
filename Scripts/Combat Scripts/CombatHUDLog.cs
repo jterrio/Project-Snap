@@ -32,6 +32,7 @@ public class CombatHUDLog : MonoBehaviour {
         public GameObject path;
         public LineRenderer pathLR;
         public int hash;
+        public int queuePos;
         void Start() {
             mt = MoveType.Movement;
         }
@@ -57,13 +58,13 @@ public class CombatHUDLog : MonoBehaviour {
         
     }
 
-    public void InsertNode(Vector3 n, int startIndex, int endIndex, Vector3[] d) {
+    public void InsertNode(Vector3 n, int startIndex, int endIndex, Vector3[] d, int dHash) {
         List<Movement> endofListMovement = new List<Movement>();
         int index = 0;
         Movement targetMovement = new Movement();
         //get index
         foreach(Movement m in loggedMoves) {
-            if(m.destination == d) {
+            if(m.hash == dHash) {
                 index = loggedMoves.IndexOf(m);
                 targetMovement = m;
             }
@@ -198,6 +199,7 @@ public class CombatHUDLog : MonoBehaviour {
         mvmt.hash = tempHash;
 
         loggedMoves.Add(mvmt);
+        mvmt.queuePos = loggedMoves.IndexOf(mvmt);
         isEmpty = false;
     }
 
