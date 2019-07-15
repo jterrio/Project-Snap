@@ -580,7 +580,12 @@ public class CombatScript : MonoBehaviour {
                 movementQueue.RemoveAt(0); //remove reached point
                 Move(); //recursive call
             } else { //if we haven't reached, set destination
-                npcInfo.polyNav.SetDestination(movementQueue[0]);
+                if (npcInfo.CanMoveTo(movementQueue[0])) { //check if we can move to
+                    npcInfo.polyNav.SetDestination(movementQueue[0]);
+                } else {
+                    movementQueue.RemoveAt(0); //cant reach point
+                    Move(); //recursive call
+                }
             }
         } else {
             npcInfo.polyNav.Stop(); //if we dont have points to move to, stop the ai from moving
@@ -707,11 +712,11 @@ public class CombatScript : MonoBehaviour {
                     }
                     //set direction or give chance to change. need to change later to account for spells and such
                     if (rotationDirection == 1) {
-                        if (Random.Range(1, 100) <= 2) { //2% chance to change direction
+                        if (Random.Range(1, 100) <= 1) { //1% chance to change direction
                             rotationDirection = 0;
                         }
                     } else if (rotationDirection == 0) {
-                        if (Random.Range(1, 100) <= 2) { //2% chance to change direction
+                        if (Random.Range(1, 100) <= 1) { //1% chance to change direction
                             rotationDirection = 1;
                         }
                     } else { //if we have not set a direction to go; base case

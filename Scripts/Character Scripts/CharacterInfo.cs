@@ -704,4 +704,14 @@ public class CharacterInfo : MonoBehaviour {
         return isVisible;
     }
 
+
+    public bool CanMoveTo(Vector3 p) {
+
+        RaycastHit2D[] hits = Physics2D.RaycastAll(Feet(), p - Feet(), Vector3.Distance(p, Feet()), CombatManager.ins.wallTest);
+        if(hits.Length % 2 == 0) {
+            return true;
+        }
+        return false;
+    }
+
 }
