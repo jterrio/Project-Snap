@@ -230,7 +230,7 @@ public class CharacterInfo : MonoBehaviour {
             polyNav.maxSpeed = defaultSpeed;
             print("Spell casted!");
             if (spellQueue[0].fireMode == CombatHUDAttack.FireMode.TARGET) {
-                angle = ((slider.value - 0.5f) * maxRangeForShootPrediction);
+                angle = ((slider.value - 0.5f) * maxRangeForShootPrediction * -1);
                 SpellManagerScript.ins.CastSpell(spellQueue[0], gameObject, angle);
             } else {
                 SpellManagerScript.ins.CastSpell(spellQueue[0], gameObject, 0);
