@@ -1615,7 +1615,7 @@ GameObject:
   - component: {fileID: 187231656}
   - component: {fileID: 187231655}
   - component: {fileID: 187231657}
-  m_Layer: 2
+  m_Layer: 10
   m_Name: Obstacle_Layer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3798,7 +3798,7 @@ GameObject:
   - component: {fileID: 428723724}
   - component: {fileID: 428723723}
   - component: {fileID: 428723722}
-  m_Layer: 10
+  m_Layer: 13
   m_Name: Unwalk_Layer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -19835,7 +19835,7 @@ MonoBehaviour:
   joinDistance: 20
   obstacleTest:
     serializedVersion: 2
-    m_Bits: 9216
+    m_Bits: 41984
   characterTest:
     serializedVersion: 2
     m_Bits: 768
@@ -19845,6 +19845,9 @@ MonoBehaviour:
   spellTest:
     serializedVersion: 2
     m_Bits: 4096
+  wallTest:
+    serializedVersion: 2
+    m_Bits: 8192
 --- !u!4 &1619709817
 Transform:
   m_ObjectHideFlags: 0
