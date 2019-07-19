@@ -230,7 +230,7 @@ public class CharacterInfo : MonoBehaviour {
             polyNav.maxSpeed = defaultSpeed;
             print("Spell casted!");
             if (spellQueue[0].fireMode == CombatHUDAttack.FireMode.TARGET) {
-                angle = ((slider.value - 0.5f) * maxRangeForShootPrediction);
+                angle = ((slider.value - 0.5f) * maxRangeForShootPrediction * -1);
                 SpellManagerScript.ins.CastSpell(spellQueue[0], gameObject, angle);
             } else {
                 SpellManagerScript.ins.CastSpell(spellQueue[0], gameObject, 0);
@@ -702,6 +702,16 @@ public class CharacterInfo : MonoBehaviour {
         }
 
         return isVisible;
+    }
+
+
+    public bool CanMoveTo(Vector3 p) {
+
+        RaycastHit2D[] hits = Physics2D.RaycastAll(Feet(), p - Feet(), Vector3.Distance(p, Feet()), CombatManager.ins.wallTest);
+        if(hits.Length % 2 == 0) {
+            return true;
+        }
+        return false;
     }
 
 }

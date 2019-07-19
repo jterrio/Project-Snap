@@ -173,6 +173,11 @@ public class PlayerDrawCombatMovePosition : MonoBehaviour {
 
     void DisplayPath(Vector2[] path) {
         if (path == null || path.Length == 0) {
+            lr.positionCount = 0;
+            return;
+        }
+        if(!log.CanReachFirstPosition(path[path.Length - 2], path[path.Length - 1])){
+            lr.positionCount = 0;
             return;
         }
         if (Input.GetKey(KeyCode.LeftControl)) {
