@@ -184,6 +184,16 @@ public class PlayerDrawCombatMovePosition : MonoBehaviour {
             lr.positionCount = 0;
             return;
         }
+        PointerEventData pointerData = new PointerEventData(EventSystem.current);
+        pointerData.position = Input.mousePosition;
+        List<RaycastResult> results = new List<RaycastResult>();
+        EventSystem.current.RaycastAll(pointerData, results);
+        if (results.Count > 0) {
+            if (results[0].gameObject.layer == LayerMask.NameToLayer("UI")) {
+                lr.positionCount = 0;
+                return;
+            }
+        }
         lr.positionCount = path.Length;
         Vector3[] pointList = new Vector3[lr.positionCount];
         for (int i = 0; i < path.Length; i++) {
@@ -269,8 +279,8 @@ public class PlayerDrawCombatMovePosition : MonoBehaviour {
             }
         }
         foreach(CombatHUDAttack.Attack b in toRemove) {
-            attackLog.RemoveAttackFromLayout(b);
             Destroy(attackLog.loggedAttacks[attackLog.loggedAttacks.IndexOf(b)].attackObject);
+            attackLog.RemoveAttackFromLayout(b);
             attackLog.loggedAttacks.Remove(b);
         }
     }
