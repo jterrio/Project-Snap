@@ -3234,7 +3234,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4477174473858310, guid: 55630cc1951e31b409cdc9a4a4c96fd4, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -1.5
+      value: -2.5
       objectReference: {fileID: 0}
     - target: {fileID: 4477174473858310, guid: 55630cc1951e31b409cdc9a4a4c96fd4, type: 3}
       propertyPath: m_LocalPosition.y
@@ -3623,7 +3623,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4477174473858310, guid: 55630cc1951e31b409cdc9a4a4c96fd4, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.5
+      value: -1.5
       objectReference: {fileID: 0}
     - target: {fileID: 4477174473858310, guid: 55630cc1951e31b409cdc9a4a4c96fd4, type: 3}
       propertyPath: m_LocalPosition.y
@@ -20599,7 +20599,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1748299855
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -22689,7 +22689,7 @@ MonoBehaviour:
   spirituality: 1
   dexterity: 10
   perception: 10
-  attitude: -100
+  attitude: 100
   fear: 0
   danger: 0
 --- !u!114 &1942604916
