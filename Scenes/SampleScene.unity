@@ -3084,6 +3084,7 @@ MonoBehaviour:
   LogPanel_Attack_gridLayout: {fileID: 985960603}
   LogPanel_Attack_Icon_Prefab: {fileID: 224907871577313822, guid: 4b3b5bc62d3f20f47a88c5986c39e09b,
     type: 3}
+  LogPanel_Hover: {fileID: 503385743}
   ControllerPanel_MovementButton: {fileID: 120827428}
   ControllerPanel_AttackButton: {fileID: 198820428}
   HealthandStaminaPanel: {fileID: 115923847}
@@ -5496,6 +5497,80 @@ CanvasRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 490960492}
+  m_CullTransparentMesh: 0
+--- !u!1 &503385742
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 503385743}
+  - component: {fileID: 503385745}
+  - component: {fileID: 503385744}
+  m_Layer: 5
+  m_Name: HoverPanel
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &503385743
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 503385742}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 812789179}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: -168.6}
+  m_SizeDelta: {x: 0, y: -533.9}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &503385744
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 503385742}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.392}
+  m_RaycastTarget: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
+      Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+  m_Type: 1
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+--- !u!222 &503385745
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 503385742}
   m_CullTransparentMesh: 0
 --- !u!1 &519420028
 GameObject:
@@ -12873,7 +12948,7 @@ GameObject:
   - component: {fileID: 812789179}
   - component: {fileID: 812789181}
   - component: {fileID: 812789180}
-  m_Layer: 5
+  m_Layer: 2
   m_Name: CombatHUDPanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -12893,6 +12968,7 @@ RectTransform:
   m_Children:
   - {fileID: 28372125}
   - {fileID: 1897244760}
+  - {fileID: 503385743}
   m_Father: {fileID: 984996129}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -15601,7 +15677,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1649810443}
   m_Direction: 2
   m_Value: 0
-  m_Size: 0.99999994
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -22024,7 +22100,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1897244760
 RectTransform:
   m_ObjectHideFlags: 0
@@ -22689,7 +22765,7 @@ MonoBehaviour:
   spirituality: 1
   dexterity: 10
   perception: 10
-  attitude: 100
+  attitude: -100
   fear: 0
   danger: 0
 --- !u!114 &1942604916

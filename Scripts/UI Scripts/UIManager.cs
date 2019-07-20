@@ -13,7 +13,7 @@ public class UIManager : MonoBehaviour {
     public RectTransform InvBackground, InvForeground, InvGridLayout, InventorySlotPrefab, InvItemInfoPanel;
     public RectTransform ChoicePanel;
     public RectTransform MerchantPanel;
-    public RectTransform CombatHUDPanel, LogPanel_Base, LogPanel_Main, LogPanel_gridLayout, LogPanel_Attack, LogPanel_Attack_gridLayout, LogPanel_Attack_Icon_Prefab;
+    public RectTransform CombatHUDPanel, LogPanel_Base, LogPanel_Main, LogPanel_gridLayout, LogPanel_Attack, LogPanel_Attack_gridLayout, LogPanel_Attack_Icon_Prefab, LogPanel_Hover;
     public Button ControllerPanel_MovementButton, ControllerPanel_AttackButton;
     public RectTransform HealthandStaminaPanel;
     public Image HealthImageFilled, StaminaImageFilled;
@@ -60,6 +60,12 @@ public class UIManager : MonoBehaviour {
 
     void Update() {
 
+        //info on where mouse is
+        PointerEventData pointerData = new PointerEventData(EventSystem.current);
+        pointerData.position = Input.mousePosition;
+        List<RaycastResult> results = new List<RaycastResult>();
+        EventSystem.current.RaycastAll(pointerData, results);
+
         //check to open/close menu elements
         if (Input.GetKeyDown(GameManagerScript.ins.OpenMenu)) {
             TabPanel.gameObject.SetActive(!TabPanel.gameObject.activeInHierarchy);
@@ -69,12 +75,6 @@ public class UIManager : MonoBehaviour {
         if (InvPanel.gameObject.activeInHierarchy) {
             //if item stats panel is not active, check to see if we can
             if (!InvItemInfoPanel.gameObject.activeInHierarchy) {
-                PointerEventData pointerData = new PointerEventData(EventSystem.current);
-
-                pointerData.position = Input.mousePosition;
-
-                List<RaycastResult> results = new List<RaycastResult>();
-                EventSystem.current.RaycastAll(pointerData, results);
                 bool found = false;
                 GameObject itemFound = null;
                 //if it hits a layer, check if it is not UI, then close inventory; close in else if not hitting layer
@@ -92,12 +92,6 @@ public class UIManager : MonoBehaviour {
                     }
                 }
             } else { //if item stats panel is active, check to see if move off it
-                PointerEventData pointerData = new PointerEventData(EventSystem.current);
-
-                pointerData.position = Input.mousePosition;
-
-                List<RaycastResult> results = new List<RaycastResult>();
-                EventSystem.current.RaycastAll(pointerData, results);
                 bool found = false;
                 //if it hits a layer, check if it is not UI, then close inventory; close in else if not hitting layer
                 if (results.Count > 0) {
@@ -113,6 +107,23 @@ public class UIManager : MonoBehaviour {
             }
         } //end
 
+        //checking hover panel when in combat
+        if (GameManagerScript.ins.playerInfo.inCombat) {
+            if (LogPanel_Base.gameObject.activeSelf && !CombatManager.ins.combatHUDAttack.isSelected) {
+                DisableLogPanelBase();
+                EnableLogPanelHover();
+            }
+            foreach (RaycastResult r in results) {
+                if (r.gameObject == LogPanel_Hover.gameObject || r.gameObject == LogPanel_Base.gameObject) {
+                    if (LogPanel_Hover.gameObject.activeSelf) {
+                        DisableLogPanelHover();
+                        EnableLogPanelBase();
+                        break;
+                    }
+                }
+            }
+
+        }//end
     }
 
     /// <summary>
@@ -302,6 +313,21 @@ public class UIManager : MonoBehaviour {
         return false;
     }
 
+    public void DisableLogPanelBase() {
+        LogPanel_Base.gameObject.SetActive(false);
+    }
+
+    public void EnableLogPanelBase() {
+        LogPanel_Base.gameObject.SetActive(true);
+    }
+
+    public void EnableLogPanelHover() {
+        LogPanel_Hover.gameObject.SetActive(true);
+    }
+
+    public void DisableLogPanelHover() {
+        LogPanel_Hover.gameObject.SetActive(false);
+    }
 
 
 }
