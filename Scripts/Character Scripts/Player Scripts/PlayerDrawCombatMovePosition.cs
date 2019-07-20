@@ -63,8 +63,8 @@ public class PlayerDrawCombatMovePosition : MonoBehaviour {
                             pointerData.position = Input.mousePosition;
                             List<RaycastResult> results = new List<RaycastResult>();
                             EventSystem.current.RaycastAll(pointerData, results);
-                            if (results.Count > 0) {
-                                if (results[0].gameObject.layer == LayerMask.NameToLayer("UI")) {
+                            foreach(RaycastResult r in results) {
+                                if(r.gameObject.layer == LayerMask.NameToLayer("UI") && r.gameObject.activeSelf) {
                                     return;
                                 }
                             }
@@ -105,8 +105,8 @@ public class PlayerDrawCombatMovePosition : MonoBehaviour {
             pointerData.position = Input.mousePosition;
             List<RaycastResult> results = new List<RaycastResult>();
             EventSystem.current.RaycastAll(pointerData, results);
-            if(results.Count > 0) {
-                if(results[0].gameObject.layer == LayerMask.NameToLayer("UI")) {
+            foreach (RaycastResult r in results) {
+                if (r.gameObject.layer == LayerMask.NameToLayer("UI") && r.gameObject.activeSelf) {
                     return;
                 }
             }
@@ -122,8 +122,8 @@ public class PlayerDrawCombatMovePosition : MonoBehaviour {
             pointerData.position = Input.mousePosition;
             List<RaycastResult> results = new List<RaycastResult>();
             EventSystem.current.RaycastAll(pointerData, results);
-            if (results.Count > 0) {
-                if (results[0].gameObject.layer == LayerMask.NameToLayer("UI")) {
+            foreach (RaycastResult r in results) {
+                if (r.gameObject.layer == LayerMask.NameToLayer("UI") && r.gameObject.activeSelf) {
                     return;
                 }
             }
@@ -188,8 +188,8 @@ public class PlayerDrawCombatMovePosition : MonoBehaviour {
         pointerData.position = Input.mousePosition;
         List<RaycastResult> results = new List<RaycastResult>();
         EventSystem.current.RaycastAll(pointerData, results);
-        if (results.Count > 0) {
-            if (results[0].gameObject.layer == LayerMask.NameToLayer("UI")) {
+        foreach (RaycastResult r in results) {
+            if (r.gameObject.layer == LayerMask.NameToLayer("UI") && r.gameObject.activeSelf) {
                 lr.positionCount = 0;
                 return;
             }
@@ -258,10 +258,14 @@ public class PlayerDrawCombatMovePosition : MonoBehaviour {
             ChangeMovementValue();
         }
         attackLog.isSelected = true;
+        UIManager.ins.EnableLogPanelBase();
+        UIManager.ins.DisableLogPanelHover();
     }
 
     public void UnSelectPlayerAttack() {
         attackLog.isSelected = false;
+        UIManager.ins.DisableLogPanelBase();
+        UIManager.ins.EnableLogPanelHover();
         attackLog.ResetValues();
     }
 
