@@ -9,6 +9,7 @@ public class CombatManager : MonoBehaviour {
     public CombatHUDLog combatHUDLog;
     public CombatHUDAttack combatHUDAttack;
     public PlayerDrawCombatMovePosition combatDrawMovePosition;
+    public CombatSpeech combatSpeech;
     public static GameObject playerCombatHandler; //the combat handler that the player is particpating in, if they are in combat;
     public List<GameObject> allCombatHandlers;
     public float joinDistance = 10f;

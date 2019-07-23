@@ -13,12 +13,10 @@ public class UIManager : MonoBehaviour {
     public RectTransform InvBackground, InvForeground, InvGridLayout, InventorySlotPrefab, InvItemInfoPanel;
     public RectTransform ChoicePanel;
     public RectTransform MerchantPanel;
-    public RectTransform CombatHUDPanel, LogPanel_Base, LogPanel_Main, LogPanel_gridLayout, LogPanel_Attack, LogPanel_Attack_gridLayout, LogPanel_Attack_Icon_Prefab, LogPanel_Hover;
-    public Button ControllerPanel_MovementButton, ControllerPanel_AttackButton;
+    public RectTransform CombatHUDPanel, LogPanel_Base, LogPanel_Main, LogPanel_gridLayout, LogPanel_Attack, LogPanel_Attack_gridLayout, LogPanel_Attack_Icon_Prefab, LogPanel_Hover_Attack, LogPanel_Hover_Speech, LogPanel_Speech;
+    public Button ControllerPanel_MovementButton, ControllerPanel_AttackButton, ControllerPanel_SpeechButton;
     public RectTransform HealthandStaminaPanel;
     public Image HealthImageFilled, StaminaImageFilled;
-    public RectTransform AITurnProgressPanel;
-    public Image AITurnProgressImage;
 
     public RectTransform speechOutline;
     public RectTransform speechPanel;
@@ -113,11 +111,22 @@ public class UIManager : MonoBehaviour {
                 DisableLogPanelBase();
                 EnableLogPanelHover();
             }
+            if(LogPanel_Speech.gameObject.activeSelf && !CombatManager.ins.combatSpeech.isSelected) {
+                DisableLogPanelSpeech();
+                EnableLogPanelHoverSpeech();
+            }
             foreach (RaycastResult r in results) {
-                if (r.gameObject == LogPanel_Hover.gameObject || r.gameObject == LogPanel_Base.gameObject) {
-                    if (LogPanel_Hover.gameObject.activeSelf) {
+                if (r.gameObject == LogPanel_Hover_Attack.gameObject || r.gameObject == LogPanel_Base.gameObject) {
+                    if (LogPanel_Hover_Attack.gameObject.activeSelf) {
                         DisableLogPanelHover();
                         EnableLogPanelBase();
+                        break;
+                    }
+                }
+                if(r.gameObject == LogPanel_Hover_Speech.gameObject || r.gameObject == LogPanel_Speech.gameObject) {
+                    if (LogPanel_Hover_Speech.gameObject.activeSelf) {
+                        DisableLogPanelHoverSpeech();
+                        EnableLogPanelSpeech();
                         break;
                     }
                 }
@@ -293,19 +302,6 @@ public class UIManager : MonoBehaviour {
         LogPanel_Attack.gameObject.SetActive(false);
     }
 
-    public void EnableAITurnProgress() {
-        //AITurnProgressPanel.gameObject.SetActive(true);
-    }
-
-    public void DisableAITurnProgress() {
-        //AITurnProgressPanel.gameObject.SetActive(false);
-    }
-
-    public void UpdateAITurnProgress(int amount, int max) {
-        //float progress = (float)amount / (float)max;
-        //AITurnProgressImage.fillAmount = progress;
-    }
-
     public bool IsSelectingInCombat() {
         if((!(ControllerPanel_MovementButton.IsActive()) || !(ControllerPanel_AttackButton.IsActive())) && GameManagerScript.ins.playerInfo.inCombat) {
             return true;
@@ -322,12 +318,37 @@ public class UIManager : MonoBehaviour {
     }
 
     public void EnableLogPanelHover() {
-        LogPanel_Hover.gameObject.SetActive(true);
+        LogPanel_Hover_Attack.gameObject.SetActive(true);
     }
 
     public void DisableLogPanelHover() {
-        LogPanel_Hover.gameObject.SetActive(false);
+        LogPanel_Hover_Attack.gameObject.SetActive(false);
     }
 
+    public void DisableLogPanelSpeech() {
+        LogPanel_Speech.gameObject.SetActive(false);
+    }
+
+    public void EnableLogPanelSpeech() {
+        LogPanel_Speech.gameObject.SetActive(true);
+    }
+
+    public void EnableLogPanelHoverSpeech() {
+        LogPanel_Hover_Speech.gameObject.SetActive(true);
+    }
+
+    public void DisableLogPanelHoverSpeech() {
+        LogPanel_Hover_Speech.gameObject.SetActive(false);
+    }
+
+    public void EnableSpeechCombat() {
+        HealthandStaminaPanel.gameObject.SetActive(false);
+        CombatHUDPanel.gameObject.SetActive(false);
+    }
+
+    public void DisableSpeechCombat() {
+        HealthandStaminaPanel.gameObject.SetActive(true);
+        CombatHUDPanel.gameObject.SetActive(true);
+    }
 
 }

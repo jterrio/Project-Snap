@@ -358,7 +358,7 @@ public class CombatHUDAttack : MonoBehaviour {
                             }
                         }
                         Vector2 mouse2D = new Vector2(Camera.main.ScreenToWorldPoint(Input.mousePosition).x, Camera.main.ScreenToWorldPoint(Input.mousePosition).y);
-                            RaycastHit2D hit = Physics2D.Raycast(mouse2D, Vector2.zero);
+                        RaycastHit2D hit = Physics2D.Raycast(mouse2D, Vector2.zero);
                         if (hit.collider != null) {
                             if (hit.collider.gameObject.layer == LayerMask.NameToLayer("NPC")) {
                                 if (selectedNPC != null) {

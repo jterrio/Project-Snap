@@ -220,15 +220,24 @@ public class PlayerDrawCombatMovePosition : MonoBehaviour {
     public void SelectPlayerMovement() {
         isSelected = true;
         lr.enabled = true;
+        //disable attacking
         if (attackLog.isSelected) {
             ChangeAttackValue();
             attackLog.ResetValues();
         }
+        //disable speeching
+        if (CombatManager.ins.combatSpeech.isSelected) {
+            ChangeSpeechValue();
+        }
+        UIManager.ins.DisableLogPanelHover();
+        UIManager.ins.DisableLogPanelHoverSpeech();
     }
 
     public void UnSelectPlayerMovement() {
         isSelected = false;
         lr.enabled = false;
+        UIManager.ins.EnableLogPanelHover();
+        UIManager.ins.EnableLogPanelHoverSpeech();
     }
 
     public void ChangeAttackValue() {
@@ -245,6 +254,21 @@ public class PlayerDrawCombatMovePosition : MonoBehaviour {
         UIManager.ins.ControllerPanel_AttackButton.colors = temp;
     }
 
+
+    public void ChangeSpeechValue() {
+        ColorBlock temp = UIManager.ins.ControllerPanel_SpeechButton.colors;
+        if (CombatManager.ins.combatSpeech.isSelected) {
+            temp.normalColor = new Color(1f, 1f, 1f);
+            temp.highlightedColor = new Color(245 / 255f, 245 / 255f, 245 / 255f);
+            CombatManager.ins.combatSpeech.RightClick();
+        } else {
+            temp.normalColor = temp.pressedColor;
+            temp.highlightedColor = temp.normalColor;
+            CombatManager.ins.combatSpeech.Select();
+        }
+        UIManager.ins.ControllerPanel_SpeechButton.colors = temp;
+    }
+
     public void ResetAttackValue() {
         ColorBlock temp = UIManager.ins.ControllerPanel_AttackButton.colors;
         temp.normalColor = new Color(1f, 1f, 1f);
@@ -254,18 +278,26 @@ public class PlayerDrawCombatMovePosition : MonoBehaviour {
     }
 
     public void SelectPlayerAttack() {
+        //disable movement
         if (isSelected) {
             ChangeMovementValue();
+        }
+        //disable speeching
+        if (CombatManager.ins.combatSpeech.isSelected) {
+            ChangeSpeechValue();
         }
         attackLog.isSelected = true;
         UIManager.ins.EnableLogPanelBase();
         UIManager.ins.DisableLogPanelHover();
+        UIManager.ins.DisableLogPanelHoverSpeech();
+        UIManager.ins.DisableSpeechCombat();
     }
 
     public void UnSelectPlayerAttack() {
         attackLog.isSelected = false;
         UIManager.ins.DisableLogPanelBase();
         UIManager.ins.EnableLogPanelHover();
+        UIManager.ins.EnableLogPanelHoverSpeech();
         attackLog.ResetValues();
     }
 
