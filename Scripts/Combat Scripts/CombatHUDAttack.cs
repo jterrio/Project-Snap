@@ -42,7 +42,7 @@ public class CombatHUDAttack : MonoBehaviour {
         public GameObject attackObject; //object of the spell
         public RectTransform loggedInfo; //info in the log
         public int hash; //random hash
-        public GameObject attackTarget; 
+        public GameObject attackTarget; //for TARGET fire mode
         public FireMode fireMode; //fire mode of the spell
         public bool selfCast = false; //if the spell is cast from self
         public bool isCasting = false; //if the spell is currently in spell queue
