@@ -63,8 +63,8 @@ public class PlayerDrawCombatMovePosition : MonoBehaviour {
                             pointerData.position = Input.mousePosition;
                             List<RaycastResult> results = new List<RaycastResult>();
                             EventSystem.current.RaycastAll(pointerData, results);
-                            if (results.Count > 0) {
-                                if (results[0].gameObject.layer == LayerMask.NameToLayer("UI")) {
+                            foreach(RaycastResult r in results) {
+                                if(r.gameObject.layer == LayerMask.NameToLayer("UI") && r.gameObject.activeSelf) {
                                     return;
                                 }
                             }
@@ -105,8 +105,8 @@ public class PlayerDrawCombatMovePosition : MonoBehaviour {
             pointerData.position = Input.mousePosition;
             List<RaycastResult> results = new List<RaycastResult>();
             EventSystem.current.RaycastAll(pointerData, results);
-            if(results.Count > 0) {
-                if(results[0].gameObject.layer == LayerMask.NameToLayer("UI")) {
+            foreach (RaycastResult r in results) {
+                if (r.gameObject.layer == LayerMask.NameToLayer("UI") && r.gameObject.activeSelf) {
                     return;
                 }
             }
@@ -122,8 +122,8 @@ public class PlayerDrawCombatMovePosition : MonoBehaviour {
             pointerData.position = Input.mousePosition;
             List<RaycastResult> results = new List<RaycastResult>();
             EventSystem.current.RaycastAll(pointerData, results);
-            if (results.Count > 0) {
-                if (results[0].gameObject.layer == LayerMask.NameToLayer("UI")) {
+            foreach (RaycastResult r in results) {
+                if (r.gameObject.layer == LayerMask.NameToLayer("UI") && r.gameObject.activeSelf) {
                     return;
                 }
             }
@@ -184,6 +184,16 @@ public class PlayerDrawCombatMovePosition : MonoBehaviour {
             lr.positionCount = 0;
             return;
         }
+        PointerEventData pointerData = new PointerEventData(EventSystem.current);
+        pointerData.position = Input.mousePosition;
+        List<RaycastResult> results = new List<RaycastResult>();
+        EventSystem.current.RaycastAll(pointerData, results);
+        foreach (RaycastResult r in results) {
+            if (r.gameObject.layer == LayerMask.NameToLayer("UI") && r.gameObject.activeSelf) {
+                lr.positionCount = 0;
+                return;
+            }
+        }
         lr.positionCount = path.Length;
         Vector3[] pointList = new Vector3[lr.positionCount];
         for (int i = 0; i < path.Length; i++) {
@@ -210,15 +220,24 @@ public class PlayerDrawCombatMovePosition : MonoBehaviour {
     public void SelectPlayerMovement() {
         isSelected = true;
         lr.enabled = true;
+        //disable attacking
         if (attackLog.isSelected) {
             ChangeAttackValue();
             attackLog.ResetValues();
         }
+        //disable speeching
+        if (CombatManager.ins.combatSpeech.isSelected) {
+            ChangeSpeechValue();
+        }
+        UIManager.ins.DisableLogPanelHover();
+        UIManager.ins.DisableLogPanelHoverSpeech();
     }
 
     public void UnSelectPlayerMovement() {
         isSelected = false;
         lr.enabled = false;
+        UIManager.ins.EnableLogPanelHover();
+        UIManager.ins.EnableLogPanelHoverSpeech();
     }
 
     public void ChangeAttackValue() {
@@ -235,6 +254,21 @@ public class PlayerDrawCombatMovePosition : MonoBehaviour {
         UIManager.ins.ControllerPanel_AttackButton.colors = temp;
     }
 
+
+    public void ChangeSpeechValue() {
+        ColorBlock temp = UIManager.ins.ControllerPanel_SpeechButton.colors;
+        if (CombatManager.ins.combatSpeech.isSelected) {
+            temp.normalColor = new Color(1f, 1f, 1f);
+            temp.highlightedColor = new Color(245 / 255f, 245 / 255f, 245 / 255f);
+            CombatManager.ins.combatSpeech.RightClick();
+        } else {
+            temp.normalColor = temp.pressedColor;
+            temp.highlightedColor = temp.normalColor;
+            CombatManager.ins.combatSpeech.Select();
+        }
+        UIManager.ins.ControllerPanel_SpeechButton.colors = temp;
+    }
+
     public void ResetAttackValue() {
         ColorBlock temp = UIManager.ins.ControllerPanel_AttackButton.colors;
         temp.normalColor = new Color(1f, 1f, 1f);
@@ -244,14 +278,26 @@ public class PlayerDrawCombatMovePosition : MonoBehaviour {
     }
 
     public void SelectPlayerAttack() {
+        //disable movement
         if (isSelected) {
             ChangeMovementValue();
         }
+        //disable speeching
+        if (CombatManager.ins.combatSpeech.isSelected) {
+            ChangeSpeechValue();
+        }
         attackLog.isSelected = true;
+        UIManager.ins.EnableLogPanelBase();
+        UIManager.ins.DisableLogPanelHover();
+        UIManager.ins.DisableLogPanelHoverSpeech();
+        UIManager.ins.DisableSpeechCombat();
     }
 
     public void UnSelectPlayerAttack() {
         attackLog.isSelected = false;
+        UIManager.ins.DisableLogPanelBase();
+        UIManager.ins.EnableLogPanelHover();
+        UIManager.ins.EnableLogPanelHoverSpeech();
         attackLog.ResetValues();
     }
 
@@ -269,8 +315,8 @@ public class PlayerDrawCombatMovePosition : MonoBehaviour {
             }
         }
         foreach(CombatHUDAttack.Attack b in toRemove) {
-            attackLog.RemoveAttackFromLayout(b);
             Destroy(attackLog.loggedAttacks[attackLog.loggedAttacks.IndexOf(b)].attackObject);
+            attackLog.RemoveAttackFromLayout(b);
             attackLog.loggedAttacks.Remove(b);
         }
     }

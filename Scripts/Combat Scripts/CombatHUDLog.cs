@@ -43,19 +43,50 @@ public class CombatHUDLog : MonoBehaviour {
     }
 
     public void ChangeNode(Vector3 o, Vector3 n) {
+
         foreach(Movement m in loggedMoves) {
             if(m.destination[m.destination.Length - 1] == o) {
-                m.destination[m.destination.Length - 1] = n;
+                GameManagerScript.ins.playerInfo.polyNav.map.FindPath(m.destination[0], n, ChangeNodeLevelsBeg);
                 m.pathLR.SetPositions(m.destination);
                 m.path.transform.position = n;
             }
             if(m.destination[0] == o) {
-                m.destination[0] = n;
+                GameManagerScript.ins.playerInfo.polyNav.map.FindPath(n, m.destination[m.destination.Length - 1], ChangeNodeLevelsEnd);
+                //m.pathLR.positionCount = m.destination.Length;
                 m.pathLR.SetPositions(m.destination);
                 break;
             }
         }
         
+    }
+
+    void ChangeNodeLevelsBeg(Vector2[] path) {
+        Vector3[] a = toVectorThree(path);
+
+        foreach(Movement m in loggedMoves) {
+            if (m.destination[0] == a[0]) {
+                m.pathLR.positionCount = a.Length;
+                m.destination = a;
+            }
+        }
+    }
+
+    void ChangeNodeLevelsEnd(Vector2[] path) {
+        Vector3[] a = toVectorThree(path);
+        foreach (Movement m in loggedMoves) {
+            if (m.destination[m.destination.Length - 1] == a[a.Length - 1]) {
+                m.pathLR.positionCount = a.Length;
+                m.destination = a;
+            }
+        }
+    }
+
+    private Vector3[] toVectorThree(Vector2[] path) {
+        Vector3[] a = new Vector3[path.Length];
+        for (int i = 0; i < path.Length; i++) {
+            a[i] = new Vector3(path[i].x, path[i].y, 0);
+        }
+        return a;
     }
 
     public void InsertNode(Vector3 n, int startIndex, int endIndex, Vector3[] d, int dHash) {
@@ -88,7 +119,7 @@ public class CombatHUDLog : MonoBehaviour {
         } else {
             CombatManager.ins.combatDrawMovePosition.playerAgent.map.FindPath(GetLastPosition(), n, LogMovePosition);
         }
-        CombatManager.ins.combatDrawMovePosition.playerAgent.map.FindPath(GetLastPosition(), d[endIndex], LogMovePosition);
+        CombatManager.ins.combatDrawMovePosition.playerAgent.map.FindPath(GetLastPosition(), d[d.Length - 1], LogMovePosition);
 
         foreach(Movement m in endofListMovement) {
             LogMovePosition(m.destination);

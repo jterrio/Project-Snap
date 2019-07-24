@@ -4,41 +4,51 @@ using UnityEngine;
 
 public class NPCInfo : CharacterInfo {
 
+    [Header("NPC")]
     public NPC npc;
-
     [HideInInspector] private NPCSpeechHolder speech;
-    [HideInInspector] public bool isTalkable;
-    [HideInInspector] public bool isMerchant;
-    [HideInInspector] public bool isKeyNPC;
-    [HideInInspector] public bool hasQuests;
+    private Rigidbody2D rb;
+    private CombatScript cs;
 
-
+    [Header("Features")]
     public Inventory merchantInventory;
     public float merchantMoney;
-    //public NPC.Faction faction;
-    [HideInInspector] public FactionManagerScript.Faction faction;
+    [HideInInspector] public bool isTalkable; //access via NPC class
+    [HideInInspector] public bool isMerchant; //access via NPC class
+    [HideInInspector] public bool isKeyNPC; //access via NPC class
+    [HideInInspector] public bool hasQuests; //access via NPC class
+    [HideInInspector] public FactionManagerScript.Faction faction; //access via NPC class
     public NPC.MovementType movementType;
+    private NPC.MovementType movementTypeOld;
+    private Coroutine waitCoroutine;
 
+    [Header("Movement - Area")]
     public GameObject areaPoint; //for the movementtype.area
     public float radiusOfArea; //radius from area to search // area will be a square
+    public Vector3 destination; //target position
 
+    [Header("Movement - Patrol")]
     public List<GameObject> patrolPoints = new List<GameObject>(); //for the movementtype.patrol
 
-    public Vector3 destination; //target position
+    [Header("Movement - Stationary")]
+    public GameObject stationaryPoint; //for the movementtype.stationary
+    public Direction stationaryDirection; //direction to face when in the stationary mode
+
+    [Header("Movement Conditions")]
     public bool isMoving; //checks to see whether the npc is moving to destination
     public bool isWaiting; //checks to see if the npc is waiting before moving again
     public float waitTime; //the timer for waiting
     public bool isTalking; //if they are talking or not, which helps determine if they can move
 
-    public GameObject stationaryPoint; //for the movementtype.stationary
-    public Direction stationaryDirection; //direction to face when in the stationary mode
-    private Coroutine waitCoroutine;
-    private Rigidbody2D rb;
-    private CombatScript cs;
-
+    [Header("Mechanics")]
     public float runDistance; //distance required to be able to flee combat
-    public float FOV = 200;
-    public float ViewDistance;
+    public float FOV = 200; //view distance on sides
+    public float ViewDistance; //distance from face
+
+    [Header("After Combat")]
+    public bool combatCooldown;
+    public float timeToWaitAfterCombat; //time to wait to go back to normal after combat
+    private float timeStoppedCombat;
 
     void Start() {
         isTalkable = npc.isTalkable;
@@ -61,6 +71,7 @@ public class NPCInfo : CharacterInfo {
     }
 
     public void InitPosition() {
+        movementTypeOld = movementType;
         switch (movementType) {
             case NPC.MovementType.AREA:
                 //
@@ -87,19 +98,35 @@ public class NPCInfo : CharacterInfo {
     void Update() {
         //DO MOVEMENT FOR THE NPC BASED ON THE TYPE THEY ARE SET TO
         if (!inCombat) {
-            switch (movementType) {
-                case NPC.MovementType.AREA:
-                    AreaMovement();
+            bool canContinue = true;
+            if (combatCooldown) {
+                if(Time.time < timeToWaitAfterCombat + timeStoppedCombat) {
+                    canContinue = false;
+                } else {
+                    combatCooldown = false;
+                }
+            }
+            if (canContinue) {
+                switch (movementType) {
+                    case NPC.MovementType.AREA:
+                        AreaMovement();
 
-                    break;
-                case NPC.MovementType.PATROL:
-                    PatrolMovement();
-                    break;
-                case NPC.MovementType.STATIONARY:
-                    StationaryMovement();
-                    break;
+                        break;
+                    case NPC.MovementType.PATROL:
+                        PatrolMovement();
+                        break;
+                    case NPC.MovementType.STATIONARY:
+                        StationaryMovement();
+                        break;
+                }
+            }
+            SetDirection();
+            SetSprite();
+            if (movementTypeOld != movementType) {
+                InitPosition();
             }
         }
+
     }
 
     public void SetMovementType(NPC.MovementType ms) {
@@ -130,12 +157,17 @@ public class NPCInfo : CharacterInfo {
         polyNav.Stop();
         polyNav.stoppingDistance = 0.1f;
         inCombat = false;
+        isWaiting = false;
+        isMoving = false;
+        IsWalking = true;
         spellQueue.Clear();
         if(spellCastCoroutine != null) {
             StopCoroutine(spellCastCoroutine);
         }
         GetComponent<CombatScript>().AIEndCombat();
         GetComponentInChildren<FieldOfVisionScript>().NeedToCheck = true;
+        combatCooldown = true;
+        timeStoppedCombat = Time.time;
     }
 
     public void Talk() {
