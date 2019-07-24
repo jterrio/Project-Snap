@@ -1,0 +1,60 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!78 &1
+TagManager:
+  serializedVersion: 2
+  tags:
+  - Door
+  - Projectile
+  layers:
+  - Default
+  - TransparentFX
+  - Ignore Raycast
+  - 
+  - Water
+  - UI
+  - 
+  - 
+  - NPC
+  - Player
+  - Obstacle
+  - SightTest
+  - Spell
+  - Map
+  - PlayerCombat
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  m_SortingLayers:
+  - name: Default
+    uniqueID: 0
+    locked: 0
+  - name: TileMap
+    uniqueID: 3620936959
+    locked: 0
+  - name: TileMap2
+    uniqueID: 2032309817
+    locked: 0
+  - name: OnGround
+    uniqueID: 2725028813
+    locked: 0
+  - name: Combat
+    uniqueID: 4055700307
+    locked: 0
+  - name: Characters
+    uniqueID: 116970057
+    locked: 0
