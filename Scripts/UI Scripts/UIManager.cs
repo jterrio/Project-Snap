@@ -13,12 +13,10 @@ public class UIManager : MonoBehaviour {
     public RectTransform InvBackground, InvForeground, InvGridLayout, InventorySlotPrefab, InvItemInfoPanel;
     public RectTransform ChoicePanel;
     public RectTransform MerchantPanel;
-    public RectTransform CombatHUDPanel, LogPanel_Base, LogPanel_Main, LogPanel_gridLayout, LogPanel_Attack, LogPanel_Attack_gridLayout, LogPanel_Attack_Icon_Prefab;
-    public Button ControllerPanel_MovementButton, ControllerPanel_AttackButton;
+    public RectTransform CombatHUDPanel, LogPanel_Base, LogPanel_Main, LogPanel_gridLayout, LogPanel_Attack, LogPanel_Attack_gridLayout, LogPanel_Attack_Icon_Prefab, LogPanel_Hover_Attack, LogPanel_Hover_Speech, LogPanel_Speech;
+    public Button ControllerPanel_MovementButton, ControllerPanel_AttackButton, ControllerPanel_SpeechButton;
     public RectTransform HealthandStaminaPanel;
     public Image HealthImageFilled, StaminaImageFilled;
-    public RectTransform AITurnProgressPanel;
-    public Image AITurnProgressImage;
 
     public RectTransform speechOutline;
     public RectTransform speechPanel;
@@ -60,6 +58,12 @@ public class UIManager : MonoBehaviour {
 
     void Update() {
 
+        //info on where mouse is
+        PointerEventData pointerData = new PointerEventData(EventSystem.current);
+        pointerData.position = Input.mousePosition;
+        List<RaycastResult> results = new List<RaycastResult>();
+        EventSystem.current.RaycastAll(pointerData, results);
+
         //check to open/close menu elements
         if (Input.GetKeyDown(GameManagerScript.ins.OpenMenu)) {
             TabPanel.gameObject.SetActive(!TabPanel.gameObject.activeInHierarchy);
@@ -69,12 +73,6 @@ public class UIManager : MonoBehaviour {
         if (InvPanel.gameObject.activeInHierarchy) {
             //if item stats panel is not active, check to see if we can
             if (!InvItemInfoPanel.gameObject.activeInHierarchy) {
-                PointerEventData pointerData = new PointerEventData(EventSystem.current);
-
-                pointerData.position = Input.mousePosition;
-
-                List<RaycastResult> results = new List<RaycastResult>();
-                EventSystem.current.RaycastAll(pointerData, results);
                 bool found = false;
                 GameObject itemFound = null;
                 //if it hits a layer, check if it is not UI, then close inventory; close in else if not hitting layer
@@ -92,12 +90,6 @@ public class UIManager : MonoBehaviour {
                     }
                 }
             } else { //if item stats panel is active, check to see if move off it
-                PointerEventData pointerData = new PointerEventData(EventSystem.current);
-
-                pointerData.position = Input.mousePosition;
-
-                List<RaycastResult> results = new List<RaycastResult>();
-                EventSystem.current.RaycastAll(pointerData, results);
                 bool found = false;
                 //if it hits a layer, check if it is not UI, then close inventory; close in else if not hitting layer
                 if (results.Count > 0) {
@@ -113,6 +105,34 @@ public class UIManager : MonoBehaviour {
             }
         } //end
 
+        //checking hover panel when in combat
+        if (GameManagerScript.ins.playerInfo.inCombat) {
+            if (LogPanel_Base.gameObject.activeSelf && !CombatManager.ins.combatHUDAttack.isSelected) {
+                DisableLogPanelBase();
+                EnableLogPanelHover();
+            }
+            if(LogPanel_Speech.gameObject.activeSelf && !CombatManager.ins.combatSpeech.isSelected) {
+                DisableLogPanelSpeech();
+                EnableLogPanelHoverSpeech();
+            }
+            foreach (RaycastResult r in results) {
+                if (r.gameObject == LogPanel_Hover_Attack.gameObject || r.gameObject == LogPanel_Base.gameObject) {
+                    if (LogPanel_Hover_Attack.gameObject.activeSelf) {
+                        DisableLogPanelHover();
+                        EnableLogPanelBase();
+                        break;
+                    }
+                }
+                if(r.gameObject == LogPanel_Hover_Speech.gameObject || r.gameObject == LogPanel_Speech.gameObject) {
+                    if (LogPanel_Hover_Speech.gameObject.activeSelf) {
+                        DisableLogPanelHoverSpeech();
+                        EnableLogPanelSpeech();
+                        break;
+                    }
+                }
+            }
+
+        }//end
     }
 
     /// <summary>
@@ -282,19 +302,6 @@ public class UIManager : MonoBehaviour {
         LogPanel_Attack.gameObject.SetActive(false);
     }
 
-    public void EnableAITurnProgress() {
-        //AITurnProgressPanel.gameObject.SetActive(true);
-    }
-
-    public void DisableAITurnProgress() {
-        //AITurnProgressPanel.gameObject.SetActive(false);
-    }
-
-    public void UpdateAITurnProgress(int amount, int max) {
-        //float progress = (float)amount / (float)max;
-        //AITurnProgressImage.fillAmount = progress;
-    }
-
     public bool IsSelectingInCombat() {
         if((!(ControllerPanel_MovementButton.IsActive()) || !(ControllerPanel_AttackButton.IsActive())) && GameManagerScript.ins.playerInfo.inCombat) {
             return true;
@@ -302,6 +309,46 @@ public class UIManager : MonoBehaviour {
         return false;
     }
 
+    public void DisableLogPanelBase() {
+        LogPanel_Base.gameObject.SetActive(false);
+    }
 
+    public void EnableLogPanelBase() {
+        LogPanel_Base.gameObject.SetActive(true);
+    }
+
+    public void EnableLogPanelHover() {
+        LogPanel_Hover_Attack.gameObject.SetActive(true);
+    }
+
+    public void DisableLogPanelHover() {
+        LogPanel_Hover_Attack.gameObject.SetActive(false);
+    }
+
+    public void DisableLogPanelSpeech() {
+        LogPanel_Speech.gameObject.SetActive(false);
+    }
+
+    public void EnableLogPanelSpeech() {
+        LogPanel_Speech.gameObject.SetActive(true);
+    }
+
+    public void EnableLogPanelHoverSpeech() {
+        LogPanel_Hover_Speech.gameObject.SetActive(true);
+    }
+
+    public void DisableLogPanelHoverSpeech() {
+        LogPanel_Hover_Speech.gameObject.SetActive(false);
+    }
+
+    public void EnableSpeechCombat() {
+        HealthandStaminaPanel.gameObject.SetActive(false);
+        CombatHUDPanel.gameObject.SetActive(false);
+    }
+
+    public void DisableSpeechCombat() {
+        HealthandStaminaPanel.gameObject.SetActive(true);
+        CombatHUDPanel.gameObject.SetActive(true);
+    }
 
 }

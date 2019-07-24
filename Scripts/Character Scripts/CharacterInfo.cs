@@ -5,33 +5,41 @@ using UnityEngine.UI;
 
 public class CharacterInfo : MonoBehaviour {
 
+    [Header("Character Info")]
     public string characterName;
     public int characterAge;
+
+    [Header("Directional Info")]
     public Direction direction;
     public MovementState state;
-    public SpellInventory spellInventory;
     public Sprite[] directionSprites;
-    public Stats stats;
     protected SpriteRenderer sr;
+
+    [Header("Scripts")]
+    public SpellInventory spellInventory;
+    public Stats stats;
+    public PolyNav.PolyNavAgent polyNav;
+
+    [Header("Combat")]
     public bool canMove;
     private bool isWalking = true;
     public bool inCombat = false;
     public List<CombatHUDAttack.Attack> spellQueue = new List<CombatHUDAttack.Attack>();
     public Coroutine spellCastCoroutine;
-    public PolyNav.PolyNavAgent polyNav;
+    private int progress = 0;
+    private float maxRangeForShootPrediction = 90;
 
+    [Header("Health & Stamina")]
     public float currentHealth = 100f;
     public float maxHealth = 100f;
     public float currentStamina = 100f;
     public float maxStamina = 100f;
 
+    [Header("Running & Walking")]
     public float defaultSpeed;
     public float defaultRunSpeed;
     public float speed;
     public float runSpeed;
-
-    private int progress = 0;
-    private float maxRangeForShootPrediction = 90;
 
     /// <summary>
     /// Direction that we are facing
@@ -56,6 +64,9 @@ public class CharacterInfo : MonoBehaviour {
         RUNNING
     }
 
+    /// <summary>
+    /// Takes the direction and assigns the corresponding sprite
+    /// </summary>
     public void SetSprite() {
         switch (direction) {
             case Direction.FRONT:
@@ -146,9 +157,8 @@ public class CharacterInfo : MonoBehaviour {
     /// returns direction to turn to face in order to face another character
     /// </summary>
     /// <param name="other"></param>
-    /// <returns></returns>
+    /// <returns>return the inverse of the current direction</returns>
     public Direction TurnToFace(Direction other) {
-        //return the inverse of the current direction
         switch (other) {
             case Direction.FRONT:
                 return Direction.BACK;
@@ -171,6 +181,11 @@ public class CharacterInfo : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// returns direction to turn to face in order to face a given location
+    /// </summary>
+    /// <param name="targetLocation"></param>
+    /// <returns>return direction that points to targetLocation</returns>
     public Direction FaceDirection(Vector3 targetLocation) {
         float currentAngle = Vector2.Angle(Vector2.down, targetLocation - gameObject.transform.position); //get current Angle we are running
         if (targetLocation.x < gameObject.transform.position.x) {
@@ -200,35 +215,45 @@ public class CharacterInfo : MonoBehaviour {
     }
 
 
-
+    /// <summary>
+    /// Starts the spell casting coroutine
+    /// </summary>
     public void CastSpell() {
         spellCastCoroutine = StartCoroutine(SpellCoroutine());
     }
 
+    /// <summary>
+    /// Starts casting from the spellQueue if there are spells
+    /// </summary>
+    /// <returns></returns>
     IEnumerator SpellCoroutine() {
-        print("Beginning to cast spell...");
+        //check to see if there are spells and this is the player
         if (gameObject == GameManagerScript.ins.player && spellQueue.Count > 0) {
+            //grab info from the spell
             Image child = spellQueue[0].loggedInfo.GetComponentInChildren<Image>();
             Toggle toggle = spellQueue[0].loggedInfo.GetComponentInChildren<Toggle>();
             Slider slider = spellQueue[0].loggedInfo.GetComponentInChildren<Slider>();
+            //init
             float angle = 0;
             for (progress = 0; progress < (spellQueue[0].selectedSpell.castTime * 100); progress++) {
+                //if toggle (move while casting) is on, then move at the speed assigned. If not, then don't move.
                 if (toggle.isOn) {
                     polyNav.maxSpeed = defaultSpeed;
                 } else {
                     polyNav.maxSpeed = 0;
                 }
+                
                 yield return new WaitForSeconds(0.01f);
 
-                //Debug.DrawRay(GameManagerScript.ins.player.transform.position, newVec - GameManagerScript.ins.player.transform.position, Color.green, 10f);
-
+                //show on ui
                 currentStamina -= (spellQueue[0].selectedSpell.energyToCast / (spellQueue[0].selectedSpell.castTime * 100));
                 child.fillAmount = progress / (spellQueue[0].selectedSpell.castTime * 100);
             }
-            //exit the for loop at 99%, so set it to 1
+            //Cast and Reset
             child.fillAmount = 1;
             polyNav.maxSpeed = defaultSpeed;
-            print("Spell casted!");
+
+            //Check firemode and cast
             if (spellQueue[0].fireMode == CombatHUDAttack.FireMode.TARGET) {
                 angle = ((slider.value - 0.5f) * maxRangeForShootPrediction * -1);
                 SpellManagerScript.ins.CastSpell(spellQueue[0], gameObject, angle);
@@ -236,26 +261,30 @@ public class CharacterInfo : MonoBehaviour {
                 SpellManagerScript.ins.CastSpell(spellQueue[0], gameObject, 0);
             }
 
-            //set check if the player here
+            //Remove the spell from UI
             CombatManager.ins.combatHUDAttack.RemoveAttackFromLayout(spellQueue[0]);
-
+            //Remove spell from queue and reset the coroutine to know that it is finished
             spellQueue.RemoveAt(0);
             spellCastCoroutine = null;
-        } else {
-
         }
-
     }
 
+    /// <summary>
+    /// Cancels spell
+    /// </summary>
+    /// <param name="a"></param>
     public void CancelSpell(CombatHUDAttack.Attack a) {
-        print("Spell cancelled!");
-        if(spellCastCoroutine != null) {
+
+        //Check if spell trying to cancel is being casted
+        if(spellCastCoroutine != null && a.isCasting) {
             StopCoroutine(spellCastCoroutine);
             spellCastCoroutine = null;
         }
+        //remove from UI
         if(gameObject == GameManagerScript.ins.player) {
             CombatManager.ins.combatHUDAttack.RemoveAttackFromLayout(a);
         }
+        //remove from spellQueue
         if (spellQueue.Count > 0) {
             spellQueue.Remove(a);
         }
@@ -477,7 +506,10 @@ public class CharacterInfo : MonoBehaviour {
 
 
 
-
+    /// <summary>
+    /// Get the position of the feet
+    /// </summary>
+    /// <returns>Feet, the location of the PolyNav AI</returns>
     public Vector3 Feet() {
         return new Vector3(transform.position.x, transform.position.y - 0.45f, transform.position.z);
     }

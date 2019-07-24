@@ -55,8 +55,8 @@ public class CameraFollowScript : MonoBehaviour {
         pointerData.position = Input.mousePosition;
         List<RaycastResult> results = new List<RaycastResult>();
         EventSystem.current.RaycastAll(pointerData, results);
-        if (results.Count > 0) {
-            if (results[0].gameObject.layer == LayerMask.NameToLayer("UI")) {
+        foreach (RaycastResult r in results) {
+            if (r.gameObject.layer == LayerMask.NameToLayer("UI") && r.gameObject.activeSelf) {
                 return;
             }
         }

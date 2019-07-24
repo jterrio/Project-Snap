@@ -42,7 +42,7 @@ public class CombatHUDAttack : MonoBehaviour {
         public GameObject attackObject; //object of the spell
         public RectTransform loggedInfo; //info in the log
         public int hash; //random hash
-        public GameObject attackTarget; 
+        public GameObject attackTarget; //for TARGET fire mode
         public FireMode fireMode; //fire mode of the spell
         public bool selfCast = false; //if the spell is cast from self
         public bool isCasting = false; //if the spell is currently in spell queue
@@ -111,8 +111,8 @@ public class CombatHUDAttack : MonoBehaviour {
                 pointerData.position = Input.mousePosition;
                 List<RaycastResult> results = new List<RaycastResult>();
                 EventSystem.current.RaycastAll(pointerData, results);
-                if (results.Count > 0) {
-                    if (results[0].gameObject.layer == LayerMask.NameToLayer("UI")) {
+                foreach (RaycastResult r in results) {
+                    if (r.gameObject.layer == LayerMask.NameToLayer("UI") && r.gameObject.activeSelf) {
                         return;
                     }
                 }
@@ -127,8 +127,8 @@ public class CombatHUDAttack : MonoBehaviour {
             pointerData.position = Input.mousePosition;
             List<RaycastResult> results = new List<RaycastResult>();
             EventSystem.current.RaycastAll(pointerData, results);
-            if (results.Count > 0) {
-                if (results[0].gameObject.layer == LayerMask.NameToLayer("UI")) {
+            foreach (RaycastResult r in results) {
+                if (r.gameObject.layer == LayerMask.NameToLayer("UI") && r.gameObject.activeSelf) {
                     return;
                 }
             }
@@ -352,13 +352,13 @@ public class CombatHUDAttack : MonoBehaviour {
                         pointerData.position = Input.mousePosition;
                         List<RaycastResult> results = new List<RaycastResult>();
                         EventSystem.current.RaycastAll(pointerData, results);
-                        if (results.Count > 0) {
-                            if (results[0].gameObject.layer == LayerMask.NameToLayer("UI")) {
+                        foreach (RaycastResult r in results) {
+                            if (r.gameObject.layer == LayerMask.NameToLayer("UI") && r.gameObject.activeSelf) {
                                 break;
                             }
                         }
-                            Vector2 mouse2D = new Vector2(Camera.main.ScreenToWorldPoint(Input.mousePosition).x, Camera.main.ScreenToWorldPoint(Input.mousePosition).y);
-                            RaycastHit2D hit = Physics2D.Raycast(mouse2D, Vector2.zero);
+                        Vector2 mouse2D = new Vector2(Camera.main.ScreenToWorldPoint(Input.mousePosition).x, Camera.main.ScreenToWorldPoint(Input.mousePosition).y);
+                        RaycastHit2D hit = Physics2D.Raycast(mouse2D, Vector2.zero);
                         if (hit.collider != null) {
                             if (hit.collider.gameObject.layer == LayerMask.NameToLayer("NPC")) {
                                 if (selectedNPC != null) {
@@ -400,8 +400,8 @@ public class CombatHUDAttack : MonoBehaviour {
             pointerData.position = Input.mousePosition;
             List<RaycastResult> results = new List<RaycastResult>();
             EventSystem.current.RaycastAll(pointerData, results);
-            if (results.Count > 0) {
-                if (results[0].gameObject.layer == LayerMask.NameToLayer("UI")) {
+            foreach (RaycastResult r in results) {
+                if (r.gameObject.layer == LayerMask.NameToLayer("UI") && r.gameObject.activeSelf) {
                     return;
                 }
             }
@@ -454,8 +454,8 @@ public class CombatHUDAttack : MonoBehaviour {
             pointerData.position = Input.mousePosition;
             List<RaycastResult> results = new List<RaycastResult>();
             EventSystem.current.RaycastAll(pointerData, results);
-            if (results.Count > 0) {
-                if (results[0].gameObject.layer == LayerMask.NameToLayer("UI")) {
+            foreach (RaycastResult r in results) {
+                if (r.gameObject.layer == LayerMask.NameToLayer("UI") && r.gameObject.activeSelf) {
                     return;
                 }
             }
@@ -481,8 +481,8 @@ public class CombatHUDAttack : MonoBehaviour {
             pointerData.position = Input.mousePosition;
             List<RaycastResult> results = new List<RaycastResult>();
             EventSystem.current.RaycastAll(pointerData, results);
-            if (results.Count > 0) {
-                if (results[0].gameObject.layer == LayerMask.NameToLayer("UI")) {
+            foreach (RaycastResult r in results) {
+                if (r.gameObject.layer == LayerMask.NameToLayer("UI") && r.gameObject.activeSelf) {
                     return;
                 }
             }

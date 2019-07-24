@@ -136,10 +136,10 @@ public class CombatScript : MonoBehaviour {
         }
         npcInfo = GetComponent<NPCInfo>(); //get its own info
         fov = GetComponentInChildren<FieldOfVisionScript>();
+        /*
         for (int i = 0; i < 40; i++) { //instantiate debug points
             testRotationPoints[i] = Instantiate(debugPoint) as GameObject;
-        
-        } 
+        } */
     }
 
     //called every frame
@@ -572,10 +572,11 @@ public class CombatScript : MonoBehaviour {
         //print(Vector3.Distance(feet, movementQueue[0]));
         if(movementQueue.Count > 0) { //if we have points to move
             
+            /*
             for (int i = 0; i < movementQueue.Count; i++) { //set debug points positions
                 testRotationPoints[i].transform.position = movementQueue[i];
                 lastRunAwayPosition = feet;
-            } 
+            } */
             if (Vector3.Distance(feet, movementQueue[0]) <= 0.2f) { //check to see if we have reached
                 movementQueue.RemoveAt(0); //remove reached point
                 Move(); //recursive call
