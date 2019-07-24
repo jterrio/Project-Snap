@@ -5776,7 +5776,7 @@ Camera:
   far clip plane: 1000
   field of view: 87.7
   orthographic: 1
-  orthographic size: 4.171875
+  orthographic size: 5.2734375
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -12866,7 +12866,6 @@ MonoBehaviour:
   characterAge: 0
   direction: 0
   state: 0
-  spellInventory: {fileID: 776057288}
   directionSprites:
   - {fileID: 21300000, guid: 08cdf570b3cfd3c47b5fc75bfbf295c8, type: 3}
   - {fileID: 21300002, guid: 08cdf570b3cfd3c47b5fc75bfbf295c8, type: 3}
@@ -12876,10 +12875,11 @@ MonoBehaviour:
   - {fileID: 21300010, guid: 08cdf570b3cfd3c47b5fc75bfbf295c8, type: 3}
   - {fileID: 21300012, guid: 08cdf570b3cfd3c47b5fc75bfbf295c8, type: 3}
   - {fileID: 21300014, guid: 08cdf570b3cfd3c47b5fc75bfbf295c8, type: 3}
+  spellInventory: {fileID: 776057288}
   stats: {fileID: 776057294}
+  polyNav: {fileID: 776057291}
   canMove: 0
   inCombat: 0
-  polyNav: {fileID: 776057291}
   currentHealth: 100
   maxHealth: 100
   currentStamina: 100
@@ -12889,29 +12889,31 @@ MonoBehaviour:
   speed: 0
   runSpeed: 0
   npc: {fileID: 11400000, guid: 936dddc72b6849c42b4af804f1b1527f, type: 2}
+  merchantInventory: {fileID: 776057292}
+  merchantMoney: 0
   isTalkable: 1
   isMerchant: 0
   isKeyNPC: 0
   hasQuests: 0
-  merchantInventory: {fileID: 776057292}
-  merchantMoney: 0
   faction: 0
   movementType: 2
   areaPoint: {fileID: 1605157499}
   radiusOfArea: 2
+  destination: {x: 0, y: 0, z: 0}
   patrolPoints:
   - {fileID: 1579580608}
   - {fileID: 1110119796}
-  destination: {x: 0, y: 0, z: 0}
+  stationaryPoint: {fileID: 1605157499}
+  stationaryDirection: 0
   isMoving: 0
   isWaiting: 0
   waitTime: 2
   isTalking: 0
-  stationaryPoint: {fileID: 1605157499}
-  stationaryDirection: 0
   runDistance: 0
   FOV: 110
   ViewDistance: 5
+  combatCooldown: 0
+  timeToWaitAfterCombat: 0
 --- !u!50 &776057296
 Rigidbody2D:
   serializedVersion: 4
@@ -15642,7 +15644,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1114312524
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15714,7 +15716,6 @@ MonoBehaviour:
   characterAge: 0
   direction: 0
   state: 0
-  spellInventory: {fileID: 1114312536}
   directionSprites:
   - {fileID: 21300000, guid: 08cdf570b3cfd3c47b5fc75bfbf295c8, type: 3}
   - {fileID: 21300002, guid: 08cdf570b3cfd3c47b5fc75bfbf295c8, type: 3}
@@ -15724,10 +15725,11 @@ MonoBehaviour:
   - {fileID: 21300010, guid: 08cdf570b3cfd3c47b5fc75bfbf295c8, type: 3}
   - {fileID: 21300012, guid: 08cdf570b3cfd3c47b5fc75bfbf295c8, type: 3}
   - {fileID: 21300014, guid: 08cdf570b3cfd3c47b5fc75bfbf295c8, type: 3}
+  spellInventory: {fileID: 1114312536}
   stats: {fileID: 1114312533}
+  polyNav: {fileID: 1114312531}
   canMove: 0
   inCombat: 0
-  polyNav: {fileID: 1114312531}
   currentHealth: 100
   maxHealth: 100
   currentStamina: 100
@@ -15737,27 +15739,29 @@ MonoBehaviour:
   speed: 0
   runSpeed: 0
   npc: {fileID: 11400000, guid: 0c34ebb0ba18a174fa1e6d2684f44268, type: 2}
+  merchantInventory: {fileID: 1114312532}
+  merchantMoney: 600
   isTalkable: 1
   isMerchant: 1
   isKeyNPC: 0
   hasQuests: 0
-  merchantInventory: {fileID: 1114312532}
-  merchantMoney: 600
   faction: 0
   movementType: 0
   areaPoint: {fileID: 0}
   radiusOfArea: 0
-  patrolPoints: []
   destination: {x: 0, y: 0, z: 0}
+  patrolPoints: []
+  stationaryPoint: {fileID: 2050847292}
+  stationaryDirection: 6
   isMoving: 0
   isWaiting: 0
   waitTime: 0
   isTalking: 0
-  stationaryPoint: {fileID: 2050847292}
-  stationaryDirection: 6
   runDistance: 0
   FOV: 200
   ViewDistance: 0
+  combatCooldown: 0
+  timeToWaitAfterCombat: 0
 --- !u!50 &1114312526
 Rigidbody2D:
   serializedVersion: 4
@@ -16700,6 +16704,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 1935789441055798, guid: dc0fc5471c8d19e4a88db1f7a11f2cc1, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4646916850192338, guid: dc0fc5471c8d19e4a88db1f7a11f2cc1, type: 3}
       propertyPath: m_LocalPosition.x
       value: 2.97
@@ -17099,7 +17107,6 @@ MonoBehaviour:
   characterAge: 0
   direction: 0
   state: 0
-  spellInventory: {fileID: 1254768309}
   directionSprites:
   - {fileID: 21300000, guid: 08cdf570b3cfd3c47b5fc75bfbf295c8, type: 3}
   - {fileID: 21300002, guid: 08cdf570b3cfd3c47b5fc75bfbf295c8, type: 3}
@@ -17109,10 +17116,11 @@ MonoBehaviour:
   - {fileID: 21300010, guid: 08cdf570b3cfd3c47b5fc75bfbf295c8, type: 3}
   - {fileID: 21300012, guid: 08cdf570b3cfd3c47b5fc75bfbf295c8, type: 3}
   - {fileID: 21300014, guid: 08cdf570b3cfd3c47b5fc75bfbf295c8, type: 3}
+  spellInventory: {fileID: 1254768309}
   stats: {fileID: 1254768300}
+  polyNav: {fileID: 1254768297}
   canMove: 0
   inCombat: 0
-  polyNav: {fileID: 1254768297}
   currentHealth: 100
   maxHealth: 100
   currentStamina: 100
@@ -17122,29 +17130,31 @@ MonoBehaviour:
   speed: 0
   runSpeed: 0
   npc: {fileID: 11400000, guid: 936dddc72b6849c42b4af804f1b1527f, type: 2}
+  merchantInventory: {fileID: 1254768298}
+  merchantMoney: 0
   isTalkable: 1
   isMerchant: 0
   isKeyNPC: 0
   hasQuests: 0
-  merchantInventory: {fileID: 1254768298}
-  merchantMoney: 0
   faction: 0
   movementType: 1
   areaPoint: {fileID: 1605157499}
   radiusOfArea: 2
+  destination: {x: 0, y: 0, z: 0}
   patrolPoints:
   - {fileID: 1579580608}
   - {fileID: 1110119796}
-  destination: {x: 0, y: 0, z: 0}
+  stationaryPoint: {fileID: 1605157499}
+  stationaryDirection: 0
   isMoving: 0
   isWaiting: 0
   waitTime: 2
   isTalking: 0
-  stationaryPoint: {fileID: 1605157499}
-  stationaryDirection: 0
   runDistance: 0
   FOV: 110
   ViewDistance: 5
+  combatCooldown: 0
+  timeToWaitAfterCombat: 0
 --- !u!50 &1254768302
 Rigidbody2D:
   serializedVersion: 4
@@ -21565,7 +21575,6 @@ MonoBehaviour:
   characterAge: 0
   direction: 0
   state: 0
-  spellInventory: {fileID: 1748299855}
   directionSprites:
   - {fileID: 21300000, guid: 08cdf570b3cfd3c47b5fc75bfbf295c8, type: 3}
   - {fileID: 21300002, guid: 08cdf570b3cfd3c47b5fc75bfbf295c8, type: 3}
@@ -21575,10 +21584,11 @@ MonoBehaviour:
   - {fileID: 21300010, guid: 08cdf570b3cfd3c47b5fc75bfbf295c8, type: 3}
   - {fileID: 21300012, guid: 08cdf570b3cfd3c47b5fc75bfbf295c8, type: 3}
   - {fileID: 21300014, guid: 08cdf570b3cfd3c47b5fc75bfbf295c8, type: 3}
+  spellInventory: {fileID: 1748299855}
   stats: {fileID: 1748299861}
+  polyNav: {fileID: 1748299858}
   canMove: 0
   inCombat: 0
-  polyNav: {fileID: 1748299858}
   currentHealth: 100
   maxHealth: 100
   currentStamina: 100
@@ -21588,31 +21598,33 @@ MonoBehaviour:
   speed: 0
   runSpeed: 0
   npc: {fileID: 11400000, guid: dfbd124f6c884d248bd9111d587a33bf, type: 2}
+  merchantInventory: {fileID: 1748299859}
+  merchantMoney: 0
   isTalkable: 1
   isMerchant: 0
   isKeyNPC: 0
   hasQuests: 0
-  merchantInventory: {fileID: 1748299859}
-  merchantMoney: 0
   faction: 1
   movementType: 0
   areaPoint: {fileID: 1605157499}
   radiusOfArea: 2
+  destination: {x: 0, y: 0, z: 0}
   patrolPoints:
   - {fileID: 1579580608}
   - {fileID: 788771389}
   - {fileID: 305019101}
   - {fileID: 1110119796}
-  destination: {x: 0, y: 0, z: 0}
+  stationaryPoint: {fileID: 1605157499}
+  stationaryDirection: 0
   isMoving: 0
   isWaiting: 0
   waitTime: 0
   isTalking: 0
-  stationaryPoint: {fileID: 1605157499}
-  stationaryDirection: 0
   runDistance: 0
   FOV: 200
   ViewDistance: 10
+  combatCooldown: 0
+  timeToWaitAfterCombat: 0
 --- !u!50 &1748299863
 Rigidbody2D:
   serializedVersion: 4
@@ -23340,7 +23352,6 @@ MonoBehaviour:
   characterAge: 0
   direction: 0
   state: 0
-  spellInventory: {fileID: 1942604918}
   directionSprites:
   - {fileID: 21300000, guid: 08cdf570b3cfd3c47b5fc75bfbf295c8, type: 3}
   - {fileID: 21300002, guid: 08cdf570b3cfd3c47b5fc75bfbf295c8, type: 3}
@@ -23350,10 +23361,11 @@ MonoBehaviour:
   - {fileID: 21300010, guid: 08cdf570b3cfd3c47b5fc75bfbf295c8, type: 3}
   - {fileID: 21300012, guid: 08cdf570b3cfd3c47b5fc75bfbf295c8, type: 3}
   - {fileID: 21300014, guid: 08cdf570b3cfd3c47b5fc75bfbf295c8, type: 3}
+  spellInventory: {fileID: 1942604918}
   stats: {fileID: 1942604915}
+  polyNav: {fileID: 1942604913}
   canMove: 0
   inCombat: 0
-  polyNav: {fileID: 1942604913}
   currentHealth: 100
   maxHealth: 100
   currentStamina: 100
@@ -23363,31 +23375,33 @@ MonoBehaviour:
   speed: 0
   runSpeed: 0
   npc: {fileID: 11400000, guid: 533fe1df76b43f5448c754f0cf42b1e5, type: 2}
+  merchantInventory: {fileID: 1942604914}
+  merchantMoney: 0
   isTalkable: 1
   isMerchant: 0
   isKeyNPC: 0
   hasQuests: 0
-  merchantInventory: {fileID: 1942604914}
-  merchantMoney: 0
   faction: 1
-  movementType: 0
+  movementType: 1
   areaPoint: {fileID: 1605157499}
   radiusOfArea: 2
+  destination: {x: 0, y: 0, z: 0}
   patrolPoints:
   - {fileID: 1579580608}
   - {fileID: 788771389}
   - {fileID: 305019101}
   - {fileID: 1110119796}
-  destination: {x: 0, y: 0, z: 0}
+  stationaryPoint: {fileID: 1605157499}
+  stationaryDirection: 0
   isMoving: 0
   isWaiting: 0
   waitTime: 0
   isTalking: 0
-  stationaryPoint: {fileID: 1605157499}
-  stationaryDirection: 0
   runDistance: 0
   FOV: 200
   ViewDistance: 10
+  combatCooldown: 0
+  timeToWaitAfterCombat: 3
 --- !u!50 &1942604907
 Rigidbody2D:
   serializedVersion: 4
