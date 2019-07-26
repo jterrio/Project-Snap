@@ -40,7 +40,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 375, y: -37.5}
-  m_SizeDelta: {x: 750, y: 75}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &222019681876754284
 CanvasRenderer:
@@ -122,7 +122,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: -1538293026337654711}
         m_MethodName: TaskOnClick
         m_Mode: 1
         m_Arguments:
@@ -178,10 +178,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 1652775981849888}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e822f5fda09c82b409497c13ff545ab7, type: 3}
+  m_Script: {fileID: 11500000, guid: 5a040fa4083a4a84985122ab5beaf567, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Choice: 0
 --- !u!1 &1828777163649668
 GameObject:
   m_ObjectHideFlags: 0

@@ -12731,6 +12731,8 @@ MonoBehaviour:
   dodgeChance: 1
   isReady: 0
   endTurn: 0
+  isFollowingOrders: 0
+  order: 0
 --- !u!114 &776057290
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16007,6 +16009,8 @@ MonoBehaviour:
   dodgeChance: 1
   isReady: 0
   endTurn: 0
+  isFollowingOrders: 0
+  order: 0
 --- !u!114 &1114312536
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17346,6 +17350,8 @@ MonoBehaviour:
   dodgeChance: 1
   isReady: 0
   endTurn: 0
+  isFollowingOrders: 0
+  order: 0
 --- !u!114 &1254768309
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20693,8 +20699,8 @@ LineRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 425234961
-  m_SortingLayer: 0
+  m_SortingLayerID: -1569938483
+  m_SortingLayer: 3
   m_SortingOrder: 10000
   m_Positions:
   - {x: 0, y: 0, z: 0}
@@ -20821,8 +20827,10 @@ MonoBehaviour:
   isSelected: 0
   hasClicked: 0
   selectedNPC: {fileID: 0}
-  buttonPrefab: {fileID: 0}
-  gridlayout: {fileID: 0}
+  savedNPC: {fileID: 0}
+  buttonPrefab: {fileID: 1652775981849888, guid: 2e0634ab9063e334399428e32b13c66a,
+    type: 3}
+  gridlayout: {fileID: 1161838814}
 --- !u!1 &1635220151
 GameObject:
   m_ObjectHideFlags: 0
@@ -21459,6 +21467,8 @@ MonoBehaviour:
   dodgeChance: 100
   isReady: 0
   endTurn: 0
+  isFollowingOrders: 0
+  order: 0
 --- !u!114 &1748299857
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -23698,6 +23708,8 @@ MonoBehaviour:
   dodgeChance: 100
   isReady: 0
   endTurn: 0
+  isFollowingOrders: 0
+  order: 0
 --- !u!114 &1942604918
 MonoBehaviour:
   m_ObjectHideFlags: 0
