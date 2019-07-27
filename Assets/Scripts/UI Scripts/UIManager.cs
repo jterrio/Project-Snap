@@ -13,7 +13,7 @@ public class UIManager : MonoBehaviour {
     public RectTransform InvBackground, InvForeground, InvGridLayout, InventorySlotPrefab, InvItemInfoPanel;
     public RectTransform ChoicePanel;
     public RectTransform MerchantPanel;
-    public RectTransform CombatHUDPanel, LogPanel_Base, LogPanel_Main, LogPanel_gridLayout, LogPanel_Attack, LogPanel_Attack_gridLayout, LogPanel_Attack_Icon_Prefab, LogPanel_Hover_Attack, LogPanel_Hover_Speech, LogPanel_Speech;
+    public RectTransform CombatHUDPanel, LogPanel_Base, LogPanel_Main, LogPanel_gridLayout, LogPanel_Attack, LogPanel_Attack_gridLayout, LogPanel_Attack_Icon_Prefab, LogPanel_Hover_Attack, LogPanel_Hover_Speech, LogPanel_Speech, LogPanel_GivenOrders, LogPanel_Speech_Main;
     public Button ControllerPanel_MovementButton, ControllerPanel_AttackButton, ControllerPanel_SpeechButton;
     public RectTransform HealthandStaminaPanel;
     public Image HealthImageFilled, StaminaImageFilled;
@@ -111,9 +111,10 @@ public class UIManager : MonoBehaviour {
                 DisableLogPanelBase();
                 EnableLogPanelHover();
             }
-            if(LogPanel_Speech.gameObject.activeSelf && !CombatManager.ins.combatSpeech.isSelected) {
+            if(LogPanel_Speech.gameObject.activeSelf && !CombatManager.ins.combatSpeech.hasClicked) {
                 DisableLogPanelSpeech();
                 EnableLogPanelHoverSpeech();
+                
             }
             foreach (RaycastResult r in results) {
                 if (r.gameObject == LogPanel_Hover_Attack.gameObject || r.gameObject == LogPanel_Base.gameObject) {
@@ -127,6 +128,7 @@ public class UIManager : MonoBehaviour {
                     if (LogPanel_Hover_Speech.gameObject.activeSelf) {
                         DisableLogPanelHoverSpeech();
                         EnableLogPanelSpeech();
+                        ShowSpeechGivenOrders();
                         break;
                     }
                 }
@@ -289,7 +291,7 @@ public class UIManager : MonoBehaviour {
     public void ShowAttackPanel() {
         HideLogPanel();
         LogPanel_Attack.gameObject.SetActive(true);
-        foreach(Transform child in LogPanel_Attack_gridLayout.transform) {
+        foreach (Transform child in LogPanel_Attack_gridLayout.transform) {
             Destroy(child.gameObject);
         }
         foreach(Spell spell in GameManagerScript.ins.playerSpells.Spells()) {
@@ -349,6 +351,16 @@ public class UIManager : MonoBehaviour {
     public void DisableSpeechCombat() {
         HealthandStaminaPanel.gameObject.SetActive(true);
         CombatHUDPanel.gameObject.SetActive(true);
+    }
+
+    public void ShowSpeechLogMain() {
+        LogPanel_Speech_Main.gameObject.SetActive(true);
+        LogPanel_GivenOrders.gameObject.SetActive(false);
+    }
+
+    public void ShowSpeechGivenOrders() {
+        LogPanel_Speech_Main.gameObject.SetActive(false);
+        LogPanel_GivenOrders.gameObject.SetActive(true);
     }
 
 }

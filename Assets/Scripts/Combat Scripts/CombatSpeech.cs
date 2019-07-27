@@ -9,8 +9,20 @@ public class CombatSpeech : MonoBehaviour{
     public bool isSelected = false; //selected by button
     public bool hasClicked = false; //has clicked on selectedNPC
     public GameObject selectedNPC; //selected by mouse hovering over
-    public RectTransform buttonPrefab;
-    public RectTransform gridlayout;
+    public GameObject savedNPC; //selected NPC that choices will affect
+    public GameObject buttonPrefab;
+    public RectTransform gridlayout; //layout for buttons for choices
+    public RectTransform gridlayoutGivenOrders; //show the queue of selected choices
+    public GameObject gridlayoutItem;
+    public List<GivenOrder> givenOrders;
+    private Coroutine speechCoroutine;
+    private int progress;
+    
+    public class GivenOrder {
+        public GameObject npc;
+        public Order o;
+        public GameObject child;
+    }
 
     public enum Order {
         GUARD, //0
@@ -21,8 +33,13 @@ public class CombatSpeech : MonoBehaviour{
         INTIMIDATE //5
     }
 
+    private void Start() {
+        givenOrders = new List<GivenOrder>();
+    }
+
     // Update is called once per frame
     void Update(){
+        ContinueSpeechQueue();
         if (!isSelected) {
             return;
         }
@@ -33,6 +50,51 @@ public class CombatSpeech : MonoBehaviour{
         ClickCheck();
     }
 
+    void ContinueSpeechQueue() {
+        if(givenOrders.Count < 1) {
+            return;
+        }
+        if(speechCoroutine == null) {
+            speechCoroutine = StartCoroutine(SpeechQueue());
+        }
+
+    }
+
+    IEnumerator SpeechQueue() {
+        //grab info from the speech
+        Image child = givenOrders[0].child.GetComponentInChildren<Image>();
+
+        //1 second
+        for (progress = 0; progress < 100; progress++) {
+
+            yield return new WaitForSeconds(0.01f);
+            child.fillAmount = (float)progress / 100f;
+        }
+        //Cast and Reset
+        child.fillAmount = 1;
+
+        //cast
+
+        //Remove from UI
+        //CombatManager.ins.combatHUDAttack.RemoveAttackFromLayout(spellQueue[0]);
+        //Remove from queue and reset the coroutine to know that it is finished
+        RemoveFromOrders(givenOrders[0]);
+        speechCoroutine = null; 
+    }
+
+
+    public void RemoveFromOrders(GivenOrder o) {
+
+        foreach(Transform child in gridlayoutGivenOrders) {
+            if(child.gameObject == o.child) {
+                Destroy(child.gameObject);
+                givenOrders.Remove(o);
+                return;
+            }
+        }
+
+    }
+
     void ClickCheck() {
         //check if we click
         if (selectedNPC != null && Input.GetMouseButtonDown(0)) {
@@ -40,7 +102,23 @@ public class CombatSpeech : MonoBehaviour{
                 return;
             }
             hasClicked = true;
+            UIManager.ins.EnableLogPanelSpeech();
+            UIManager.ins.ShowSpeechLogMain();
+            UIManager.ins.DisableLogPanelHoverSpeech();
+            UIManager.ins.DisableLogPanelHover();
+            UIManager.ins.DisableLogPanelBase();
+            savedNPC = selectedNPC;
+            DestroyChoices();
             PopulateChoices();
+        }
+        if(hasClicked && Input.GetMouseButtonDown(1)) {
+            DestroyChoices();
+            UIManager.ins.DisableLogPanelSpeech();
+            UIManager.ins.DisableLogPanelBase();
+            UIManager.ins.EnableLogPanelHover();
+            UIManager.ins.EnableLogPanelHoverSpeech();
+            hasClicked = false;
+            savedNPC = null;
         }
     }
 
@@ -105,16 +183,38 @@ public class CombatSpeech : MonoBehaviour{
     }
 
     public void DestroyChoices() {
-
+        foreach (Transform child in gridlayout) {
+            Destroy(child.gameObject);
+        }
     }
 
     public void PopulateChoices() {
-        NPCInfo info = selectedNPC.GetComponent<NPCInfo>();
-        Stats s = selectedNPC.GetComponent<Stats>();
-        if(s.attitude < 0) {
-            
-        } else {
+        NPCInfo info = savedNPC.GetComponent<NPCInfo>();
+        Stats s = savedNPC.GetComponent<Stats>();
+        if(s.attitude >= 0) {
+            GameObject g = (GameObject)Instantiate(buttonPrefab, gridlayout);
+            g.GetComponent<CombatSpeechChoiceScript>().SetChoice(0);
+            g.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = "Guard";
 
+            g = (GameObject)Instantiate(buttonPrefab, gridlayout);
+            g.GetComponent<CombatSpeechChoiceScript>().SetChoice(1);
+            g.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = "Watch";
+
+            g = (GameObject)Instantiate(buttonPrefab, gridlayout);
+            g.GetComponent<CombatSpeechChoiceScript>().SetChoice(2);
+            g.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = "Sentry";
+        } else {
+            GameObject g = (GameObject)Instantiate(buttonPrefab, gridlayout);
+            g.GetComponent<CombatSpeechChoiceScript>().SetChoice(3);
+            g.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = "Taunt";
+
+            g = (GameObject)Instantiate(buttonPrefab, gridlayout);
+            g.GetComponent<CombatSpeechChoiceScript>().SetChoice(4);
+            g.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = "Bribe";
+
+            g = (GameObject)Instantiate(buttonPrefab, gridlayout);
+            g.GetComponent<CombatSpeechChoiceScript>().SetChoice(5);
+            g.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = "Intimidate";
         }
     }
 
@@ -129,10 +229,6 @@ public class CombatSpeech : MonoBehaviour{
             CombatManager.ins.combatDrawMovePosition.ChangeAttackValue();
             CombatManager.ins.combatHUDAttack.ResetValues();
         }
-        UIManager.ins.EnableLogPanelSpeech();
-        UIManager.ins.DisableLogPanelHoverSpeech();
-        UIManager.ins.DisableLogPanelHover();
-        UIManager.ins.DisableLogPanelBase();
     }
 
     public void RightClick() {
@@ -140,6 +236,7 @@ public class CombatSpeech : MonoBehaviour{
             selectedNPC.GetComponent<Renderer>().material.color = Color.white;
             selectedNPC = null;
         }
+        savedNPC = null;
         isSelected = false;
         hasClicked = false;
         DestroyChoices();
@@ -150,6 +247,35 @@ public class CombatSpeech : MonoBehaviour{
     }
 
     public void ChoiceSelected(int i) {
-        Order o = (Order)i;
+        DestroyChoices();
+        GivenOrder go = new GivenOrder();
+        go.npc = savedNPC;
+        go.o = (Order)i;
+        GameObject c = Instantiate(gridlayoutItem, gridlayoutGivenOrders);
+        go.child = c;
+        givenOrders.Add(go);
+        go.child.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = GetChoiceText(i);
+        CombatManager.ins.combatDrawMovePosition.ChangeSpeechValue();
+    }
+
+    string GetChoiceText(int i) {
+        switch (i) {
+            case 0:
+                return "Guard";
+            case 1:
+                return "Watch";
+            case 2:
+                return "Sentry";
+            case 3:
+                return "Taunt";
+            case 4:
+                return "Bribe";
+            case 5:
+                return "Intimidate";
+            case 6:
+                return "Cancel";
+            default:
+                return "BROKEN";
+        }
     }
 }

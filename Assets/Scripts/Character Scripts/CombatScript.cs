@@ -67,6 +67,12 @@ public class CombatScript : MonoBehaviour {
     public bool isReady = false; //ready means that combat handler should give us a turn
     public bool endTurn = false; //send to combat handler to know that we are done
 
+    [Header("Commands/Orders")]
+    public bool isFollowingOrders = false;
+    public float startTimeForFollowingOrders;
+    public float timeToFollowOrders;
+    public CombatSpeech.Order order;
+
     public GameObject FocusTarget {
         get {
             return focusTarget;
@@ -105,7 +111,11 @@ public class CombatScript : MonoBehaviour {
         CoverTest(); //tests to see if there are any changes to cover and partial cover
         SelectTarget(); //selects a target
         GetSpell(); //get a spell to perform
-        SetMove(); //sets movement based on target and spell selected
+        if (!isFollowingOrders) {
+            SetMove(); //sets movement based on target and spell selected
+        } else {
+            npcInfo.polyNav.enabled = false;
+        }
         TrySpell(); //Trys to see if it can cast, if not, begins casting
         CheckEnergyTimer(); //recharge energy, if possible
         EndTurn(); //end turn
@@ -1440,6 +1450,11 @@ public class CombatScript : MonoBehaviour {
                 }
             }          
         }
+    }
+
+    public void SetOrders(int i) {
+        isFollowingOrders = true;
+        order = (CombatSpeech.Order)i;
     }
 
 }
