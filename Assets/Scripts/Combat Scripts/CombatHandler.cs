@@ -169,6 +169,9 @@ public class CombatHandler : MonoBehaviour {
                 Time.timeScale = 0f;
                 //print("Turn: " + c.gameObject.name + " at " + Time.time);
                 currentCharactersTurn.Add(c);
+                if(c == GameManagerScript.ins.player) {
+                    CombatManager.ins.isPlayerTurn = true;
+                }
                 c.GetComponent<CombatScript>().isReady = false;
                 if(c.layer == 8) { //npc, means when need to run the AI
                     c.GetComponent<CombatScript>().AI(charactersInCombat, CombatManager.ins.GetPlayerHandler() == this.gameObject);
@@ -187,6 +190,9 @@ public class CombatHandler : MonoBehaviour {
                 continue;
             } else {
                 //print("START WAITING: " + c);
+                if(c == GameManagerScript.ins.player) {
+                    CombatManager.ins.isPlayerTurn = false;
+                }
                 c.GetComponent<CombatScript>().StartWaiting();
                 charactersToRemove.Add(c);
             }

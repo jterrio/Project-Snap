@@ -17,11 +17,14 @@ public class CombatSpeech : MonoBehaviour{
     public List<GivenOrder> givenOrders;
     private Coroutine speechCoroutine;
     private int progress;
+    public GameObject watchAreaPrefab, guardAreaPrefab;
     
     public class GivenOrder {
         public GameObject npc;
         public Order o;
         public GameObject child;
+        public GameObject standArea;
+        public GameObject watchArea;
     }
 
     public enum Order {
@@ -253,10 +256,51 @@ public class CombatSpeech : MonoBehaviour{
         go.o = (Order)i;
         GameObject c = Instantiate(gridlayoutItem, gridlayoutGivenOrders);
         go.child = c;
+        CreateObjects(go);
+        //update collider when timescale is 0
+        UpdateColliders(go);
+
         givenOrders.Add(go);
         go.child.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = GetChoiceText(i);
         CombatManager.ins.combatDrawMovePosition.ChangeSpeechValue();
     }
+    
+    public void UpdateColliders(GivenOrder go) {
+        if(go.standArea != null) {
+            go.standArea.GetComponent<BoxCollider2D>().isTrigger = false;
+            go.standArea.GetComponent<BoxCollider2D>().isTrigger = true;
+        }
+        if (go.watchArea != null) {
+            go.watchArea.GetComponent<BoxCollider2D>().isTrigger = false;
+            go.watchArea.GetComponent<BoxCollider2D>().isTrigger = true;
+        }
+    }
+
+    void CreateObjects(GivenOrder go) {
+        switch (go.o) {
+            case Order.BUY:
+                return;
+            case Order.GUARD:
+                go.standArea = Instantiate(guardAreaPrefab);
+                go.standArea.transform.position = go.npc.transform.position;
+                return;
+            case Order.INTIMIDATE:
+                return;
+            case Order.SENTRY:
+                go.standArea = Instantiate(guardAreaPrefab);
+                go.standArea.transform.position = go.npc.transform.position;
+                go.watchArea = Instantiate(watchAreaPrefab);
+                go.watchArea.transform.position = GameManagerScript.ins.player.transform.position;
+                return;
+            case Order.TAUNT:
+                return;
+            case Order.WATCH:
+                go.watchArea = Instantiate(watchAreaPrefab);
+                go.watchArea.transform.position = GameManagerScript.ins.player.transform.position;
+                return;
+        }
+    }
+
 
     string GetChoiceText(int i) {
         switch (i) {

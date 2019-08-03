@@ -10,9 +10,9 @@ GameObject:
   m_Component:
   - component: {fileID: 224396942695520734}
   - component: {fileID: 212250479080547722}
-  - component: {fileID: 120130929291270138}
+  - component: {fileID: 3263237103209381153}
   - component: {fileID: -7993578299230089664}
-  - component: {fileID: -5285341020083169421}
+  - component: {fileID: -7678750846731387963}
   m_Layer: 14
   m_Name: Path
   m_TagString: Untagged
@@ -64,6 +64,7 @@ SpriteRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -87,7 +88,7 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!120 &120130929291270138
+--- !u!120 &3263237103209381153
 LineRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -112,6 +113,7 @@ LineRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -195,7 +197,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   newPos: {x: 0, y: 0, z: 0}
---- !u!61 &-5285341020083169421
+--- !u!61 &-7678750846731387963
 BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

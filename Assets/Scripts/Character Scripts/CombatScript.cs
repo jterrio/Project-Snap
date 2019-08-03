@@ -114,7 +114,7 @@ public class CombatScript : MonoBehaviour {
         if (!isFollowingOrders) {
             SetMove(); //sets movement based on target and spell selected
         } else {
-            npcInfo.polyNav.enabled = false;
+            
         }
         TrySpell(); //Trys to see if it can cast, if not, begins casting
         CheckEnergyTimer(); //recharge energy, if possible
@@ -604,6 +604,23 @@ public class CombatScript : MonoBehaviour {
         }
             
 
+
+    }
+
+
+    /// <summary>
+    /// Set a movement pattern based on the orders given
+    /// </summary>
+    void SetOrderMove() {
+        movementQueue.Clear(); //clear our movement
+
+
+    }
+
+
+
+    void FollowGuardOrder() {
+        movementQueue.Clear(); //clear our movement
 
     }
 

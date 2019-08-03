@@ -49,6 +49,10 @@ public class CombatHUDLog : MonoBehaviour {
                 GameManagerScript.ins.playerInfo.polyNav.map.FindPath(m.destination[0], n, ChangeNodeLevelsBeg);
                 m.pathLR.SetPositions(m.destination);
                 m.path.transform.position = n;
+                
+                //re-evaluate position of collider while timescale is 0
+                m.path.GetComponent<BoxCollider2D>().isTrigger = false;
+                m.path.GetComponent<BoxCollider2D>().isTrigger = true;
             }
             if(m.destination[0] == o) {
                 GameManagerScript.ins.playerInfo.polyNav.map.FindPath(n, m.destination[m.destination.Length - 1], ChangeNodeLevelsEnd);
@@ -147,7 +151,7 @@ public class CombatHUDLog : MonoBehaviour {
 
         loggedMoves[0].SetDest(temp);
         loggedMoves[0].path.transform.position = temp[temp.Length - 1];
-        loggedMoves[0].pathLR = loggedMoves[0].path.GetComponent<LineRenderer>();
+        loggedMoves[0].pathLR = loggedMoves[0].path.GetComponentInChildren<LineRenderer>();
         loggedMoves[0].pathLR.positionCount = temp.Length;
         loggedMoves[0].pathLR.SetPositions(temp);
     }
@@ -224,11 +228,16 @@ public class CombatHUDLog : MonoBehaviour {
         mvmt.SetDest(temp.ToArray());
         mvmt.path = Instantiate(pathPrefab);
         mvmt.path.transform.position = temp[temp.Count - 1];
-        mvmt.pathLR = mvmt.path.GetComponent<LineRenderer>();
+        mvmt.pathLR = mvmt.path.GetComponentInChildren<LineRenderer>();
         mvmt.pathLR.startWidth = 0.05f;
         mvmt.pathLR.endWidth = 0.05f;
         mvmt.pathLR.positionCount = temp.Count;
         mvmt.pathLR.SetPositions(temp.ToArray());
+
+
+        //re-evaluate position of collider while timescale is 0
+        mvmt.path.GetComponent<BoxCollider2D>().isTrigger = false;
+        mvmt.path.GetComponent<BoxCollider2D>().isTrigger = true;
 
         int tempHash = Random.Range(0, 999999);
         while (randomHashList.Contains(tempHash)) {
