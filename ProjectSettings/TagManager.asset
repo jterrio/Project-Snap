@@ -6,6 +6,9 @@ TagManager:
   tags:
   - Door
   - Projectile
+  - NPC
+  - Item
+  - Chest
   layers:
   - Default
   - TransparentFX
@@ -22,7 +25,7 @@ TagManager:
   - Spell
   - Map
   - PlayerCombat
-  - 
+  - WalkableMap
   - 
   - 
   - 
@@ -57,4 +60,7 @@ TagManager:
     locked: 0
   - name: Characters
     uniqueID: 116970057
+    locked: 0
+  - name: CombatAboveCharacters
+    uniqueID: 722921453
     locked: 0
