@@ -82,7 +82,7 @@ public class NPCSpeechHolder : MonoBehaviour {
             if (speechSets[currentSet].dialogue[currentLine].reset) {
                 ResetSetNumber();
             }
-            currentLine = 0;
+            //currentLine = 0;
             return true;
         } else {
             //move to next line
@@ -95,7 +95,8 @@ public class NPCSpeechHolder : MonoBehaviour {
     /// if we reset, the set should have a set number to reset to, which we set the current set to
     /// </summary>
     public void ResetSetNumber() {
-        currentSet = speechSets[currentSet].dialogue[currentLine].resetSet;
+        SetDialogueSet(speechSets[currentSet].dialogue[currentLine].resetSet);
+
     }
 
 
@@ -124,7 +125,7 @@ public class NPCSpeechHolder : MonoBehaviour {
     /// <param name="setNumber"></param>
     public void SetDialogueSet(int setNumber) {
         currentSet = setNumber;
-        currentLine = 0;
+        //currentLine = 0;
     }
 
 }
