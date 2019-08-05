@@ -15,7 +15,7 @@ MonoBehaviour:
   characterName: Ryan Villa
   archetype: Lower Class
   characterAge: 35
-  isTalkable: 0
+  isTalkable: 1
   isKeyNPC: 0
   isMerchant: 0
   hasQuests: 0

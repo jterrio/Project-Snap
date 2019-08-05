@@ -112,6 +112,7 @@ SpriteRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -122,7 +123,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 501207281
-  m_SortingLayer: 4
+  m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 08cdf570b3cfd3c47b5fc75bfbf295c8, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -172,7 +173,6 @@ MonoBehaviour:
   characterAge: 0
   direction: 0
   state: 0
-  spellInventory: {fileID: 0}
   directionSprites:
   - {fileID: 21300000, guid: 08cdf570b3cfd3c47b5fc75bfbf295c8, type: 3}
   - {fileID: 21300002, guid: 08cdf570b3cfd3c47b5fc75bfbf295c8, type: 3}
@@ -182,11 +182,11 @@ MonoBehaviour:
   - {fileID: 21300010, guid: 08cdf570b3cfd3c47b5fc75bfbf295c8, type: 3}
   - {fileID: 21300012, guid: 08cdf570b3cfd3c47b5fc75bfbf295c8, type: 3}
   - {fileID: 21300014, guid: 08cdf570b3cfd3c47b5fc75bfbf295c8, type: 3}
+  spellInventory: {fileID: 0}
   stats: {fileID: 0}
-  canMove: 0
-  isWalking: 1
-  inCombat: 0
   polyNav: {fileID: 0}
+  canMove: 0
+  inCombat: 0
   currentHealth: 100
   maxHealth: 100
   currentStamina: 100
@@ -196,27 +196,29 @@ MonoBehaviour:
   speed: 0
   runSpeed: 0
   npc: {fileID: 0}
-  isTalkable: 0
+  merchantInventory: {fileID: 0}
+  merchantMoney: 0
+  isTalkable: 1
   isMerchant: 0
   isKeyNPC: 0
   hasQuests: 0
-  merchantInventory: {fileID: 0}
-  merchantMoney: 0
   faction: 0
   movementType: 0
   areaPoint: {fileID: 0}
   radiusOfArea: 0
-  patrolPoints: []
   destination: {x: 0, y: 0, z: 0}
+  patrolPoints: []
+  stationaryPoint: {fileID: 0}
+  stationaryDirection: 0
   isMoving: 0
   isWaiting: 0
   waitTime: 0
   isTalking: 0
-  stationaryPoint: {fileID: 0}
-  stationaryDirection: 0
   runDistance: 0
   FOV: 0
   ViewDistance: 0
+  combatCooldown: 0
+  timeToWaitAfterCombat: 0
 --- !u!114 &8497193949762172517
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -326,16 +328,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   myStats: {fileID: 0}
-  isReady: 0
-  endTurn: 0
+  difficulty: 1
+  state: 0
+  energyState: 0
   targets: []
   movementQueue: []
   debugPoint: {fileID: 0}
-  difficulty: 1
   hasAttackedRecently: 0
   inCover: 0
   inPartialCover: 0
-  state: 0
+  dodgeChance: 1
+  isReady: 0
+  endTurn: 0
 --- !u!114 &6864428710728588719
 MonoBehaviour:
   m_ObjectHideFlags: 0

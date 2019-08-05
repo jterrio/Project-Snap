@@ -15,9 +15,9 @@ MonoBehaviour:
   characterName: Daniel Morton
   archetype: Average Person
   characterAge: 56
-  isTalkable: 0
+  isTalkable: 1
   isKeyNPC: 0
-  isMerchant: 0
+  isMerchant: 1
   hasQuests: 0
   canUseMagic: 1
   weaponType: GUNMAGE

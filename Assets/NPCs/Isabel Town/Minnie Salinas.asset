@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   characterName: Minnie Salinas (Mimi)
   archetype: Lower Class
-  characterAge: 18
-  isTalkable: 0
+  characterAge: 13
+  isTalkable: 1
   isKeyNPC: 0
   isMerchant: 0
   hasQuests: 0

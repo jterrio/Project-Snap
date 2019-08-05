@@ -13,10 +13,10 @@ public class NPCInfo : CharacterInfo {
     [Header("Features")]
     public Inventory merchantInventory;
     public float merchantMoney;
-    [HideInInspector] public bool isTalkable; //access via NPC class
-    [HideInInspector] public bool isMerchant; //access via NPC class
-    [HideInInspector] public bool isKeyNPC; //access via NPC class
-    [HideInInspector] public bool hasQuests; //access via NPC class
+    public bool isTalkable; //access via NPC class
+    public bool isMerchant; //access via NPC class
+    public bool isKeyNPC; //access via NPC class
+    public bool hasQuests; //access via NPC class
     [HideInInspector] public FactionManagerScript.Faction faction; //access via NPC class
     public NPC.MovementType movementType;
     private NPC.MovementType movementTypeOld;
