@@ -13,16 +13,17 @@ MonoBehaviour:
   m_Name: Daniel Morton
   m_EditorClassIdentifier: 
   characterName: Daniel Morton
+  nickname: 
   archetype: Average Person
   characterAge: 56
+  description: Genuine Creative Jokester MeatHead Book-Worm Disobedient Unclear Intelligent  Male
+    Scrawny Short Bald White
+  itemPool: []
+  faction: 0
   isTalkable: 1
   isKeyNPC: 0
   isMerchant: 1
   hasQuests: 0
   canUseMagic: 1
-  weaponType: GUNMAGE
+  weaponType: 3
   spawnChance: 0
-  itemPool: []
-  faction: 0
-  description: Genuine Creative Jokester MeatHead Book-Worm Disobedient Unclear Intelligent  Male
-    Scrawny Short Bald White

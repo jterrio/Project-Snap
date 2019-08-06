@@ -5,20 +5,27 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "New NPC", menuName = "NPC")]
 public class NPC : ScriptableObject {
 
+    [Header("Character Info")]
     public string characterName;
+    public string nickname;
     public string archetype;
     public int characterAge;
+    public string description;
+    public Item[] itemPool;
+    public FactionManagerScript.Faction faction;
+
+    [Header("Attribuites")]
     public bool isTalkable;
     public bool isKeyNPC;
     public bool isMerchant;
     public bool hasQuests;
     public bool canUseMagic;
-    public string weaponType;
+    public WeaponType weaponType;
+
+    [Header("Key Features")]
     public int spawnChance; //if the npc is an enemy, what the spawn chance will be
 
-    public Item[] itemPool;
-    public FactionManagerScript.Faction faction;
-    public string description;
+
     public enum WeaponType {
         GUN,
         SWORD,

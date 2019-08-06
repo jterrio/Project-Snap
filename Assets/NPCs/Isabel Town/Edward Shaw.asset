@@ -13,16 +13,17 @@ MonoBehaviour:
   m_Name: Edward Shaw
   m_EditorClassIdentifier: 
   characterName: Edward Shaw
+  nickname: 
   archetype: Average Person
   characterAge: 24
+  description: Loyal Unintelligent  Male Scrawny Short Red Long-Straight Hair, White
+    Skin Tone
+  itemPool: []
+  faction: 0
   isTalkable: 0
   isKeyNPC: 0
   isMerchant: 0
   hasQuests: 0
   canUseMagic: 1
-  weaponType: MAGIC
+  weaponType: 5
   spawnChance: 0
-  itemPool: []
-  faction: 0
-  description: Loyal Unintelligent  Male Scrawny Short Red Long-Straight Hair, White
-    Skin Tone

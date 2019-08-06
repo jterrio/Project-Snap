@@ -13,16 +13,17 @@ MonoBehaviour:
   m_Name: Ryan Villa
   m_EditorClassIdentifier: 
   characterName: Ryan Villa
+  nickname: 
   archetype: Lower Class
   characterAge: 35
+  description: Genuine Serious Hands-On Procrastinator Push-Over Unintelligent Shut-in
+    Unfriendly  Male Short Receding Blonde
+  itemPool: []
+  faction: 0
   isTalkable: 1
   isKeyNPC: 0
   isMerchant: 0
   hasQuests: 0
   canUseMagic: 1
-  weaponType: MAGIC
+  weaponType: 5
   spawnChance: 0
-  itemPool: []
-  faction: 0
-  description: Genuine Serious Hands-On Procrastinator Push-Over Unintelligent Shut-in
-    Unfriendly  Male Short Receding Blonde

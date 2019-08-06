@@ -13,16 +13,17 @@ MonoBehaviour:
   m_Name: Brian Tate
   m_EditorClassIdentifier: 
   characterName: Brian Tate
+  nickname: 
   archetype: Lower Class
   characterAge: 26
+  description: Creative Jokester SelfDepricating MeatHead Book-Worm Quick-Thinker
+    Loyal Stubborn Unintelligent Dull  Female Scrawny Receding Brown
+  itemPool: []
+  faction: 0
   isTalkable: 0
   isKeyNPC: 0
   isMerchant: 0
   hasQuests: 0
   canUseMagic: 0
-  weaponType: SWORD
+  weaponType: 1
   spawnChance: 0
-  itemPool: []
-  faction: 0
-  description: Creative Jokester SelfDepricating MeatHead Book-Worm Quick-Thinker
-    Loyal Stubborn Unintelligent Dull  Female Scrawny Receding Brown

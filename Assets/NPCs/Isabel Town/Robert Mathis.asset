@@ -13,16 +13,17 @@ MonoBehaviour:
   m_Name: Robert Mathis
   m_EditorClassIdentifier: 
   characterName: Robert Mathis
+  nickname: 
   archetype: Government Person
   characterAge: 55
-  isTalkable: 0
+  description: Genuine Uncreative Direct Quick-Thinker Loyal Intelligent Shut-in  Male
+    Black Bald Hair, White Skin Tone
+  itemPool: []
+  faction: 0
+  isTalkable: 1
   isKeyNPC: 0
   isMerchant: 0
   hasQuests: 0
   canUseMagic: 1
-  weaponType: MAGIC
+  weaponType: 5
   spawnChance: 0
-  itemPool: []
-  faction: 0
-  description: Genuine Uncreative Direct Quick-Thinker Loyal Intelligent Shut-in  Male
-    Black Bald Hair, White Skin Tone

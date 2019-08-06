@@ -13,17 +13,18 @@ MonoBehaviour:
   m_Name: Shannon Hodges
   m_EditorClassIdentifier: 
   characterName: Shannon Hodges
+  nickname: 
   archetype: Average Person
   characterAge: 36
+  description: Ingenuine Creative SelfDepricating Book-Worm Disobedient Direct Quick-Thinker
+    Unloyal Push-Over Shut-in Charismatic Friendly  Female Buff Short Short-Curly
+    Red
+  itemPool: []
+  faction: 0
   isTalkable: 0
   isKeyNPC: 0
   isMerchant: 0
   hasQuests: 0
   canUseMagic: 1
-  weaponType: GUNMAGE
+  weaponType: 3
   spawnChance: 0
-  itemPool: []
-  faction: 0
-  description: Ingenuine Creative SelfDepricating Book-Worm Disobedient Direct Quick-Thinker
-    Unloyal Push-Over Shut-in Charismatic Friendly  Female Buff Short Short-Curly
-    Red
