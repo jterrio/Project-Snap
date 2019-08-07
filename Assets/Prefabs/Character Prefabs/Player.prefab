@@ -253,6 +253,7 @@ SpriteRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -262,8 +263,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: -459180299
-  m_SortingLayer: 4
+  m_SortingLayerID: 116970057
+  m_SortingLayer: 5
   m_SortingOrder: 3250
   m_Sprite: {fileID: 21300000, guid: 08cdf570b3cfd3c47b5fc75bfbf295c8, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -304,7 +305,6 @@ MonoBehaviour:
   characterAge: 69
   direction: 0
   state: 0
-  spellInventory: {fileID: 114843199992253482}
   directionSprites:
   - {fileID: 21300000, guid: 08cdf570b3cfd3c47b5fc75bfbf295c8, type: 3}
   - {fileID: 21300002, guid: 08cdf570b3cfd3c47b5fc75bfbf295c8, type: 3}
@@ -314,11 +314,11 @@ MonoBehaviour:
   - {fileID: 21300010, guid: 08cdf570b3cfd3c47b5fc75bfbf295c8, type: 3}
   - {fileID: 21300012, guid: 08cdf570b3cfd3c47b5fc75bfbf295c8, type: 3}
   - {fileID: 21300014, guid: 08cdf570b3cfd3c47b5fc75bfbf295c8, type: 3}
+  spellInventory: {fileID: 114843199992253482}
   stats: {fileID: 114583318065831654}
-  canMove: 1
-  isWalking: 1
-  inCombat: 0
   polyNav: {fileID: 114379264451516218}
+  canMove: 1
+  inCombat: 0
   currentHealth: 100
   maxHealth: 100
   currentStamina: 100
@@ -521,13 +521,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   myStats: {fileID: 114583318065831654}
-  isReady: 0
-  endTurn: 0
+  difficulty: 1
+  state: 0
+  energyState: 0
   targets: []
   movementQueue: []
   debugPoint: {fileID: 0}
-  difficulty: 1
   hasAttackedRecently: 0
   inCover: 0
   inPartialCover: 0
-  state: 0
+  dodgeChance: 1
+  isReady: 0
+  endTurn: 0

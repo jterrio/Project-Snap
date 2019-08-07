@@ -1,0 +1,1 @@
+{"arch":"Government Person","intu":51,"inte":45,"str":56,"cha":53,"pre":48,"dex":33,"per":14,"spirit":0,"UseMagic":true,"favWeap":"MageSword","physical":["Male","Tall","White","Bald-Hair","Light-Brown"],"personality":["Genuine","Creative","Procrastinator","Quick-Thinker","Unintelligent","Shut-in"]}
