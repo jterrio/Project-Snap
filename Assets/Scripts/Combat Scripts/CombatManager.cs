@@ -14,6 +14,7 @@ public class CombatManager : MonoBehaviour {
     public static GameObject playerCombatHandler; //the combat handler that the player is particpating in, if they are in combat;
     public List<GameObject> allCombatHandlers;
     public float joinDistance = 10f;
+    public int combatCooldownTime = 60;
 
     public LayerMask obstacleTest;
     public LayerMask characterTest;
@@ -83,7 +84,7 @@ public class CombatManager : MonoBehaviour {
                 if (!c.GetComponent<CharacterInfo>().inCombat) {
                     if (c.gameObject == GameManagerScript.ins.player) {
                         InitCombat(GameManagerScript.ins.player);
-                    } else {
+                    } else if (!c.GetComponent<NPCInfo>().combatCooldown){
                         handler.GetComponent<CombatHandler>().AddLateCharacter(c.gameObject);
                     }
                 }
@@ -117,6 +118,16 @@ public class CombatManager : MonoBehaviour {
 
     public GameObject GetPlayerHandler() {
         return playerCombatHandler;
+    }
+
+    public void RemoveCharacter(GameObject c) {
+        foreach(GameObject handler in allCombatHandlers) {
+            foreach(GameObject g in new List<GameObject>(handler.GetComponent<CombatHandler>().charactersInCombat)) {
+                if(c == g) {
+                    handler.GetComponent<CombatHandler>().RemoveFromCombat(c);
+                }
+            }
+        }
     }
 
 

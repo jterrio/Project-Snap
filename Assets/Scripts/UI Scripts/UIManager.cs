@@ -17,6 +17,7 @@ public class UIManager : MonoBehaviour {
     public Button ControllerPanel_MovementButton, ControllerPanel_AttackButton, ControllerPanel_SpeechButton;
     public RectTransform HealthandStaminaPanel;
     public Image HealthImageFilled, StaminaImageFilled;
+    public RectTransform bribePanel;
 
     public RectTransform speechOutline;
     public RectTransform speechPanel;
@@ -110,22 +111,23 @@ public class UIManager : MonoBehaviour {
             if (LogPanel_Base.gameObject.activeSelf && !CombatManager.ins.combatHUDAttack.isSelected) {
                 DisableLogPanelBase();
                 EnableLogPanelHover();
+                EnableLogPanelHoverSpeech();
             }
             if(LogPanel_Speech.gameObject.activeSelf && !CombatManager.ins.combatSpeech.hasClicked) {
                 DisableLogPanelSpeech();
                 EnableLogPanelHoverSpeech();
-                
+                EnableLogPanelHover();
             }
             foreach (RaycastResult r in results) {
                 if (r.gameObject == LogPanel_Hover_Attack.gameObject || r.gameObject == LogPanel_Base.gameObject) {
-                    if (LogPanel_Hover_Attack.gameObject.activeSelf) {
+                    if (LogPanel_Hover_Attack.gameObject.activeSelf && !bribePanel.gameObject.activeSelf) {
                         DisableLogPanelHover();
                         EnableLogPanelBase();
                         break;
                     }
                 }
                 if(r.gameObject == LogPanel_Hover_Speech.gameObject || r.gameObject == LogPanel_Speech.gameObject) {
-                    if (LogPanel_Hover_Speech.gameObject.activeSelf) {
+                    if (LogPanel_Hover_Speech.gameObject.activeSelf && !bribePanel.gameObject.activeSelf) {
                         DisableLogPanelHoverSpeech();
                         EnableLogPanelSpeech();
                         ShowSpeechGivenOrders();
@@ -275,8 +277,17 @@ public class UIManager : MonoBehaviour {
     }
 
     public void DisableCombatHUD() {
-        CombatHUDPanel.gameObject.SetActive(false);
         HealthandStaminaPanel.gameObject.SetActive(false);
+        if (CombatManager.ins.combatSpeech.isSelected) {
+            CombatManager.ins.combatDrawMovePosition.ChangeSpeechValue();
+        }
+        if (CombatManager.ins.combatHUDAttack.isSelected) {
+            CombatManager.ins.combatDrawMovePosition.ChangeAttackValue();
+        }
+        if (CombatManager.ins.combatDrawMovePosition.isSelected) {
+            CombatManager.ins.combatDrawMovePosition.ChangeMovementValue();
+        }
+        CombatHUDPanel.gameObject.SetActive(false);
     }
 
     public void HideLogPanel() {
@@ -286,6 +297,7 @@ public class UIManager : MonoBehaviour {
     public void ShowLogPanel() {
         HideAttackPanel();
         LogPanel_Main.gameObject.SetActive(true);
+        LogPanel_Hover_Speech.gameObject.SetActive(true);
     }
 
     public void ShowAttackPanel() {

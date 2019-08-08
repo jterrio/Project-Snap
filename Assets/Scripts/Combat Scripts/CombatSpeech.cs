@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
-public class CombatSpeech : MonoBehaviour{
+public class CombatSpeech : MonoBehaviour {
 
     public bool isSelected = false; //selected by button
     public bool hasClicked = false; //has clicked on selectedNPC
@@ -18,7 +18,15 @@ public class CombatSpeech : MonoBehaviour{
     private Coroutine speechCoroutine;
     private int progress;
     public GameObject watchAreaPrefab, guardAreaPrefab;
-    
+    public RectTransform bribePrefab;
+    public RectTransform bribePanel, bribeGridLayout, bribeText;
+    public Button bribeButton;
+    public string rejectBribe = "They will NOT accept this offer.";
+    public string acceptBribe = "They will accept this offer.";
+    public string close = "Close";
+    public string gift = "Bribe";
+    public Inventory itemsForBribe;
+
     public class GivenOrder {
         public GameObject npc;
         public Order o;
@@ -33,7 +41,8 @@ public class CombatSpeech : MonoBehaviour{
         SENTRY, //2
         TAUNT, //3
         BUY, //4
-        INTIMIDATE //5
+        INTIMIDATE, //5
+        NOTFOLLOWING //6
     }
 
     private void Start() {
@@ -41,7 +50,7 @@ public class CombatSpeech : MonoBehaviour{
     }
 
     // Update is called once per frame
-    void Update(){
+    void Update() {
         ContinueSpeechQueue();
         if (!isSelected) {
             return;
@@ -54,10 +63,10 @@ public class CombatSpeech : MonoBehaviour{
     }
 
     void ContinueSpeechQueue() {
-        if(givenOrders.Count < 1) {
+        if (givenOrders.Count < 1) {
             return;
         }
-        if(speechCoroutine == null) {
+        if (speechCoroutine == null) {
             speechCoroutine = StartCoroutine(SpeechQueue());
         }
 
@@ -76,20 +85,33 @@ public class CombatSpeech : MonoBehaviour{
         //Cast and Reset
         child.fillAmount = 1;
 
-        //cast
+        //cast - SEND ORDERS
+        if (givenOrders[0].o != Order.BUY) {
+            givenOrders[0].npc.GetComponent<CombatScript>().SetOrders(givenOrders[0]);
+            RestartOrderQueue();
+        } else {
+            OpenBribePanel();
+        }
+    }
 
+    void RestartOrderQueue() {
         //Remove from UI
-        //CombatManager.ins.combatHUDAttack.RemoveAttackFromLayout(spellQueue[0]);
         //Remove from queue and reset the coroutine to know that it is finished
         RemoveFromOrders(givenOrders[0]);
-        speechCoroutine = null; 
+        speechCoroutine = null;
     }
 
 
     public void RemoveFromOrders(GivenOrder o) {
 
-        foreach(Transform child in gridlayoutGivenOrders) {
-            if(child.gameObject == o.child) {
+        foreach (Transform child in gridlayoutGivenOrders) {
+            if (child.gameObject == o.child) {
+                if (o.standArea != null) {
+                    Destroy(o.standArea);
+                }
+                if (o.watchArea != null) {
+                    Destroy(o.watchArea);
+                }
                 Destroy(child.gameObject);
                 givenOrders.Remove(o);
                 return;
@@ -101,7 +123,7 @@ public class CombatSpeech : MonoBehaviour{
     void ClickCheck() {
         //check if we click
         if (selectedNPC != null && Input.GetMouseButtonDown(0)) {
-            if((Vector3.Distance(selectedNPC.transform.position, GameManagerScript.ins.player.transform.position) > 10)) {
+            if ((Vector3.Distance(selectedNPC.transform.position, GameManagerScript.ins.player.transform.position) > 10)) {
                 return;
             }
             hasClicked = true;
@@ -114,7 +136,7 @@ public class CombatSpeech : MonoBehaviour{
             DestroyChoices();
             PopulateChoices();
         }
-        if(hasClicked && Input.GetMouseButtonDown(1)) {
+        if (hasClicked && Input.GetMouseButtonDown(1)) {
             DestroyChoices();
             UIManager.ins.DisableLogPanelSpeech();
             UIManager.ins.DisableLogPanelBase();
@@ -138,9 +160,9 @@ public class CombatSpeech : MonoBehaviour{
                 }
             }
             Vector2 mouse2D = new Vector2(Camera.main.ScreenToWorldPoint(Input.mousePosition).x, Camera.main.ScreenToWorldPoint(Input.mousePosition).y);
-            RaycastHit2D hit = Physics2D.Raycast(mouse2D, Vector2.zero);
-            if(hit.collider != null) {
-                if(hit.collider.gameObject.layer == LayerMask.NameToLayer("NPC")) {
+            RaycastHit2D hit = Physics2D.Raycast(mouse2D, Vector2.zero, Mathf.Infinity, CombatManager.ins.characterTest);
+            if (hit.collider != null) {
+                if (hit.collider.gameObject.layer == LayerMask.NameToLayer("NPC")) {
                     ChangeSelectedNPC(hit.collider.gameObject);
                     return;
                 }
@@ -160,14 +182,14 @@ public class CombatSpeech : MonoBehaviour{
     }
 
     public void ChangeSelectedNPC(GameObject t) {
-        if(selectedNPC == t) {
-            VerifySelectedNPC(); 
+        if (selectedNPC == t) {
+            VerifySelectedNPC();
         }
-        if(selectedNPC != null) {
+        if (selectedNPC != null) {
             selectedNPC.GetComponent<Renderer>().material.color = Color.white;
         }
         selectedNPC = t;
-        if(selectedNPC != null) {
+        if (selectedNPC != null) {
             if (Vector3.Distance(t.transform.position, GameManagerScript.ins.player.transform.position) > 10) {
                 selectedNPC.GetComponent<Renderer>().material.color = Color.red;
             } else {
@@ -177,7 +199,7 @@ public class CombatSpeech : MonoBehaviour{
     }
 
     public void VerifySelectedNPC() {
-        if(selectedNPC == null) {
+        if (selectedNPC == null) {
             return;
         }
         if (Vector3.Distance(selectedNPC.transform.position, GameManagerScript.ins.player.transform.position) > 10) {
@@ -194,7 +216,7 @@ public class CombatSpeech : MonoBehaviour{
     public void PopulateChoices() {
         NPCInfo info = savedNPC.GetComponent<NPCInfo>();
         Stats s = savedNPC.GetComponent<Stats>();
-        if(s.attitude >= 0) {
+        if (s.attitude >= 0) {
             GameObject g = (GameObject)Instantiate(buttonPrefab, gridlayout);
             g.GetComponent<CombatSpeechChoiceScript>().SetChoice(0);
             g.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = "Guard";
@@ -235,7 +257,7 @@ public class CombatSpeech : MonoBehaviour{
     }
 
     public void RightClick() {
-        if(selectedNPC != null) {
+        if (selectedNPC != null) {
             selectedNPC.GetComponent<Renderer>().material.color = Color.white;
             selectedNPC = null;
         }
@@ -264,9 +286,9 @@ public class CombatSpeech : MonoBehaviour{
         go.child.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = GetChoiceText(i);
         CombatManager.ins.combatDrawMovePosition.ChangeSpeechValue();
     }
-    
+
     public void UpdateColliders(GivenOrder go) {
-        if(go.standArea != null) {
+        if (go.standArea != null) {
             go.standArea.GetComponent<BoxCollider2D>().isTrigger = false;
             go.standArea.GetComponent<BoxCollider2D>().isTrigger = true;
         }
@@ -320,6 +342,89 @@ public class CombatSpeech : MonoBehaviour{
                 return "Cancel";
             default:
                 return "BROKEN";
+        }
+    }
+
+    public void OpenBribePanel() {
+        bribePanel.gameObject.SetActive(true);
+        DisplayPlayerItems();
+        CalculateBribeText();
+    }
+
+    public void CloseBribePanel() {
+        bribePanel.gameObject.SetActive(false);
+        if (CalculateBribeText()) {
+            foreach(Inventory.InventorySlot invSlot in itemsForBribe.inventory) {
+                GameManagerScript.ins.playerInventory.RemoveItem(invSlot.item, invSlot.count);
+                givenOrders[0].npc.GetComponent<Inventory>().AddItemCount(invSlot.item, invSlot.count);
+            }
+            float i = 0;
+            foreach (Inventory.InventorySlot invSlot in itemsForBribe.inventory) {
+                i += (invSlot.count * invSlot.item.baseItemCost);
+            }
+            i -= (-1 * givenOrders[0].npc.GetComponent<Stats>().attitude * 10);
+            givenOrders[0].npc.GetComponent<CombatScript>().OrderLeaveCombat();
+            if (i > 0) {
+                givenOrders[0].npc.GetComponent<Stats>().ChangeAttitude(Mathf.FloorToInt(i));
+            }
+        }
+        foreach(Transform c in bribeGridLayout) {
+            Destroy(c.gameObject);
+        }
+        itemsForBribe.ClearInventory();
+        RestartOrderQueue();
+    }
+
+    /// <summary>
+    /// Display player items in the bribe window
+    /// </summary>
+    void DisplayPlayerItems() {
+        //goes through every item in the player's inventory
+        foreach (Inventory.InventorySlot inv in GameManagerScript.ins.player.GetComponent<PlayerInfo>().inventory.inventory) {
+            //checks to see if it is sellable and/or if it has cost
+            //needs to change cost check to account for merchant bias (how it changes price)
+            if (!inv.item.isSellable || inv.item.baseItemCost == 0) {
+                continue;
+            }
+            //instantiate item and set it as a grid layout child
+            RectTransform newItem = (RectTransform)Instantiate(bribePrefab, bribeGridLayout);
+            newItem.transform.GetChild(0).GetComponent<DisplayItemInInventory>().InventoryDisplay(inv.item, newItem);
+            newItem.transform.GetComponentInChildren<DisplayItemCount>().ItemNumber = inv.count;
+            newItem.transform.GetComponent<CombatBribeScript>().SetValues(1, inv.count);
+        }
+    }
+
+    public void AddItem(GameObject c) {
+        Item i = c.GetComponentInChildren<DisplayItemInInventory>().item;
+        itemsForBribe.AddItem(i);
+        CalculateBribeText();
+    }
+
+    public void RemoveItem(GameObject c) {
+        Item i = c.GetComponentInChildren<DisplayItemInInventory>().item;
+        itemsForBribe.RemoveItem(i, 1);
+        CalculateBribeText();
+    }
+
+    public void RemoveAllItems(GameObject c) {
+        Item i = c.GetComponentInChildren<DisplayItemInInventory>().item;
+        itemsForBribe.RemoveAllItem(i);
+        CalculateBribeText();
+    }
+
+    public bool CalculateBribeText() {
+        float i = 0;
+        foreach (Inventory.InventorySlot invSlot in itemsForBribe.inventory) {
+            i += (invSlot.count * invSlot.item.baseItemCost);
+        }
+        if (i >= (-1 * givenOrders[0].npc.GetComponent<Stats>().attitude * 5)) {
+            bribeText.GetComponent<TMPro.TextMeshProUGUI>().text = acceptBribe;
+            bribeButton.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = gift;
+            return true;
+        } else {
+            bribeText.GetComponent<TMPro.TextMeshProUGUI>().text = rejectBribe;
+            bribeButton.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = close;
+            return false;
         }
     }
 }

@@ -72,6 +72,8 @@ public class CombatScript : MonoBehaviour {
     public float startTimeForFollowingOrders;
     public float timeToFollowOrders;
     public CombatSpeech.Order order;
+    public Vector3 guardArea;
+    public Vector3 watchArea;
 
     public GameObject FocusTarget {
         get {
@@ -91,6 +93,7 @@ public class CombatScript : MonoBehaviour {
         lastPosition = Vector3.zero;
         selectedSpell = null;
         progress = 0;
+        isFollowingOrders = false;
         state = CombatState.ATTACKING;
         if(spellCoroutine != null) {
             StopCoroutine(spellCoroutine);
@@ -114,7 +117,7 @@ public class CombatScript : MonoBehaviour {
         if (!isFollowingOrders) {
             SetMove(); //sets movement based on target and spell selected
         } else {
-            
+            SetOrderMove();
         }
         TrySpell(); //Trys to see if it can cast, if not, begins casting
         CheckEnergyTimer(); //recharge energy, if possible
@@ -612,16 +615,45 @@ public class CombatScript : MonoBehaviour {
     /// Set a movement pattern based on the orders given
     /// </summary>
     void SetOrderMove() {
-        movementQueue.Clear(); //clear our movement
-
+        if (state != CombatState.ATTACKING) {
+            SetMove();
+        } else {
+            movementQueue.Clear(); //clear our movement
+            switch (order) {
+                case CombatSpeech.Order.GUARD:
+                case CombatSpeech.Order.SENTRY:
+                    FollowGuardOrder();
+                    return;
+                case CombatSpeech.Order.TAUNT:
+                case CombatSpeech.Order.WATCH:
+                    SetMove();
+                    return;
+                case CombatSpeech.Order.INTIMIDATE:
+                    TryIntimidateOrder();
+                    return;
+            }
+        }
 
     }
 
 
 
     void FollowGuardOrder() {
-        movementQueue.Clear(); //clear our movement
+        movementQueue.Add(guardArea);
+    }
 
+    void TryIntimidateOrder() {
+        isFollowingOrders = false;
+        myStats.ChangeFear(-10);
+        if(myStats.fear < myStats.attitude) {
+            OrderLeaveCombat();
+        }
+    }
+
+    public void OrderLeaveCombat() {
+        npcInfo.combatCooldown = true;
+        npcInfo.timeStoppedCombat = Time.time;
+        CombatManager.ins.RemoveCharacter(gameObject);
     }
 
     /// <summary>
@@ -1214,13 +1246,30 @@ public class CombatScript : MonoBehaviour {
     /// Select a target from our list of targets
     /// </summary>
     void SelectTarget() {
-        foreach (GameObject c in targets) { //run through each target
-            if(focusTarget == null || focusTarget == c) { //get base case, or skip we we have already selected
-                focusTarget = c;
-            } else { //check distance, if the target is closer than the focus target, they become the new focus target
-                if(Vector3.Distance(memory[focusTarget], transform.position) >= Vector3.Distance(c.transform.position, transform.position)) {
+        if(focusTarget == GameManagerScript.ins.player && myStats.attitude >= -30) {
+            focusTarget = null;
+        }
+        if(isFollowingOrders && order == CombatSpeech.Order.TAUNT && targets.Contains(GameManagerScript.ins.player)) {
+            focusTarget = GameManagerScript.ins.player;
+        }else if (isFollowingOrders && (order == CombatSpeech.Order.SENTRY || order == CombatSpeech.Order.WATCH)) {
+            foreach(GameObject c in targets) { //run through each target
+                if(focusTarget == null || focusTarget == c) { //get base case or skip
                     focusTarget = c;
+                } else {
+                    if (Vector3.Distance(memory[focusTarget], guardArea) >= Vector3.Distance(c.transform.position, guardArea)) {
+                        focusTarget = c;
+                    }
+                }
+            }
+        } else {
+            foreach (GameObject c in targets) { //run through each target
+                if (focusTarget == null || focusTarget == c) { //get base case, or skip we we have already selected
+                    focusTarget = c;
+                } else { //check distance, if the target is closer than the focus target, they become the new focus target
+                    if (Vector3.Distance(memory[focusTarget], transform.position) >= Vector3.Distance(c.transform.position, transform.position)) {
+                        focusTarget = c;
 
+                    }
                 }
             }
         }
@@ -1469,9 +1518,15 @@ public class CombatScript : MonoBehaviour {
         }
     }
 
-    public void SetOrders(int i) {
+    public void SetOrders(CombatSpeech.GivenOrder go) {
         isFollowingOrders = true;
-        order = (CombatSpeech.Order)i;
+        order = go.o;
+        if(go.standArea != null) {
+            guardArea = go.standArea.gameObject.transform.position;
+        }
+        if (go.watchArea != null) {
+            watchArea = go.watchArea.gameObject.transform.position;
+        }
     }
 
 }

@@ -61,7 +61,7 @@ public class FieldOfVisionScript : MonoBehaviour {
     }
 
     void CheckCombat() {
-        if (!canSee) {
+        if (!canSee || npcInfo.combatCooldown) {
             return;
         }
         if(myStats.attitude <= -25) {

@@ -4,7 +4,8 @@
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
@@ -17,5 +18,5 @@ MonoBehaviour:
   isSellable: 1
   isStackable: 1
   itemType: 5
-  baseItemCost: 50
+  baseItemCost: 100
   sprite: {fileID: 21300000, guid: 48597efa238fa9f47b85dce9af302a4c, type: 3}
