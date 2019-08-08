@@ -36,7 +36,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3215782591688913530}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -10}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -191,8 +191,8 @@ MonoBehaviour:
   maxHealth: 100
   currentStamina: 100
   maxStamina: 100
-  defaultSpeed: 0
-  defaultRunSpeed: 0
+  defaultSpeed: 2.5
+  defaultRunSpeed: 6
   speed: 0
   runSpeed: 0
   npc: {fileID: 0}
@@ -215,8 +215,8 @@ MonoBehaviour:
   waitTime: 0
   isTalking: 0
   runDistance: 0
-  FOV: 0
-  ViewDistance: 0
+  FOV: 200
+  ViewDistance: 10
   combatCooldown: 0
   timeToWaitAfterCombat: 0
 --- !u!114 &8497193949762172517
