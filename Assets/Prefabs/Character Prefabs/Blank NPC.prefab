@@ -340,6 +340,10 @@ MonoBehaviour:
   dodgeChance: 1
   isReady: 0
   endTurn: 0
+  isFollowingOrders: 0
+  startTimeForFollowingOrders: 0
+  timeToFollowOrders: 0
+  order: 0
 --- !u!114 &6864428710728588719
 MonoBehaviour:
   m_ObjectHideFlags: 0
