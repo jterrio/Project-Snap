@@ -13,7 +13,7 @@ public class NPCInfo : CharacterInfo {
     [Header("Features")]
     public Inventory merchantInventory;
     public float merchantMoney;
-    [HideInInspector] public bool isTalkable; //access via NPC class
+    public bool isTalkable; //access via NPC class
     [HideInInspector] public bool isMerchant; //access via NPC class
     [HideInInspector] public bool isKeyNPC; //access via NPC class
     [HideInInspector] public bool hasQuests; //access via NPC class
@@ -47,8 +47,7 @@ public class NPCInfo : CharacterInfo {
 
     [Header("After Combat")]
     public bool combatCooldown;
-    public float timeToWaitAfterCombat; //time to wait to go back to normal after combat
-    private float timeStoppedCombat;
+    public float timeStoppedCombat;
 
     void Start() {
         isTalkable = npc.isTalkable;
@@ -100,7 +99,7 @@ public class NPCInfo : CharacterInfo {
         if (!inCombat) {
             bool canContinue = true;
             if (combatCooldown) {
-                if(Time.time < timeToWaitAfterCombat + timeStoppedCombat) {
+                if(Time.time < CombatManager.ins.combatCooldownTime + timeStoppedCombat) {
                     canContinue = false;
                 } else {
                     combatCooldown = false;

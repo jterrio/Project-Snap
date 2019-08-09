@@ -739,8 +739,8 @@ public class CharacterInfo : MonoBehaviour {
 
     public bool CanMoveTo(Vector3 p) {
 
-        RaycastHit2D[] hits = Physics2D.RaycastAll(Feet(), p - Feet(), Vector3.Distance(p, Feet()), CombatManager.ins.wallTest);
-        if(hits.Length % 2 == 0) {
+        RaycastHit2D hit = Physics2D.Raycast(p, Vector2.zero, Mathf.Infinity, CombatManager.ins.mapTest);
+        if (hit.collider != null) {
             return true;
         }
         return false;

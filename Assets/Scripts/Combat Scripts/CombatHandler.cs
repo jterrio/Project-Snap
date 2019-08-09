@@ -8,6 +8,7 @@ public class CombatHandler : MonoBehaviour {
     public List<GameObject> currentCharactersTurn; //list of characters who are currently turning
     public List<GameObject> charactersChecked; //characters check to join combat
     public List<GameObject> charactersToCheck; //characters queued to check to join combat
+    public List<GameObject> charactersRemovedFromCombat; //characters removed and cannot join back
     public TurnStage turnStage; //turn of stage - MAY BE LEGACY AND NOT USED
 
     public EdgeCollider2D combatBounds; // Never used to my knowlage -Ryan
@@ -82,6 +83,7 @@ public class CombatHandler : MonoBehaviour {
         foreach(GameObject c in new List<GameObject>(charactersInCombat)) {
             if(c == null) {
                 charactersInCombat.Remove(c);
+                charactersRemovedFromCombat.Add(c);
             }
         }
     }
@@ -122,7 +124,9 @@ public class CombatHandler : MonoBehaviour {
     /// Remove a specific character from combat
     /// </summary>
     /// <param name="c"></param>
-    void RemoveFromCombat(GameObject c) {
+    public void RemoveFromCombat(GameObject c) {
+        charactersInCombat.Remove(c);
+        charactersRemovedFromCombat.Add(c);
         if (c == GameManagerScript.ins.player) {
             c.GetComponent<PlayerInfo>().LeaveCombat();
         } else {
@@ -164,11 +168,14 @@ public class CombatHandler : MonoBehaviour {
     IEnumerator TurnCheck() {
         yield return new WaitForEndOfFrame();
         RemoveDeadCharacters();
-        foreach (GameObject c in charactersInCombat) {
+        foreach (GameObject c in new List<GameObject>(charactersInCombat)) {
             if (c.GetComponent<CombatScript>().isReady) {
                 Time.timeScale = 0f;
                 //print("Turn: " + c.gameObject.name + " at " + Time.time);
                 currentCharactersTurn.Add(c);
+                if(c == GameManagerScript.ins.player) {
+                    CombatManager.ins.isPlayerTurn = true;
+                }
                 c.GetComponent<CombatScript>().isReady = false;
                 if(c.layer == 8) { //npc, means when need to run the AI
                     c.GetComponent<CombatScript>().AI(charactersInCombat, CombatManager.ins.GetPlayerHandler() == this.gameObject);
@@ -187,6 +194,9 @@ public class CombatHandler : MonoBehaviour {
                 continue;
             } else {
                 //print("START WAITING: " + c);
+                if(c == GameManagerScript.ins.player) {
+                    CombatManager.ins.isPlayerTurn = false;
+                }
                 c.GetComponent<CombatScript>().StartWaiting();
                 charactersToRemove.Add(c);
             }
@@ -214,11 +224,13 @@ public class CombatHandler : MonoBehaviour {
             }
             if (c.gameObject.layer == 8) { //npc
                 NPCInfo npcInfo = c.gameObject.GetComponent<NPCInfo>();
-                if (!npcInfo.inCombat) {
+                if (!npcInfo.inCombat || !npcInfo.combatCooldown) {
                     //have them join combat and determine later if they will run
-                    npcInfo.EnterCombat();
-                    charactersInCombat.Add(c.gameObject);
-                    charactersToCheck.Add(c.gameObject);
+                    if (!charactersRemovedFromCombat.Contains(c.gameObject)) {
+                        npcInfo.EnterCombat();
+                        charactersInCombat.Add(c.gameObject);
+                        charactersToCheck.Add(c.gameObject);
+                    }
                 }
             } else { //player
                 PlayerInfo playerInfo = c.gameObject.GetComponent<PlayerInfo>();

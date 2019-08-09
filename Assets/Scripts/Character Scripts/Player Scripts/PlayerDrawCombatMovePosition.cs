@@ -39,6 +39,9 @@ public class PlayerDrawCombatMovePosition : MonoBehaviour {
             foreach (CombatHUDLog.Movement lines in CombatManager.ins.combatHUDLog.loggedMoves) {
                 foreach (Vector3 v in lines.destination) {
                     Vector3 endPoint = v;
+                    if(startPoint == endPoint) {
+                        continue;
+                    }
                     Vector3 lineDir = (endPoint - startPoint);
                     Vector3 mouseEndDir = (endPoint - mousePosition);
                     Vector3 mouseStartDir = (mousePosition - startPoint);
@@ -162,7 +165,7 @@ public class PlayerDrawCombatMovePosition : MonoBehaviour {
     }
 
     public void LogPath(Vector2[] path) {
-        if (path == null || path.Length == 0) {
+        if (!PathCheck(path)) {
             canMove = false;
             return;
         }
@@ -171,17 +174,24 @@ public class PlayerDrawCombatMovePosition : MonoBehaviour {
         log.LogMovePosition(path);
     }
 
-    void DisplayPath(Vector2[] path) {
+    public bool PathCheck(Vector2[] path) {
         if (path == null || path.Length == 0) {
             lr.positionCount = 0;
-            return;
+            return false;
         }
-        if(!log.CanReachFirstPosition(path[path.Length - 2], path[path.Length - 1])){
+        if (!log.CanReachFirstPosition(path[path.Length - 1])) {
             lr.positionCount = 0;
-            return;
+            return false;
         }
         if (Input.GetKey(KeyCode.LeftControl)) {
             lr.positionCount = 0;
+            return false;
+        }
+        return true;
+    }
+
+    void DisplayPath(Vector2[] path) {
+        if (!PathCheck(path)) {
             return;
         }
         PointerEventData pointerData = new PointerEventData(EventSystem.current);
