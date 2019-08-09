@@ -94,6 +94,20 @@ public class CombatSpeech : MonoBehaviour {
         }
     }
 
+    public void RemoveFromQueue(RectTransform r) {
+        foreach(GivenOrder go in givenOrders) {
+            if(go.child == r.gameObject) {
+                if(givenOrders.IndexOf(go) == 0 && speechCoroutine != null) {
+                    StopCoroutine(speechCoroutine);
+                    speechCoroutine = null;
+                }
+                givenOrders.Remove(go);
+                Destroy(r.gameObject);
+                return;
+            }
+        }
+    }
+
     void RestartOrderQueue() {
         //Remove from UI
         //Remove from queue and reset the coroutine to know that it is finished

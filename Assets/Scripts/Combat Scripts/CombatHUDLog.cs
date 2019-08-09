@@ -175,13 +175,14 @@ public class CombatHUDLog : MonoBehaviour {
         return true;
     }
 
-    public bool CanReachFirstPosition(Vector3 o, Vector3 p) {
-        RaycastHit2D[] hits = Physics2D.RaycastAll(o, p - o, Vector3.Distance(o, p), CombatManager.ins.wallTest);
-        if (hits.Length % 2 == 0) {
+    public bool CanReachFirstPosition(Vector3 p) {
+        RaycastHit2D hit = Physics2D.Raycast(p, Vector2.zero, Mathf.Infinity, CombatManager.ins.mapTest);
+        if (hit.collider != null) {
             return true;
         }
         return false;
     }
+
 
 	
 	public bool HasPosition() {
