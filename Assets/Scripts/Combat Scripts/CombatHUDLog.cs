@@ -119,11 +119,17 @@ public class CombatHUDLog : MonoBehaviour {
         Destroy(targetMovement.path);
         Destroy(targetMovement.pathLR);
         if (!HasPosition()) {
-            CombatManager.ins.combatDrawMovePosition.playerAgent.map.FindPath(GameManagerScript.ins.player.transform.position, n, LogMovePosition);
+            if (GameManagerScript.ins.player.transform.position != n) {
+                CombatManager.ins.combatDrawMovePosition.playerAgent.map.FindPath(GameManagerScript.ins.player.transform.position, n, LogMovePosition);
+            }
         } else {
-            CombatManager.ins.combatDrawMovePosition.playerAgent.map.FindPath(GetLastPosition(), n, LogMovePosition);
+            if (GetLastPosition() != n) {
+                CombatManager.ins.combatDrawMovePosition.playerAgent.map.FindPath(GetLastPosition(), n, LogMovePosition);
+            }
         }
-        CombatManager.ins.combatDrawMovePosition.playerAgent.map.FindPath(GetLastPosition(), d[d.Length - 1], LogMovePosition);
+        if (GetLastPosition() != d[d.Length - 1]) {
+            CombatManager.ins.combatDrawMovePosition.playerAgent.map.FindPath(GetLastPosition(), d[d.Length - 1], LogMovePosition);
+        }
 
         foreach(Movement m in endofListMovement) {
             LogMovePosition(m.destination);

@@ -39,6 +39,9 @@ public class PlayerDrawCombatMovePosition : MonoBehaviour {
             foreach (CombatHUDLog.Movement lines in CombatManager.ins.combatHUDLog.loggedMoves) {
                 foreach (Vector3 v in lines.destination) {
                     Vector3 endPoint = v;
+                    if(startPoint == endPoint) {
+                        continue;
+                    }
                     Vector3 lineDir = (endPoint - startPoint);
                     Vector3 mouseEndDir = (endPoint - mousePosition);
                     Vector3 mouseStartDir = (mousePosition - startPoint);
