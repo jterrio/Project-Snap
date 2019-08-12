@@ -1,1 +1,0 @@
-{"arch":"Veteran","intu":48,"inte":22,"str":43,"cha":47,"pre":56,"dex":63,"per":9,"spirit":0,"UseMagic":true,"favWeap":"Magic","physical":["Female","Blonde","Short-Curly-Hair","White"],"personality":["Ingenuine","Obedient","Procrastinator","Unloyal","Unintelligent"]}

@@ -307,7 +307,7 @@ public class NpcGenerator : MonoBehaviour {
                 canUseMagic = true;
             }
             //NonMage but sudy magic
-            else if (rando < 55 && rando >= 35) {
+            else if (rando < 60 && rando >= 35) {
                 updateUnd(-5);
                 updateInt(5);
                 updatePrc(3);
@@ -369,7 +369,7 @@ public class NpcGenerator : MonoBehaviour {
             rando = RandomNum();
             //#Average Person
             if (rando >= 60) {
-                string[] People = { "Laborer", "Soldier", "Thug", "BlackSmith", "Banker" };
+                string[] People = { "Laborer", "Soldier", "Thug", "BlackSmith", "Merchant" };
                 Character(30, 7);
                 rando = RandomNum();
 
@@ -377,19 +377,19 @@ public class NpcGenerator : MonoBehaviour {
                 if (rando > 80) {
                     archetype = People[0];
                 }
-                // Soldier
-                else if (rando >= 80 && rando < 60) {
+                //Soldier
+                else if (rando <= 80 && rando > 60) {
                     archetype = People[1];
                 }
-                // Thug
-                else if (rando >= 60 && rando < 40) {
+                //Thug
+                else if (rando <= 60 && rando > 40) {
                     archetype = People[2];
                 }
-                // BlackSmith
-                else if (rando >= 40 && rando < 20) {
+                //BlackSmith
+                else if (rando <= 40 && rando > 20) {
                     archetype = People[3];
                 }
-                //Banker
+                //Merchant
                 else {
                     archetype = People[3];
                 }
@@ -632,7 +632,7 @@ public class NpcGenerator : MonoBehaviour {
         }
 
         if (rando >= top) {
-            atributes[6] = "Obedient";
+            atributes[6] = "Reliable";
             updatePrc(3);
         }
 
@@ -640,7 +640,7 @@ public class NpcGenerator : MonoBehaviour {
             atributes[6] = "Average";
         }
         else {
-            atributes[6] = "Disobedient";
+            atributes[6] = "Unreliable";
             updateDex(3);
         }
         // Can they lead
@@ -869,9 +869,6 @@ public class NpcGenerator : MonoBehaviour {
         rando = RandomNum();
         if (rando > 84) {
             traits[3] = List[0];
-            if (traits[0] == "Female") {
-                updateInt(-20);
-            }
         }
         else if (rando <= 84 && rando > 67) {
             traits[3] = List[1];
@@ -916,11 +913,18 @@ public class NpcGenerator : MonoBehaviour {
 
         else {
             traits[4] = hariList[6];
+            if (traits[0] == "Female")
+            {
+                traits[4] = hariList[5];
+            }
         }
         // Skin Tone
         rando = RandomNum();
-        if (rando >= 30) {
+        if (rando >= 40) {
             traits[5] = "White";
+        }
+        else if (rando < 40 && rando >= 30){
+            traits[5] = "Olive";
         }
         else if (rando < 30 && rando >= 20) {
             traits[5] = "Light-Brown";
