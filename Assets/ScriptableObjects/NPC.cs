@@ -21,40 +21,45 @@ public class NPC : ScriptableObject {
     public bool hasQuests;
     public bool canUseMagic;
     public WeaponType weaponType;
+    public Traits traits;
 
     [Header("Key Features")]
     public int spawnChance; //if the npc is an enemy, what the spawn chance will be
 
     // Trying to find a way to colapse this in the inspector. Also a way to auto set this from a text document
     //Also maybe hide from inspector if they are Average.
-    [Header("Personality Traits")] 
-    public Integrity integrity;
-    public Creativity creativity;
-    public Humor humor;
-    public Attitude attitude;
-    public Mind mind;
-    public Reliability reliability;
-    public Learning learning;
-    public Leadership leadership;
-    public Commitment commitment;
-    public Thinking thinking;
-    public Loyal loyal;
-    public Persuadability persuadability;
-    public Intelligence intelligence;
-    public Travel travel;
-    public Charisma charisma;
-    public Friendship friendship;
 
-    [Header("Physical Traits")]
-    public Gender gender;
-    public Body body;
-    public Height height;
-    public Hair hair;
-    public HairColor hairColor;
-    public SkinTone skinTone;
+    [System.Serializable]
+    public class Traits {
 
-    //[Header("Testing")]
-    //public PhysicalTraits physicalTraits;
+        [Header("Personality Traits")]
+        public Integrity integrity;
+        public Creativity creativity;
+        public Humor humor;
+        public Attitude attitude;
+        public Mind mind;
+        public Reliability reliability;
+        public Learning learning;
+        public Leadership leadership;
+        public Commitment commitment;
+        public Thinking thinking;
+        public Loyal loyal;
+        public Persuadability persuadability;
+        public Intelligence intelligence;
+        public Travel travel;
+        public Charisma charisma;
+        public Friendship friendship;
+
+
+        [Header("Physical Traits")]
+        public Gender gender;
+        public Body body;
+        public Height height;
+        public Hair hair;
+        public HairColor hairColor;
+        public SkinTone skinTone;
+
+    }
 
     public enum WeaponType {
         GUN,
@@ -205,34 +210,6 @@ public class NPC : ScriptableObject {
         BROWN,
         DARKBROWN,
     }
-
-    /*struct PhysicalTraits{
-        public enum Integrity{
-            GENUINE,
-            AVERAGE,
-            INGENUINE
-        }
-        public enum Creativity{
-            CREATIVE,
-            AVERAGE,
-            UNCREATIVE
-        }
-        public enum Humor{
-            JOKESTER,
-            AVERAGE,
-            SERIOUS,
-        }
-    }*/ //Structs may be the way to make this many things colapsable. We will see later.
-
-
-    /*public enum Faction {
-        EMPIRE, //those allied to sasha but not in black rose and are fighting against daud
-        REBELS, //daud and his crew
-        BLACKROSE, //sasha and her crew
-        METRODORA, //isabel and her crew
-        CIVILIAN, //civilians, like random people or merchants
-        GANG //expand on this (for multiple gangs)
-    }*/
 
     public enum MovementType {
         STATIONARY, //stands still, like a merchant
