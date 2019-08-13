@@ -26,7 +26,6 @@ public class NPC : ScriptableObject {
     [Header("Key Features")]
     public int spawnChance; //if the npc is an enemy, what the spawn chance will be
 
-    // Trying to find a way to colapse this in the inspector. Also a way to auto set this from a text document
     //Also maybe hide from inspector if they are Average.
 
     [System.Serializable]

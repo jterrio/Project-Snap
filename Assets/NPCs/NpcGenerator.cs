@@ -354,7 +354,7 @@ public class NpcGenerator : MonoBehaviour {
             }
         }
 
-        //# People on the streets
+        // People on the streets
         else if (rando <= 60 && rando > 5) {
             rando = RandomNum();
             //Can they use magic
@@ -376,22 +376,48 @@ public class NpcGenerator : MonoBehaviour {
                 //Laborer
                 if (rando > 80) {
                     archetype = People[0];
+                    updateUnd(3);
+                    updateInt(-5);
+                    updateStr(4);
+                    updateDex(4);
+                    updatePrc(2);
                 }
                 //Soldier
                 else if (rando <= 80 && rando > 60) {
                     archetype = People[1];
+                    updateUnd(5);
+                    updateInt(-2);
+                    updateStr(3);
+                    updateDex(3);
+                    updatePrc(5);
+                    updatePer(2);
                 }
                 //Thug
-                else if (rando <= 60 && rando > 40) {
+                else if (rando <= 60 && rando > 40) { // Add more to this thug class. Flesh it out.
                     archetype = People[2];
+                    updateUnd(7);
+                    updateInt(-8);
+                    updateStr(5);
+                    updateDex(2);
+                    updatePrc(4);
+                    updatePer(1);
                 }
-                //BlackSmith
+                //BlackSmith: Thinking about changing the name to something else
                 else if (rando <= 40 && rando > 20) {
                     archetype = People[3];
+                    updateUnd(3);
+                    updateInt(2);
+                    updateStr(4);
+                    updatePrc(4);
+                    updatePer(2);
                 }
                 //Merchant
                 else {
                     archetype = People[3];
+                    updateUnd(2);
+                    updateInt(5);
+                    updateDex(4);
+                    updatePrc(2);
                 }
             }
 
@@ -943,17 +969,10 @@ public class NpcGenerator : MonoBehaviour {
     /// Runs the whole function and is the basic controller that updates values
     /// </summary>
     public void Run() {
-        NpcType();//Creating the Character base stats and Choosing What type they will be peasant Average Joe...
-        /*print(archetype);
-        if (canUseMagic) {
-            print("Can use Magic");
-        }
-        else {
-            print("Cannot use Magic");
-        }
-        print("Favorite weapon type is");*/
+        //Creating the character's base stats and choosing what archeype they will be & adjusting their base stats accordingly
+        NpcType();
 
-        //Physical Traits being made, possibaly spirt chooser
+        //Physical Traits being made, possibaly sprite chooser
         physicalTraits = Traits();
         int physicalCount = 0;
         for (int i = 0; i < physicalTraits.Length; i++){
@@ -991,34 +1010,6 @@ public class NpcGenerator : MonoBehaviour {
         }
         personalityTraits = perTraits;
         FinalizeValues();//Fixes any stat issues
-        /*print("Intuition:" + intuition);
-        print("Intelligence:" + intelligence);
-        print("Strength:" + strength);
-        print("Charisma:" + charisma);
-        print("Precision" + precision);
-        print("Dextarity:" + dexterity);
-        print("Perception:" + perception);
-        int count = 0;
-        foreach( string x in personalityTraits){
-            if (x != "0" && x != "Average"){
-                print(x + "");
-            }
-        }
-        print("");
-        //print(personalityTraits);
-        foreach (string x in physicalTraits) {
-            count++;
-            if (x != "0" && x != "Average"){
-                if (count == 6) {
-                    print("Hair,");
-                }
-
-                print(x);
-            }
-        }
-        print("Skin Tone");
-        */
-
 }
 
     /// <summary>
