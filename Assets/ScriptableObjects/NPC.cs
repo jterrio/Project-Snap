@@ -69,6 +69,10 @@ public class NPC : ScriptableObject {
         MAGIC,
         NOTHING
     }
+    public enum Magic{
+        YES,
+        NO
+    }
     public enum Archetype{
         MageStudent,
         StudyMagicStudent,
@@ -89,84 +93,83 @@ public class NPC : ScriptableObject {
 
     //Personality Traits
     public enum Integrity {
-        GENUINE,
         AVERAGE,
+        GENUINE,
         INGENUINE
     }
     public enum Creativity {
-        CREATIVE,
         AVERAGE,
+        CREATIVE,
         UNCREATIVE
     }
     public enum Humor {
-        JOKESTER,
         AVERAGE,
+        JOKESTER,
         SERIOUS,
     }
     public enum Attitude {
-        ARROGANT,
         AVERAGE,
+        ARROGANT,
         SELFDEPRICATING
     }
     public enum Mind {
-        MEATHEAD,
         AVERAGE,
+        MEATHEAD,
         SAVVY
     }
     public enum Reliability{
-        RELIABLE,
         AVERAGE,
+        RELIABLE,
         UNRELIABLE
     }
     public enum Learning {
-        BOOKWORM,
         AVERAGE,
+        BOOKWORM,
         HANDSON
     }
     public enum Leadership {
-        DIRECT,
         AVERAGE,
+        DIRECT,
         UNCLEAR
     }
     public enum Commitment {
-        COMMITTED,
         AVERAGE,
+        COMMITTED,
         PROCRASTINATOR
     }
     public enum Thinking {
-        QUICKTHINKER,
         AVERAGE,
+        QUICKTHINKER,
         SLOW
     }
     public enum Loyal {
-        LOYAL,
         AVERAGE,
+        LOYAL,
         UNLOYAL
     }
-    public enum Persuadability
-    {
-        PUSHOVER,
+    public enum Persuadability{
         AVERAGE,
+        PUSHOVER,
         STUBBORN
     }
     public enum Intelligence {
-        INTELLIGENT,
         AVERAGE,
+        INTELLIGENT,
         UNINTELLIGENT
     }
     public enum Travel {
-        WONDERLUST,
         AVERAGE,
+        WONDERLUST,
         SHUTIN
     }
     public enum Charisma {
-        CHARISMATIC,
         AVERAGE,
+        CHARISMATIC,
         DULL
     }
     public enum Friendship {
-        FRIENDLY,
         AVERAGE,
+        FRIENDLY,
         UNFRIENDLY
     }
 
@@ -176,13 +179,13 @@ public class NPC : ScriptableObject {
         FEMALE
     }
     public enum Body {
-        BUFF,
         AVERAGE,
+        BUFF,
         SCRAWNY
     }
     public enum Height {
-        TALL,
         AVERAGE,
+        TALL,
         SHORT
     }
     public enum Hair {
