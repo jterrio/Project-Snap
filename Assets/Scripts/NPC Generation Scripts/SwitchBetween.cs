@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class SwitchBetween : MonoBehaviour
 {
-    // Start is called before the first frame update
+    //This could probably be attached anywhere but to make it uniform attatch to a toggle object. Then, assign want you want to be toggled between.
     [Tooltip("This starts inactive")]
     public GameObject inactive;
 
