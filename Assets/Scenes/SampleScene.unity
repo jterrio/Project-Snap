@@ -17367,6 +17367,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 22c0a56ec03328a498aeaaa8eab72ce7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  allQuests: []
 --- !u!4 &1223375880
 Transform:
   m_ObjectHideFlags: 0

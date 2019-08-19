@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Defend : Quest {
+public class Defend : QuestObjective {
 
     public GameObject defendArea; //area of defend
     public float timeToDefend; //time to set for each wave

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Escort : Quest {
+public class Escort : QuestObjective {
 
     public GameObject[] positionsInRoute; //position to move to in the escort
     private int currentRoute; //positionsInRoute index
@@ -112,7 +112,7 @@ public class Escort : Quest {
     }
 
     bool IsPlayerTooFar() {
-        if(Vector2.Distance(player.transform.position, targetEscort.transform.position) > followDistance) {
+        if(Vector2.Distance(GameManagerScript.ins.player.transform.position, targetEscort.transform.position) > followDistance) {
             return true;
         }
         return false;

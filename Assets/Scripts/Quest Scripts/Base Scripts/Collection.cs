@@ -2,17 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Collection : Quest {
+public class Collection : QuestObjective {
 
     public Item targetItem;
     public int targetCount;
 
     void RemoveItemsFromPlayerInventory() {
-        player.GetComponent<PlayerInfo>().inventory.RemoveItem(targetItem, targetCount);
+        GameManagerScript.ins.player.GetComponent<PlayerInfo>().inventory.RemoveItem(targetItem, targetCount);
     }
 
     bool DoesPlayerHaveItems() {
-        return player.GetComponent<PlayerInfo>().inventory.HasItemCountInInventory(targetItem, targetCount);
+        return GameManagerScript.ins.player.GetComponent<PlayerInfo>().inventory.HasItemCountInInventory(targetItem, targetCount);
     }
 
 }

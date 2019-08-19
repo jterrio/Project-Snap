@@ -4,16 +4,12 @@ using UnityEngine;
 
 public class Quest : MonoBehaviour {
 
-    public float[] attitudeFactionChangeOnCompletion; //attitude changes for factions
-    public float attitudeNPCChangeOnCompletion; //attitude for the specific npc
-    public GameObject[] questCompletionReward; //reward for when you complete the quest
-    protected GameObject player;
+    private float[] attitudeFactionChangeOnCompletion; //attitude changes for factions
+    private float attitudeNPCChangeOnCompletion; //attitude for the specific npc
+    private GameObject[] questCompletionReward; //reward for when you complete the quest
+    public List<QuestObjective> questObjectives;
 
-    protected void Start() {
-        player = UIManager.ins.player;
-    }
-
-    public enum QuestType {
+    public enum Objectives {
         Delivery,
         Defend,
         Escort,
@@ -36,5 +32,5 @@ public class Quest : MonoBehaviour {
         TheNorth
         //add faction's stories
     }
-
 }
+

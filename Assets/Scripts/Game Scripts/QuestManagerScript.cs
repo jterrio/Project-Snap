@@ -5,7 +5,7 @@ using UnityEngine;
 public class QuestManagerScript : MonoBehaviour {
 
     public static QuestManagerScript ins;
-
+    public List<Quest> allQuests;
 
 	// Use this for initialization
 	void Start () {

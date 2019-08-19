@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Elimination : Quest {
+public class Elimination : QuestObjective {
 
     public GameObject targetNPC;
     public int targetCount;
