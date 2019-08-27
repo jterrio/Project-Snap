@@ -9,22 +9,4 @@ public class Elimination : QuestObjective {
     public int currentCount;
 
 
-    public bool isTarget(GameObject test) {
-        if(test.GetComponent<NPCInfo>().npc == targetNPC.GetComponent<NPCInfo>().npc) {
-            return true;
-        }
-        return false;
-    }
-
-    public void AddKill() {
-        currentCount += 1;
-    }
-
-    bool HasKilledEnough() {
-        if(currentCount >= targetCount) {
-            return true;
-        }
-        return false;
-    }
-
 }
