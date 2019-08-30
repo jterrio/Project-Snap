@@ -4452,6 +4452,7 @@ MonoBehaviour:
   playerInfo: {fileID: 0}
   playerInventory: {fileID: 0}
   playerSpells: {fileID: 0}
+  playerQuests: {fileID: 0}
   projectileTag: Projectile
   wallTag: Wall
 --- !u!4 &379495714
@@ -13102,6 +13103,11 @@ MonoBehaviour:
       myChoices:
         choices: []
       openShop: 0
+      givesQuest: 0
+      questID: 0
+      checkQuestCondition: 0
+      setToGoToForComplete: 0
+      setToGoToForInProgress: 0
       resetSet: 0
       reset: 0
     - speakerName: '[PlayerName]'
@@ -13110,6 +13116,11 @@ MonoBehaviour:
       myChoices:
         choices: []
       openShop: 0
+      givesQuest: 0
+      questID: 0
+      checkQuestCondition: 0
+      setToGoToForComplete: 0
+      setToGoToForInProgress: 0
       resetSet: 0
       reset: 0
     - speakerName: '[NPCName]'
@@ -13118,6 +13129,11 @@ MonoBehaviour:
       myChoices:
         choices: []
       openShop: 0
+      givesQuest: 0
+      questID: 0
+      checkQuestCondition: 0
+      setToGoToForComplete: 0
+      setToGoToForInProgress: 0
       resetSet: 0
       reset: 0
   currentLine: 0
@@ -14233,49 +14249,6 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
---- !u!1 &863104226
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 863104227}
-  - component: {fileID: 863104231}
-  m_Layer: 0
-  m_Name: Quest2
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &863104227
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 863104226}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 1223375880}
-  m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &863104231
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 863104226}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 054e51a6d36f15948a3414967a5c96f4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &884795081
 GameObject:
   m_ObjectHideFlags: 0
@@ -16388,6 +16361,11 @@ MonoBehaviour:
       myChoices:
         choices: []
       openShop: 0
+      givesQuest: 0
+      questID: 0
+      checkQuestCondition: 0
+      setToGoToForComplete: 0
+      setToGoToForInProgress: 0
       resetSet: 0
       reset: 0
     - speakerName: '[Choice]'
@@ -16400,6 +16378,11 @@ MonoBehaviour:
         - choiceText: No
           setToGoTo: 2
       openShop: 0
+      givesQuest: 0
+      questID: 0
+      checkQuestCondition: 0
+      setToGoToForComplete: 0
+      setToGoToForInProgress: 0
       resetSet: 0
       reset: 0
   - dialogue:
@@ -16409,6 +16392,11 @@ MonoBehaviour:
       myChoices:
         choices: []
       openShop: 1
+      givesQuest: 0
+      questID: 0
+      checkQuestCondition: 0
+      setToGoToForComplete: 0
+      setToGoToForInProgress: 0
       resetSet: 0
       reset: 1
   - dialogue:
@@ -16418,6 +16406,11 @@ MonoBehaviour:
       myChoices:
         choices: []
       openShop: 0
+      givesQuest: 0
+      questID: 0
+      checkQuestCondition: 0
+      setToGoToForComplete: 0
+      setToGoToForInProgress: 0
       resetSet: 0
       reset: 1
   currentLine: 0
@@ -17423,7 +17416,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1862112507}
-  - {fileID: 863104227}
   m_Father: {fileID: 0}
   m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -17792,6 +17784,11 @@ MonoBehaviour:
       myChoices:
         choices: []
       openShop: 0
+      givesQuest: 0
+      questID: 0
+      checkQuestCondition: 0
+      setToGoToForComplete: 0
+      setToGoToForInProgress: 0
       resetSet: 0
       reset: 0
     - speakerName: '[PlayerName]'
@@ -17800,6 +17797,11 @@ MonoBehaviour:
       myChoices:
         choices: []
       openShop: 0
+      givesQuest: 0
+      questID: 0
+      checkQuestCondition: 0
+      setToGoToForComplete: 0
+      setToGoToForInProgress: 0
       resetSet: 0
       reset: 0
     - speakerName: '[NPCName]'
@@ -17808,6 +17810,11 @@ MonoBehaviour:
       myChoices:
         choices: []
       openShop: 0
+      givesQuest: 0
+      questID: 0
+      checkQuestCondition: 0
+      setToGoToForComplete: 0
+      setToGoToForInProgress: 0
       resetSet: 0
       reset: 0
   currentLine: 0
@@ -20296,6 +20303,20 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 1224020499}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1459207477
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1459207476}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 364a52ab67703b84594588fa868eea11, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  completedQuests: []
+  inProgressQuests: []
 --- !u!1 &1479241501
 GameObject:
   m_ObjectHideFlags: 0
@@ -22670,6 +22691,11 @@ MonoBehaviour:
       myChoices:
         choices: []
       openShop: 0
+      givesQuest: 0
+      questID: 0
+      checkQuestCondition: 0
+      setToGoToForComplete: 0
+      setToGoToForInProgress: 0
       resetSet: 0
       reset: 0
     - speakerName: '[PlayerName]'
@@ -22678,6 +22704,11 @@ MonoBehaviour:
       myChoices:
         choices: []
       openShop: 0
+      givesQuest: 0
+      questID: 0
+      checkQuestCondition: 0
+      setToGoToForComplete: 0
+      setToGoToForInProgress: 0
       resetSet: 0
       reset: 0
     - speakerName: '[NPCName]'
@@ -22686,6 +22717,11 @@ MonoBehaviour:
       myChoices:
         choices: []
       openShop: 0
+      givesQuest: 0
+      questID: 0
+      checkQuestCondition: 0
+      setToGoToForComplete: 0
+      setToGoToForInProgress: 0
       resetSet: 0
       reset: 0
   currentLine: 0
@@ -24195,9 +24231,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1862112507}
-  - component: {fileID: 1862112510}
+  - component: {fileID: 1862112508}
   m_Layer: 0
-  m_Name: Quest1
+  m_Name: Quest0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -24217,7 +24253,7 @@ Transform:
   m_Father: {fileID: 1223375880}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1862112510
+--- !u!114 &1862112508
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -24226,9 +24262,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 1862112506}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 054e51a6d36f15948a3414967a5c96f4, type: 3}
+  m_Script: {fileID: 11500000, guid: 123d11310c0e35d4c845240b5d928262, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  attitudeFactionChangeOnCompletion: []
+  attitudeNPCChangeOnCompletion: 0
+  questCompletionReward: []
+  questObjectives: []
+  questID: 0
 --- !u!1 &1879560636
 GameObject:
   m_ObjectHideFlags: 0
@@ -24697,7 +24738,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1942604906
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -24915,6 +24956,11 @@ MonoBehaviour:
       myChoices:
         choices: []
       openShop: 0
+      givesQuest: 0
+      questID: 0
+      checkQuestCondition: 0
+      setToGoToForComplete: 0
+      setToGoToForInProgress: 0
       resetSet: 0
       reset: 0
     - speakerName: '[PlayerName]'
@@ -24923,6 +24969,11 @@ MonoBehaviour:
       myChoices:
         choices: []
       openShop: 0
+      givesQuest: 0
+      questID: 0
+      checkQuestCondition: 0
+      setToGoToForComplete: 0
+      setToGoToForInProgress: 0
       resetSet: 0
       reset: 0
     - speakerName: '[NPCName]'
@@ -24931,6 +24982,11 @@ MonoBehaviour:
       myChoices:
         choices: []
       openShop: 0
+      givesQuest: 1
+      questID: 0
+      checkQuestCondition: 0
+      setToGoToForComplete: 0
+      setToGoToForInProgress: 0
       resetSet: 0
       reset: 0
   currentLine: 0
@@ -24999,7 +25055,7 @@ MonoBehaviour:
   spirituality: 1
   dexterity: 10
   perception: 10
-  attitude: -90
+  attitude: 100
   fear: -89
   danger: 0
 --- !u!114 &1942604916

@@ -25,7 +25,6 @@ public class SpeechManager : MonoBehaviour {
     private string textToDisplay;
     private bool hasStartedTalking = false;
     private bool hasFinishedTalking = false;
-    private bool willReset = false;
     private bool inChoice = false;
     private bool inShop = false;
     private Coroutine typingCoroutine;
@@ -99,6 +98,7 @@ public class SpeechManager : MonoBehaviour {
             hasFinishedTalking = false;
             //checks to see if the current dialogue does not open a shop
             //if it does, this wont run and the shop will open from this line
+            GiveQuest(dialogue);
             if (!CheckShop(dialogue)) {
 
                 //check to see if we can continue talking (reached the last line) and move current dialogue to next one
@@ -122,6 +122,14 @@ public class SpeechManager : MonoBehaviour {
     bool CheckShop(NPCSpeechHolder.Dialogue dialogue) {
         if (dialogue.openShop) {
             OpenShop(); //opens shop and sets values
+            return true;
+        }
+        return false;
+    }
+
+    bool GiveQuest(NPCSpeechHolder.Dialogue dialogue) {
+        if (dialogue.givesQuest) {
+            GameManagerScript.ins.playerQuests.AddQuest(QuestManagerScript.ins.GetQuest(dialogue.questID));
             return true;
         }
         return false;

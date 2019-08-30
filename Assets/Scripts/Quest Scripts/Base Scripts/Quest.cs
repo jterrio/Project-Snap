@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Quest : MonoBehaviour {
+public abstract class Quest : MonoBehaviour {
 
     public float[] attitudeFactionChangeOnCompletion; //attitude changes for factions
     public float attitudeNPCChangeOnCompletion; //attitude for the specific npc
     public GameObject[] questCompletionReward; //reward for when you complete the quest
     public List<QuestObjective> questObjectives;
+    public int questID;
 
     public enum Objectives {
         Delivery,
@@ -32,5 +33,7 @@ public class Quest : MonoBehaviour {
         TheNorth
         //add faction's stories
     }
+
+    
 }
 

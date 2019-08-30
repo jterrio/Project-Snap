@@ -10,11 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 0}
-  m_Name: TestQuest1_Defend1
-  m_EditorClassIdentifier: Assembly-CSharp::QuestObjective/Defend
-  defendArea: {fileID: 0}
-  timeToDefend: 0
-  waves: 0
-  timeBetweenWaves: 0
+  m_Name: New Escort Objective
+  m_EditorClassIdentifier: Assembly-CSharp::QuestObjective/Escort
+  positionsInRoute:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  followDistance: 0
+  walkSpeed: 0
+  timeBetweenPointsInRoute: 0
+  targetEscort: {fileID: 0}
+  distanceFromRouteToSpawn: 0
   timeBetweenEnemySpawn: 0
-  enemySpawnLocations: []
+  spawnList: []

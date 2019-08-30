@@ -45,7 +45,6 @@ public class PlayerSpeechChecker : MonoBehaviour {
         //check to see if we can talk, if we can, set the variables
         if (collision.gameObject.GetComponent<NPCInfo>().isTalkable) {
             speech = collision.gameObject.GetComponent<NPCSpeechHolder>();
-            speech.Player = gameObject;
             speech.IsPlayerInRange = true;
             targetNPC = collision.gameObject;
             canTalk = true;

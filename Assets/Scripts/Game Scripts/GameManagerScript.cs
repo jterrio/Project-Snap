@@ -9,6 +9,7 @@ public class GameManagerScript : MonoBehaviour {
     public PlayerInfo playerInfo;
     public Inventory playerInventory;
     public SpellInventory playerSpells;
+    public QuestInventory playerQuests;
 
     //TAGS FOR SPELLS
     public string projectileTag = "Projectile";
@@ -44,6 +45,7 @@ public class GameManagerScript : MonoBehaviour {
         playerInfo = player.GetComponent<PlayerInfo>();
         playerInventory = playerInfo.inventory;
         playerSpells = playerInfo.spellInventory;
+        playerQuests = player.GetComponent<QuestInventory>();
 	}
 
 

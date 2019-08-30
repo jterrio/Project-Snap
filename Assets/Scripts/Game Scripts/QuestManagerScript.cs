@@ -22,6 +22,10 @@ public class QuestManagerScript : MonoBehaviour {
 
 
     }
+
+    public Quest GetQuest(int i) {
+        return allQuests[i];
+    }
 	
     public void AddAllQuests() {
         foreach(Transform child in transform) {

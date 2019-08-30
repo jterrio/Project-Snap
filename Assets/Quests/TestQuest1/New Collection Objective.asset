@@ -10,8 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 0}
-  m_Name: TestQuest1_Elim1
-  m_EditorClassIdentifier: Assembly-CSharp::QuestObjective/Elimination
-  targetNPC: {fileID: 0}
+  m_Name: New Collection Objective
+  m_EditorClassIdentifier: Assembly-CSharp::QuestObjective/Collection
+  targetItem: {fileID: 0}
   targetCount: 0
-  currentCount: 0
