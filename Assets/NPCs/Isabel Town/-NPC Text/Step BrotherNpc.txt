@@ -1,0 +1,1 @@
+{"arch":"Child","intu":21,"inte":6,"str":21,"cha":15,"pre":21,"dex":6,"per":9,"spirit":0,"UseMagic":true,"favWeap":"MageSword","physical":["Male","Scrawny","Red","Receding-Hair","White"],"personality":["Ingenuine","Uncreative","Serious","Meat-Head","Disobedient","Direct","Quick-Thinker"]}

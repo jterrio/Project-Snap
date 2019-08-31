@@ -1,0 +1,51 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 46b733aefa20d564b92daa0e08fe7f1a, type: 3}
+  m_Name: Brian Tate
+  m_EditorClassIdentifier: 
+  characterName: Brian Tate
+  nickname: 
+  archetype: 13
+  characterAge: 26
+  description: Creative Jokester SelfDepricating MeatHead Book-Worm Quick-Thinker
+    Loyal Stubborn Unintelligent Dull  Female Scrawny THinning Brown
+  itemPool: []
+  faction: 0
+  isTalkable: 0
+  isKeyNPC: 0
+  isMerchant: 0
+  hasQuests: 0
+  canUseMagic: 0
+  weaponType: 1
+  spawnChance: 0
+  integrity: 1
+  creativity: 0
+  humor: 0
+  attitude: 2
+  mind: 0
+  reliability: 1
+  learning: 0
+  leadership: 1
+  commitment: 1
+  thinking: 0
+  loyal: 0
+  persuadability: 2
+  intelligence: 2
+  travel: 1
+  charisma: 2
+  friendship: 1
+  gender: 1
+  body: 2
+  height: 1
+  hair: 6
+  hairColor: 0
+  skinTone: 3

@@ -1,0 +1,1 @@
+{"arch":"Government Person","intu":51,"inte":51,"str":43,"cha":42,"pre":58,"dex":60,"per":11,"spirit":0,"UseMagic":true,"favWeap":"MageSword","physical":["Female","Scrawny","White","Thinning-Hair","White"],"personality":["Serious","Arrogant","Disobedient","Quick-Thinker","Wonderlust"]}

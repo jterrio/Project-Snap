@@ -191,7 +191,7 @@ public class SpeechManager : MonoBehaviour {
         }
 
         //set the dialgoeu set to number
-        npcSpeech.SetDialogueSet(number);
+        npcSpeech.SetDialogueSetChoice(number);
         inChoice = false; //set values
         hasFinishedTalking = false;
         hasStartedTalking = false;

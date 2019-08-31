@@ -5,20 +5,61 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "New NPC", menuName = "NPC")]
 public class NPC : ScriptableObject {
 
+    [Header("Character Info")]
     public string characterName;
-    public string archetype;
+    public string nickname;
+    public Archetype archetype;
     public int characterAge;
+    public string description;
+    public Item[] itemPool;
+    public FactionManagerScript.Faction faction;
+
+    [Header("Attribuites")]
     public bool isTalkable;
     public bool isKeyNPC;
     public bool isMerchant;
     public bool hasQuests;
     public bool canUseMagic;
-    public string weaponType;
+    public WeaponType weaponType;
+    public Traits traits;
+
+    [Header("Key Features")]
     public int spawnChance; //if the npc is an enemy, what the spawn chance will be
 
-    public Item[] itemPool;
-    public FactionManagerScript.Faction faction;
-    public string description;
+    //Also maybe hide from inspector if they are Average.
+
+    [System.Serializable]
+    public class Traits {
+
+        [Header("Personality Traits")]
+        public Integrity integrity;
+        public Creativity creativity;
+        public Humor humor;
+        public Attitude attitude;
+        public Mind mind;
+        public Reliability reliability;
+        public Learning learning;
+        public Leadership leadership;
+        public Commitment commitment;
+        public Thinking thinking;
+        public Loyal loyal;
+        public Persuadability persuadability;
+        public Intelligence intelligence;
+        public Travel travel;
+        public Charisma charisma;
+        public Friendship friendship;
+
+
+        [Header("Physical Traits")]
+        public Gender gender;
+        public Body body;
+        public Height height;
+        public Hair hair;
+        public HairColor hairColor;
+        public SkinTone skinTone;
+
+    }
+
     public enum WeaponType {
         GUN,
         SWORD,
@@ -28,89 +69,124 @@ public class NPC : ScriptableObject {
         MAGIC,
         NOTHING
     }
+    public enum Magic{
+        YES,
+        NO
+    }
+    public enum Archetype{
+        MageStudent,
+        StudyMagicStudent,
+        JockSudent,
+        IntellectualStudent,
+        Student,
+        GovernmentPerson,
+        Laborer,
+        Soldier,
+        Thug,
+        Blacksmith,
+        Merchant,
+        Veteran,
+        Child,
+        LowerClass,
+        Hero
+    }
+
+    //Personality Traits
     public enum Integrity {
-        GENUINE,
         AVERAGE,
+        GENUINE,
         INGENUINE
     }
     public enum Creativity {
-        CREATIVE,
         AVERAGE,
+        CREATIVE,
         UNCREATIVE
     }
     public enum Humor {
-        JOKESTER,
         AVERAGE,
+        JOKESTER,
         SERIOUS,
     }
     public enum Attitude {
-        Arrogant,
         AVERAGE,
-        SelfDepricating
+        ARROGANT,
+        SELFDEPRICATING
     }
     public enum Mind {
-        MEATHEAD,
         AVERAGE,
+        MEATHEAD,
         SAVVY
     }
-    public enum Learning {
-        BOOKWORM,
+    public enum Reliability{
         AVERAGE,
+        RELIABLE,
+        UNRELIABLE
+    }
+    public enum Learning {
+        AVERAGE,
+        BOOKWORM,
         HANDSON
     }
     public enum Leadership {
-        DIRECT,
         AVERAGE,
+        DIRECT,
         UNCLEAR
     }
     public enum Commitment {
-        COMMITTED,
         AVERAGE,
+        COMMITTED,
         PROCRASTINATOR
     }
     public enum Thinking {
-        QUICKTHINKER,
         AVERAGE,
+        QUICKTHINKER,
         SLOW
     }
     public enum Loyal {
-        LOYAL,
         AVERAGE,
+        LOYAL,
         UNLOYAL
     }
-    public enum Intelligence {
-        INTELLIGENT,
+    public enum Persuadability{
         AVERAGE,
+        PUSHOVER,
+        STUBBORN
+    }
+    public enum Intelligence {
+        AVERAGE,
+        INTELLIGENT,
         UNINTELLIGENT
     }
     public enum Travel {
-        WONDERLUST,
         AVERAGE,
+        WONDERLUST,
         SHUTIN
     }
     public enum Charisma {
-        CHARISMATIC,
         AVERAGE,
+        CHARISMATIC,
         DULL
     }
     public enum Friendship {
-        FRIENDLY,
         AVERAGE,
+        FRIENDLY,
         UNFRIENDLY
     }
-    public enum Sex {
+
+    //Phsyical Traits
+    public enum Gender {
         MALE,
         FEMALE
     }
     public enum Body {
+        AVERAGE,
         BUFF,
-        Average,
-        Scrawny
+        SCRAWNY
     }
     public enum Height {
-        Tall,
-        Average,
-        Short
+        AVERAGE,
+        TALL,
+        SHORT
     }
     public enum Hair {
         LONGCURLY,
@@ -129,16 +205,13 @@ public class NPC : ScriptableObject {
         WHITE,
         RED
     }
-
-
-    /*public enum Faction {
-        EMPIRE, //those allied to sasha but not in black rose and are fighting against daud
-        REBELS, //daud and his crew
-        BLACKROSE, //sasha and her crew
-        METRODORA, //isabel and her crew
-        CIVILIAN, //civilians, like random people or merchants
-        GANG //expand on this (for multiple gangs)
-    }*/
+    public enum SkinTone{
+        WHITE,
+        OLIVE,
+        LIGHTBROWN,
+        BROWN,
+        DARKBROWN,
+    }
 
     public enum MovementType {
         STATIONARY, //stands still, like a merchant
