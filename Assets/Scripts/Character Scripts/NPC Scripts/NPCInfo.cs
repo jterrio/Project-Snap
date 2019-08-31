@@ -14,7 +14,7 @@ public class NPCInfo : CharacterInfo {
     public Inventory merchantInventory;
     public float merchantMoney;
     public bool isTalkable; //access via NPC class
-    [HideInInspector] public bool isMerchant; //access via NPC class
+    public bool isMerchant; //access via NPC class
     [HideInInspector] public bool isKeyNPC; //access via NPC class
     [HideInInspector] public bool hasQuests; //access via NPC class
     [HideInInspector] public FactionManagerScript.Faction faction; //access via NPC class
