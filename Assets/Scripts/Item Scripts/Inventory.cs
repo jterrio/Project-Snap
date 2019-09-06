@@ -157,12 +157,24 @@ public class Inventory : MonoBehaviour {
     /// <param name="count"></param>
     /// <returns></returns>
     public bool HasItemCountInInventory(Item item, int count) {
-        foreach(InventorySlot inv in inventory) {
-            if(inv.item == item && inv.count >= count) {
-                return true;
+        if (item.isStackable) {
+            foreach (InventorySlot inv in inventory) {
+                if (inv.item == item && inv.count >= count) {
+                    return true;
+                }
             }
+            return false;
+        } else {
+            int c = 0;
+            foreach (InventorySlot inv in inventory) {
+                if (inv.item == item) {
+                    c += 1;
+                }
+            }
+            if(c >= count) {
+                return true;
+            }return false;
         }
-        return false;
     }
 
     public int Size {

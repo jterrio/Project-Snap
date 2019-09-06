@@ -7,13 +7,13 @@ public class QuestManagerScript : MonoBehaviour {
     public static QuestManagerScript ins;
     public List<Quest> allQuests;
 
-	// Use this for initialization
-	void Start () {
-		//singelton
-        if(ins == null) {
+    // Use this for initialization
+    void Start() {
+        //singelton
+        if (ins == null) {
             ins = this;
         } else {
-            if(ins != this) {
+            if (ins != this) {
                 Destroy(gameObject);
             }
         }

@@ -33,6 +33,8 @@ public class SpeechManager : MonoBehaviour {
     private PlayerInfo pInfo;
     private NPCInfo npcInfo;
 
+    private bool changedQuestDialoguePath = false;
+
     public bool InShop {
         get {
             return inShop;
@@ -98,13 +100,23 @@ public class SpeechManager : MonoBehaviour {
             hasFinishedTalking = false;
             //checks to see if the current dialogue does not open a shop
             //if it does, this wont run and the shop will open from this line
+            if (dialogue.checkQuestCondition) {
+                changedQuestDialoguePath = true;
+                if (CheckQuest(dialogue)) {
+                    npcSpeech.SetDialogueSetChoice(dialogue.setToGoToForComplete);
+                } else {
+                    npcSpeech.SetDialogueSetChoice(dialogue.setToGoToForInProgress);
+                }
+            } else {
+                changedQuestDialoguePath = false;
+            }
             GiveQuest(dialogue);
             if (!CheckShop(dialogue)) {
 
                 //check to see if we can continue talking (reached the last line) and move current dialogue to next one
                 bool IsFinished = npcSpeech.UpdateCurrentLine();
                 dialogue = npcSpeech.Speak(); //get next line
-                if (!IsFinished) { //if not finished, print next line
+                if (!IsFinished || changedQuestDialoguePath) { //if not finished, print next line
                     DoDialogue(dialogue);
                 } else { //if we are finished, end the dialogue
                     EndSpeech();
@@ -130,6 +142,14 @@ public class SpeechManager : MonoBehaviour {
     bool GiveQuest(NPCSpeechHolder.Dialogue dialogue) {
         if (dialogue.givesQuest) {
             GameManagerScript.ins.playerQuests.AddQuest(QuestManagerScript.ins.GetQuest(dialogue.questID));
+            return true;
+        }
+        return false;
+    }
+
+    bool CheckQuest(NPCSpeechHolder.Dialogue dialogue) {
+        if (QuestManagerScript.ins.GetQuest(dialogue.questID).HasCompletedCurrentObjective()) {
+            QuestManagerScript.ins.GetQuest(dialogue.questID).CompleteObjective();
             return true;
         }
         return false;

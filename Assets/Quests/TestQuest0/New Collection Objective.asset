@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 0}
   m_Name: New Collection Objective
   m_EditorClassIdentifier: Assembly-CSharp::QuestObjective/Collection
-  targetItem: {fileID: 0}
-  targetCount: 0
+  targetItem: {fileID: 11400000, guid: 92a955bad32bbe44dbdc5b68821a9d87, type: 2}
+  targetCount: 10

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public interface QuestBase {
 
-    bool HasCompletedObjective(QuestObjective qo);
+    bool HasCompletedCurrentObjective();
     void CompleteObjective();
     bool CanCompleteQuest();
     void CompleteQuest();

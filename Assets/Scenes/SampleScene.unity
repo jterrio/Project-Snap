@@ -17493,6 +17493,121 @@ PrefabInstance:
       propertyPath: _map
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 114262197689613194, guid: dc0fc5471c8d19e4a88db1f7a11f2cc1,
+        type: 3}
+      propertyPath: inventory.Array.size
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 114262197689613194, guid: dc0fc5471c8d19e4a88db1f7a11f2cc1,
+        type: 3}
+      propertyPath: inventory.Array.data[0].item
+      value: 
+      objectReference: {fileID: 11400000, guid: 92a955bad32bbe44dbdc5b68821a9d87,
+        type: 2}
+    - target: {fileID: 114262197689613194, guid: dc0fc5471c8d19e4a88db1f7a11f2cc1,
+        type: 3}
+      propertyPath: inventory.Array.data[0].count
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114262197689613194, guid: dc0fc5471c8d19e4a88db1f7a11f2cc1,
+        type: 3}
+      propertyPath: inventory.Array.data[1].item
+      value: 
+      objectReference: {fileID: 11400000, guid: 92a955bad32bbe44dbdc5b68821a9d87,
+        type: 2}
+    - target: {fileID: 114262197689613194, guid: dc0fc5471c8d19e4a88db1f7a11f2cc1,
+        type: 3}
+      propertyPath: inventory.Array.data[1].count
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114262197689613194, guid: dc0fc5471c8d19e4a88db1f7a11f2cc1,
+        type: 3}
+      propertyPath: inventory.Array.data[2].item
+      value: 
+      objectReference: {fileID: 11400000, guid: 92a955bad32bbe44dbdc5b68821a9d87,
+        type: 2}
+    - target: {fileID: 114262197689613194, guid: dc0fc5471c8d19e4a88db1f7a11f2cc1,
+        type: 3}
+      propertyPath: inventory.Array.data[2].count
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114262197689613194, guid: dc0fc5471c8d19e4a88db1f7a11f2cc1,
+        type: 3}
+      propertyPath: inventory.Array.data[3].item
+      value: 
+      objectReference: {fileID: 11400000, guid: 92a955bad32bbe44dbdc5b68821a9d87,
+        type: 2}
+    - target: {fileID: 114262197689613194, guid: dc0fc5471c8d19e4a88db1f7a11f2cc1,
+        type: 3}
+      propertyPath: inventory.Array.data[3].count
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114262197689613194, guid: dc0fc5471c8d19e4a88db1f7a11f2cc1,
+        type: 3}
+      propertyPath: inventory.Array.data[4].item
+      value: 
+      objectReference: {fileID: 11400000, guid: 92a955bad32bbe44dbdc5b68821a9d87,
+        type: 2}
+    - target: {fileID: 114262197689613194, guid: dc0fc5471c8d19e4a88db1f7a11f2cc1,
+        type: 3}
+      propertyPath: inventory.Array.data[4].count
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114262197689613194, guid: dc0fc5471c8d19e4a88db1f7a11f2cc1,
+        type: 3}
+      propertyPath: inventory.Array.data[5].item
+      value: 
+      objectReference: {fileID: 11400000, guid: 92a955bad32bbe44dbdc5b68821a9d87,
+        type: 2}
+    - target: {fileID: 114262197689613194, guid: dc0fc5471c8d19e4a88db1f7a11f2cc1,
+        type: 3}
+      propertyPath: inventory.Array.data[5].count
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114262197689613194, guid: dc0fc5471c8d19e4a88db1f7a11f2cc1,
+        type: 3}
+      propertyPath: inventory.Array.data[6].item
+      value: 
+      objectReference: {fileID: 11400000, guid: 92a955bad32bbe44dbdc5b68821a9d87,
+        type: 2}
+    - target: {fileID: 114262197689613194, guid: dc0fc5471c8d19e4a88db1f7a11f2cc1,
+        type: 3}
+      propertyPath: inventory.Array.data[6].count
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114262197689613194, guid: dc0fc5471c8d19e4a88db1f7a11f2cc1,
+        type: 3}
+      propertyPath: inventory.Array.data[7].item
+      value: 
+      objectReference: {fileID: 11400000, guid: 92a955bad32bbe44dbdc5b68821a9d87,
+        type: 2}
+    - target: {fileID: 114262197689613194, guid: dc0fc5471c8d19e4a88db1f7a11f2cc1,
+        type: 3}
+      propertyPath: inventory.Array.data[7].count
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114262197689613194, guid: dc0fc5471c8d19e4a88db1f7a11f2cc1,
+        type: 3}
+      propertyPath: inventory.Array.data[8].item
+      value: 
+      objectReference: {fileID: 11400000, guid: 92a955bad32bbe44dbdc5b68821a9d87,
+        type: 2}
+    - target: {fileID: 114262197689613194, guid: dc0fc5471c8d19e4a88db1f7a11f2cc1,
+        type: 3}
+      propertyPath: inventory.Array.data[8].count
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114262197689613194, guid: dc0fc5471c8d19e4a88db1f7a11f2cc1,
+        type: 3}
+      propertyPath: inventory.Array.data[9].item
+      value: 
+      objectReference: {fileID: 11400000, guid: 92a955bad32bbe44dbdc5b68821a9d87,
+        type: 2}
+    - target: {fileID: 114262197689613194, guid: dc0fc5471c8d19e4a88db1f7a11f2cc1,
+        type: 3}
+      propertyPath: inventory.Array.data[9].count
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: dc0fc5471c8d19e4a88db1f7a11f2cc1, type: 3}
 --- !u!1 &1224864446
@@ -24265,11 +24380,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 123d11310c0e35d4c845240b5d928262, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attitudeFactionChangeOnCompletion: []
+  attitudeFactionChangeOnCompletion:
+  - 0
+  - 0
+  - 0
   attitudeNPCChangeOnCompletion: 0
-  questCompletionReward: []
-  questObjectives: []
+  questCompletionReward:
+  - {fileID: 11400000, guid: 1c81e9ffabbdd5449b4ae34b229801d9, type: 2}
+  questGoldReward: 1005
+  questObjectives:
+  - subSectionObjectives:
+    - {fileID: 11400000, guid: 99b126caa2ddd3e48b28b8b0aa2cd401, type: 2}
   questID: 0
+  currentObjective: 0
 --- !u!1 &1879560636
 GameObject:
   m_ObjectHideFlags: 0
@@ -24987,8 +25110,64 @@ MonoBehaviour:
       checkQuestCondition: 0
       setToGoToForComplete: 0
       setToGoToForInProgress: 0
+      resetSet: 1
+      reset: 1
+  - dialogue:
+    - speakerName: '[NPCName]'
+      text: Did you get my items?
+      isChoice: 0
+      myChoices:
+        choices: []
+      openShop: 0
+      givesQuest: 0
+      questID: 0
+      checkQuestCondition: 1
+      setToGoToForComplete: 2
+      setToGoToForInProgress: 3
       resetSet: 0
       reset: 0
+  - dialogue:
+    - speakerName: '[NPCName]'
+      text: Thanks!
+      isChoice: 0
+      myChoices:
+        choices: []
+      openShop: 0
+      givesQuest: 0
+      questID: 0
+      checkQuestCondition: 0
+      setToGoToForComplete: 0
+      setToGoToForInProgress: 0
+      resetSet: 4
+      reset: 1
+  - dialogue:
+    - speakerName: '[NPCName]'
+      text: Ew, come back when you have the items, please!
+      isChoice: 0
+      myChoices:
+        choices: []
+      openShop: 0
+      givesQuest: 0
+      questID: 0
+      checkQuestCondition: 0
+      setToGoToForComplete: 0
+      setToGoToForInProgress: 0
+      resetSet: 1
+      reset: 1
+  - dialogue:
+    - speakerName: '[NPCName]'
+      text: Thanks for getting these items! Now begone!
+      isChoice: 0
+      myChoices:
+        choices: []
+      openShop: 0
+      givesQuest: 0
+      questID: 0
+      checkQuestCondition: 0
+      setToGoToForComplete: 0
+      setToGoToForInProgress: 0
+      resetSet: 4
+      reset: 1
   currentLine: 0
   currentSet: 0
 --- !u!114 &1942604913
