@@ -4452,6 +4452,7 @@ MonoBehaviour:
   playerInfo: {fileID: 0}
   playerInventory: {fileID: 0}
   playerSpells: {fileID: 0}
+  playerQuests: {fileID: 0}
   projectileTag: Projectile
   wallTag: Wall
 --- !u!4 &379495714
@@ -6517,7 +6518,7 @@ Camera:
   far clip plane: 1000
   field of view: 87.7
   orthographic: 1
-  orthographic size: 4.1953125
+  orthographic size: 4.1640625
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -13102,6 +13103,11 @@ MonoBehaviour:
       myChoices:
         choices: []
       openShop: 0
+      givesQuest: 0
+      questID: 0
+      checkQuestCondition: 0
+      setToGoToForComplete: 0
+      setToGoToForInProgress: 0
       resetSet: 0
       reset: 0
     - speakerName: '[PlayerName]'
@@ -13110,6 +13116,11 @@ MonoBehaviour:
       myChoices:
         choices: []
       openShop: 0
+      givesQuest: 0
+      questID: 0
+      checkQuestCondition: 0
+      setToGoToForComplete: 0
+      setToGoToForInProgress: 0
       resetSet: 0
       reset: 0
     - speakerName: '[NPCName]'
@@ -13118,6 +13129,11 @@ MonoBehaviour:
       myChoices:
         choices: []
       openShop: 0
+      givesQuest: 0
+      questID: 0
+      checkQuestCondition: 0
+      setToGoToForComplete: 0
+      setToGoToForInProgress: 0
       resetSet: 0
       reset: 0
   currentLine: 0
@@ -16345,6 +16361,11 @@ MonoBehaviour:
       myChoices:
         choices: []
       openShop: 0
+      givesQuest: 0
+      questID: 0
+      checkQuestCondition: 0
+      setToGoToForComplete: 0
+      setToGoToForInProgress: 0
       resetSet: 0
       reset: 0
     - speakerName: '[Choice]'
@@ -16357,6 +16378,11 @@ MonoBehaviour:
         - choiceText: No
           setToGoTo: 2
       openShop: 0
+      givesQuest: 0
+      questID: 0
+      checkQuestCondition: 0
+      setToGoToForComplete: 0
+      setToGoToForInProgress: 0
       resetSet: 0
       reset: 0
   - dialogue:
@@ -16366,6 +16392,11 @@ MonoBehaviour:
       myChoices:
         choices: []
       openShop: 1
+      givesQuest: 0
+      questID: 0
+      checkQuestCondition: 0
+      setToGoToForComplete: 0
+      setToGoToForInProgress: 0
       resetSet: 0
       reset: 1
   - dialogue:
@@ -16375,6 +16406,11 @@ MonoBehaviour:
       myChoices:
         choices: []
       openShop: 0
+      givesQuest: 0
+      questID: 0
+      checkQuestCondition: 0
+      setToGoToForComplete: 0
+      setToGoToForInProgress: 0
       resetSet: 0
       reset: 1
   currentLine: 0
@@ -17367,6 +17403,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 22c0a56ec03328a498aeaaa8eab72ce7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  allQuests: []
 --- !u!4 &1223375880
 Transform:
   m_ObjectHideFlags: 0
@@ -17377,7 +17414,8 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 1069.6187, y: 669.97815, z: 27.392612}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
+  m_Children:
+  - {fileID: 1862112507}
   m_Father: {fileID: 0}
   m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -17454,6 +17492,121 @@ PrefabInstance:
         type: 3}
       propertyPath: _map
       value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 114262197689613194, guid: dc0fc5471c8d19e4a88db1f7a11f2cc1,
+        type: 3}
+      propertyPath: inventory.Array.size
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 114262197689613194, guid: dc0fc5471c8d19e4a88db1f7a11f2cc1,
+        type: 3}
+      propertyPath: inventory.Array.data[0].item
+      value: 
+      objectReference: {fileID: 11400000, guid: 92a955bad32bbe44dbdc5b68821a9d87,
+        type: 2}
+    - target: {fileID: 114262197689613194, guid: dc0fc5471c8d19e4a88db1f7a11f2cc1,
+        type: 3}
+      propertyPath: inventory.Array.data[0].count
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114262197689613194, guid: dc0fc5471c8d19e4a88db1f7a11f2cc1,
+        type: 3}
+      propertyPath: inventory.Array.data[1].item
+      value: 
+      objectReference: {fileID: 11400000, guid: 92a955bad32bbe44dbdc5b68821a9d87,
+        type: 2}
+    - target: {fileID: 114262197689613194, guid: dc0fc5471c8d19e4a88db1f7a11f2cc1,
+        type: 3}
+      propertyPath: inventory.Array.data[1].count
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114262197689613194, guid: dc0fc5471c8d19e4a88db1f7a11f2cc1,
+        type: 3}
+      propertyPath: inventory.Array.data[2].item
+      value: 
+      objectReference: {fileID: 11400000, guid: 92a955bad32bbe44dbdc5b68821a9d87,
+        type: 2}
+    - target: {fileID: 114262197689613194, guid: dc0fc5471c8d19e4a88db1f7a11f2cc1,
+        type: 3}
+      propertyPath: inventory.Array.data[2].count
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114262197689613194, guid: dc0fc5471c8d19e4a88db1f7a11f2cc1,
+        type: 3}
+      propertyPath: inventory.Array.data[3].item
+      value: 
+      objectReference: {fileID: 11400000, guid: 92a955bad32bbe44dbdc5b68821a9d87,
+        type: 2}
+    - target: {fileID: 114262197689613194, guid: dc0fc5471c8d19e4a88db1f7a11f2cc1,
+        type: 3}
+      propertyPath: inventory.Array.data[3].count
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114262197689613194, guid: dc0fc5471c8d19e4a88db1f7a11f2cc1,
+        type: 3}
+      propertyPath: inventory.Array.data[4].item
+      value: 
+      objectReference: {fileID: 11400000, guid: 92a955bad32bbe44dbdc5b68821a9d87,
+        type: 2}
+    - target: {fileID: 114262197689613194, guid: dc0fc5471c8d19e4a88db1f7a11f2cc1,
+        type: 3}
+      propertyPath: inventory.Array.data[4].count
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114262197689613194, guid: dc0fc5471c8d19e4a88db1f7a11f2cc1,
+        type: 3}
+      propertyPath: inventory.Array.data[5].item
+      value: 
+      objectReference: {fileID: 11400000, guid: 92a955bad32bbe44dbdc5b68821a9d87,
+        type: 2}
+    - target: {fileID: 114262197689613194, guid: dc0fc5471c8d19e4a88db1f7a11f2cc1,
+        type: 3}
+      propertyPath: inventory.Array.data[5].count
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114262197689613194, guid: dc0fc5471c8d19e4a88db1f7a11f2cc1,
+        type: 3}
+      propertyPath: inventory.Array.data[6].item
+      value: 
+      objectReference: {fileID: 11400000, guid: 92a955bad32bbe44dbdc5b68821a9d87,
+        type: 2}
+    - target: {fileID: 114262197689613194, guid: dc0fc5471c8d19e4a88db1f7a11f2cc1,
+        type: 3}
+      propertyPath: inventory.Array.data[6].count
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114262197689613194, guid: dc0fc5471c8d19e4a88db1f7a11f2cc1,
+        type: 3}
+      propertyPath: inventory.Array.data[7].item
+      value: 
+      objectReference: {fileID: 11400000, guid: 92a955bad32bbe44dbdc5b68821a9d87,
+        type: 2}
+    - target: {fileID: 114262197689613194, guid: dc0fc5471c8d19e4a88db1f7a11f2cc1,
+        type: 3}
+      propertyPath: inventory.Array.data[7].count
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114262197689613194, guid: dc0fc5471c8d19e4a88db1f7a11f2cc1,
+        type: 3}
+      propertyPath: inventory.Array.data[8].item
+      value: 
+      objectReference: {fileID: 11400000, guid: 92a955bad32bbe44dbdc5b68821a9d87,
+        type: 2}
+    - target: {fileID: 114262197689613194, guid: dc0fc5471c8d19e4a88db1f7a11f2cc1,
+        type: 3}
+      propertyPath: inventory.Array.data[8].count
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114262197689613194, guid: dc0fc5471c8d19e4a88db1f7a11f2cc1,
+        type: 3}
+      propertyPath: inventory.Array.data[9].item
+      value: 
+      objectReference: {fileID: 11400000, guid: 92a955bad32bbe44dbdc5b68821a9d87,
+        type: 2}
+    - target: {fileID: 114262197689613194, guid: dc0fc5471c8d19e4a88db1f7a11f2cc1,
+        type: 3}
+      propertyPath: inventory.Array.data[9].count
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: dc0fc5471c8d19e4a88db1f7a11f2cc1, type: 3}
@@ -17746,6 +17899,11 @@ MonoBehaviour:
       myChoices:
         choices: []
       openShop: 0
+      givesQuest: 0
+      questID: 0
+      checkQuestCondition: 0
+      setToGoToForComplete: 0
+      setToGoToForInProgress: 0
       resetSet: 0
       reset: 0
     - speakerName: '[PlayerName]'
@@ -17754,6 +17912,11 @@ MonoBehaviour:
       myChoices:
         choices: []
       openShop: 0
+      givesQuest: 0
+      questID: 0
+      checkQuestCondition: 0
+      setToGoToForComplete: 0
+      setToGoToForInProgress: 0
       resetSet: 0
       reset: 0
     - speakerName: '[NPCName]'
@@ -17762,6 +17925,11 @@ MonoBehaviour:
       myChoices:
         choices: []
       openShop: 0
+      givesQuest: 0
+      questID: 0
+      checkQuestCondition: 0
+      setToGoToForComplete: 0
+      setToGoToForInProgress: 0
       resetSet: 0
       reset: 0
   currentLine: 0
@@ -20250,6 +20418,20 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 1224020499}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1459207477
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1459207476}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 364a52ab67703b84594588fa868eea11, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  completedQuests: []
+  inProgressQuests: []
 --- !u!1 &1479241501
 GameObject:
   m_ObjectHideFlags: 0
@@ -22624,6 +22806,11 @@ MonoBehaviour:
       myChoices:
         choices: []
       openShop: 0
+      givesQuest: 0
+      questID: 0
+      checkQuestCondition: 0
+      setToGoToForComplete: 0
+      setToGoToForInProgress: 0
       resetSet: 0
       reset: 0
     - speakerName: '[PlayerName]'
@@ -22632,6 +22819,11 @@ MonoBehaviour:
       myChoices:
         choices: []
       openShop: 0
+      givesQuest: 0
+      questID: 0
+      checkQuestCondition: 0
+      setToGoToForComplete: 0
+      setToGoToForInProgress: 0
       resetSet: 0
       reset: 0
     - speakerName: '[NPCName]'
@@ -22640,6 +22832,11 @@ MonoBehaviour:
       myChoices:
         choices: []
       openShop: 0
+      givesQuest: 0
+      questID: 0
+      checkQuestCondition: 0
+      setToGoToForComplete: 0
+      setToGoToForInProgress: 0
       resetSet: 0
       reset: 0
   currentLine: 0
@@ -24140,6 +24337,62 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1861142786}
   m_CullTransparentMesh: 0
+--- !u!1 &1862112506
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1862112507}
+  - component: {fileID: 1862112508}
+  m_Layer: 0
+  m_Name: Quest0
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1862112507
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1862112506}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1223375880}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1862112508
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1862112506}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 123d11310c0e35d4c845240b5d928262, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attitudeFactionChangeOnCompletion:
+  - faction1: 0
+    faction2: 6
+    opinion: 20
+  attitudeNPCChangeOnCompletion: 35
+  questCompletionReward:
+  - {fileID: 11400000, guid: 1c81e9ffabbdd5449b4ae34b229801d9, type: 2}
+  questGoldReward: 1005
+  questObjectives:
+  - subSectionObjectives:
+    - {fileID: 11400000, guid: 99b126caa2ddd3e48b28b8b0aa2cd401, type: 2}
+  questID: 0
+  currentObjective: 0
 --- !u!1 &1879560636
 GameObject:
   m_ObjectHideFlags: 0
@@ -24608,7 +24861,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1942604906
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -24826,6 +25079,11 @@ MonoBehaviour:
       myChoices:
         choices: []
       openShop: 0
+      givesQuest: 0
+      questID: 0
+      checkQuestCondition: 0
+      setToGoToForComplete: 0
+      setToGoToForInProgress: 0
       resetSet: 0
       reset: 0
     - speakerName: '[PlayerName]'
@@ -24834,6 +25092,11 @@ MonoBehaviour:
       myChoices:
         choices: []
       openShop: 0
+      givesQuest: 0
+      questID: 0
+      checkQuestCondition: 0
+      setToGoToForComplete: 0
+      setToGoToForInProgress: 0
       resetSet: 0
       reset: 0
     - speakerName: '[NPCName]'
@@ -24842,8 +25105,69 @@ MonoBehaviour:
       myChoices:
         choices: []
       openShop: 0
+      givesQuest: 1
+      questID: 0
+      checkQuestCondition: 0
+      setToGoToForComplete: 0
+      setToGoToForInProgress: 0
+      resetSet: 1
+      reset: 1
+  - dialogue:
+    - speakerName: '[NPCName]'
+      text: Did you get my items?
+      isChoice: 0
+      myChoices:
+        choices: []
+      openShop: 0
+      givesQuest: 0
+      questID: 0
+      checkQuestCondition: 1
+      setToGoToForComplete: 2
+      setToGoToForInProgress: 3
       resetSet: 0
       reset: 0
+  - dialogue:
+    - speakerName: '[NPCName]'
+      text: Thanks!
+      isChoice: 0
+      myChoices:
+        choices: []
+      openShop: 0
+      givesQuest: 0
+      questID: 0
+      checkQuestCondition: 0
+      setToGoToForComplete: 0
+      setToGoToForInProgress: 0
+      resetSet: 4
+      reset: 1
+  - dialogue:
+    - speakerName: '[NPCName]'
+      text: Ew, come back when you have the items, please!
+      isChoice: 0
+      myChoices:
+        choices: []
+      openShop: 0
+      givesQuest: 0
+      questID: 0
+      checkQuestCondition: 0
+      setToGoToForComplete: 0
+      setToGoToForInProgress: 0
+      resetSet: 1
+      reset: 1
+  - dialogue:
+    - speakerName: '[NPCName]'
+      text: Thanks for getting these items! Now begone!
+      isChoice: 0
+      myChoices:
+        choices: []
+      openShop: 0
+      givesQuest: 0
+      questID: 0
+      checkQuestCondition: 0
+      setToGoToForComplete: 0
+      setToGoToForInProgress: 0
+      resetSet: 4
+      reset: 1
   currentLine: 0
   currentSet: 0
 --- !u!114 &1942604913
@@ -24910,7 +25234,7 @@ MonoBehaviour:
   spirituality: 1
   dexterity: 10
   perception: 10
-  attitude: -90
+  attitude: 100
   fear: -89
   danger: 0
 --- !u!114 &1942604916

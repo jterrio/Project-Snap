@@ -70,6 +70,9 @@ public class NPCInfo : CharacterInfo {
     }
 
     public void InitPosition() {
+        if (movementTypeOld == movementType) {
+            return;
+        }
         movementTypeOld = movementType;
         switch (movementType) {
             case NPC.MovementType.AREA:
@@ -121,9 +124,7 @@ public class NPCInfo : CharacterInfo {
             }
             SetDirection();
             SetSprite();
-            if (movementTypeOld != movementType) {
-                InitPosition();
-            }
+            InitPosition();
         }
 
     }
@@ -198,6 +199,7 @@ public class NPCInfo : CharacterInfo {
             isMoving = true;
             polyNav.SetDestination(new Vector2(x, y));
         }
+        //StopCoroutine(waitCoroutine);
     }
 
     IEnumerator StartWaitingPatrol() {
@@ -208,6 +210,7 @@ public class NPCInfo : CharacterInfo {
             isMoving = true;
             polyNav.SetDestination(patrolPoints[0].transform.position);
         }
+        //StopCoroutine(waitCoroutine);
     }
 
     /// <summary>

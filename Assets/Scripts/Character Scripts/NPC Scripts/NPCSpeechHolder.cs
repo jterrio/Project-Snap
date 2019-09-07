@@ -6,7 +6,6 @@ using UnityEngine.UI;
 public class NPCSpeechHolder : MonoBehaviour {
 
     private NPCInfo info;
-    private GameObject player;
     private bool isPlayerInRange;
     public SpriteRenderer spriteRenderer;
     private Color defaultColor;
@@ -29,14 +28,27 @@ public class NPCSpeechHolder : MonoBehaviour {
 
     [System.Serializable]
     public class Dialogue {
+        [Header("Displayed Text")]
         public string speakerName;
         public string text;
 
+        [Header("Choices")]
         public bool isChoice;
         public Choices myChoices;
+
+        [Header("Shop")]
         public bool openShop; //open shop after choice/space
 
-   
+        [Header("Quest")]
+        public bool givesQuest;
+        public int questID;
+
+        [Header("Quest Conditionals")]
+        public bool checkQuestCondition;
+        public int setToGoToForComplete;
+        public int setToGoToForInProgress;
+
+        [Header("Reset")]
         public int resetSet; //set to reset to beginning
         public bool reset; //if it should reset
     }
@@ -102,15 +114,6 @@ public class NPCSpeechHolder : MonoBehaviour {
         }
         set {
             isPlayerInRange = value;
-        }
-    }
-
-    public GameObject Player {
-        get {
-            return player;
-        }
-        set {
-            player = value;
         }
     }
 
