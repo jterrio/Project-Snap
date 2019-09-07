@@ -4,12 +4,14 @@ using UnityEngine;
 
 public abstract class Quest : MonoBehaviour {
 
-    public float[] attitudeFactionChangeOnCompletion; //attitude changes for factions
+    public FactionManagerScript.FactionRelation[] attitudeFactionChangeOnCompletion; //attitude changes for factions
     public float attitudeNPCChangeOnCompletion; //attitude for the specific npc
+    public int NPCID;
     public Item[] questCompletionReward; //reward for when you complete the quest
     public int questGoldReward;
     public List<QuestObjectives> questObjectives;
     public int questID;
+    public int skillPointsRewards;
     [HideInInspector]
     public int currentObjective = 0;
 

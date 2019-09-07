@@ -21,6 +21,9 @@ public class TestQuest0 : Quest {
 
     protected override void CompleteQuest() {
         GameManagerScript.ins.playerQuests.FinishQuest(this);
+        foreach(FactionManagerScript.FactionRelation factionRelation in attitudeFactionChangeOnCompletion) {
+            FactionManagerScript.ins.SetFactionRelation(factionRelation.faction1, factionRelation.faction2, factionRelation.opinion);
+        }
     }
 
     public override bool HasCompletedCurrentObjective() {

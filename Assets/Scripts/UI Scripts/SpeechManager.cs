@@ -100,6 +100,7 @@ public class SpeechManager : MonoBehaviour {
             hasFinishedTalking = false;
             //checks to see if the current dialogue does not open a shop
             //if it does, this wont run and the shop will open from this line
+            
             if (dialogue.checkQuestCondition) {
                 changedQuestDialoguePath = true;
                 if (CheckQuest(dialogue)) {
@@ -110,6 +111,7 @@ public class SpeechManager : MonoBehaviour {
             } else {
                 changedQuestDialoguePath = false;
             }
+            
             GiveQuest(dialogue);
             if (!CheckShop(dialogue)) {
 

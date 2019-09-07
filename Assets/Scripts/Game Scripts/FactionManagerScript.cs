@@ -16,7 +16,8 @@ public class FactionManagerScript : MonoBehaviour {
         BLACKROSE, //sasha and her crew
         METRODORA, //isabel and her crew
         CIVILIAN, //civilians, like random people or merchants
-        GANG //expand on this (for multiple gangs)
+        GANG, //expand on this (for multiple gangs)
+        ISABEL //player faction 
     }
 
 

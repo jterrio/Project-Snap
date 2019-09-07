@@ -24381,10 +24381,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   attitudeFactionChangeOnCompletion:
-  - 0
-  - 0
-  - 0
-  attitudeNPCChangeOnCompletion: 0
+  - faction1: 0
+    faction2: 6
+    opinion: 20
+  attitudeNPCChangeOnCompletion: 35
   questCompletionReward:
   - {fileID: 11400000, guid: 1c81e9ffabbdd5449b4ae34b229801d9, type: 2}
   questGoldReward: 1005

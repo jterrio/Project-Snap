@@ -77,15 +77,29 @@ public class Inventory : MonoBehaviour {
         if(size < 0) {
             size = 0;
         }
-        foreach(InventorySlot inv in inventory) {
-            if(inv.item == item) { //once we find the item, remove the required amount
-                inv.count -= removeCount;
-                if(inv.count <= 0) { //check to see if the item should still exist in the inventory
-                    inventory.Remove(inv);
-                    return 0;
+        if (item.isStackable) {
+            foreach (InventorySlot inv in inventory) {
+                if (inv.item == item) { //once we find the item, remove the required amount
+                    inv.count -= removeCount;
+                    if (inv.count <= 0) { //check to see if the item should still exist in the inventory
+                        inventory.Remove(inv);
+                        return 0;
+                    }
+                    return inv.count;
                 }
-                return inv.count;
             }
+        } else {
+            int c = 0;
+            foreach (InventorySlot inv in new List<InventorySlot>(inventory)) {
+                if (inv.item == item) { //once we find the item, remove the required amount
+                    inventory.Remove(inv);
+                    c += 1;
+                    if(c >= removeCount) {
+                        return removeCount;
+                    }
+                }
+            }
+            return c;
         }
         return -1;
     }
