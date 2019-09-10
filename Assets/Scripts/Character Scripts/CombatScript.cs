@@ -30,9 +30,10 @@ public class CombatScript : MonoBehaviour {
 
 
     [Header("Spell Variables")]
-    private Spell selectedSpell; //spell that is being casted (or attempted to)
+    public Spell selectedSpell; //spell that is being casted (or attempted to)
     private Coroutine spellCoroutine; //coroutine for casting spell
-    private float progress = 0; //progress from 0 to 1 of the spell being cast
+    public float progress = 0; //progress from 0 to 1 of the spell being cast
+    private int progressI = 0;
     private float spellMemoryCooldown = 0.25f;
     
 
@@ -450,8 +451,8 @@ public class CombatScript : MonoBehaviour {
     /// </summary>
     /// <returns></returns>
     IEnumerator SpellEnumerator() {
-        for (int i = 0; i < (selectedSpell.castTime * 100); i++) { //run for loop based on seconds (* 100 to get precision)
-            progress = (i / (selectedSpell.castTime * 100)); //update progress
+        for (progressI = 0; progressI < (selectedSpell.castTime * 100); progressI++) { //run for loop based on seconds (* 100 to get precision)
+            progress = (progressI / (selectedSpell.castTime * 100)); //update progress
             SpellStaminaCheck(); //check stamina
 
             npcInfo.DrainStamina( ((selectedSpell.energyToCast - (selectedSpell.energyToCast * 0.25f)) / (selectedSpell.castTime * 100))); //drain stamina
@@ -1526,6 +1527,18 @@ public class CombatScript : MonoBehaviour {
         }
         if (go.watchArea != null) {
             watchArea = go.watchArea.gameObject.transform.position;
+        }
+    }
+
+    public int ProgressI {
+        get {
+            return progressI;
+        }
+        set {
+            progressI = value;
+            if (selectedSpell != null) {
+                progress = (progressI / (selectedSpell.castTime * 100));
+            }
         }
     }
 

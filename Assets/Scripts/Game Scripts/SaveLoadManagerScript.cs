@@ -18,6 +18,9 @@ public class SaveLoadManagerScript : MonoBehaviour {
         [XmlArrayItem("NPC")]
         public List<NPCManagerScript.NPCData> npcData;
 
+        [XmlArray("ActiveSpellsData")]
+        [XmlArrayItem("Spell")]
+        public List<SpellManagerScript.ActiveSpellData> activeSpells;
     }
 
     // Start is called before the first frame update
@@ -28,6 +31,7 @@ public class SaveLoadManagerScript : MonoBehaviour {
         } else if (ins != this) {
             Destroy(this);
         }
+        DontDestroyOnLoad(gameObject);
     }
 
     public void LoadData(int i) {
@@ -60,16 +64,17 @@ public class SaveLoadManagerScript : MonoBehaviour {
 
     public void CollectDataToSave() {
         sf.npcData = NPCManagerScript.ins.CollectCurrentData();
+        sf.activeSpells = SpellManagerScript.ins.GetActiveSpellData();
     }
 
     public void CleanTempData() {
         sf.npcData = null;
+        sf.activeSpells = null;
     }
 
     public void SpreadDataToLoad() {
-        NPCManagerScript.ins.allNPCData = sf.npcData;
-
-        NPCManagerScript.ins.LoadNPCSceneData();
+        NPCManagerScript.ins.LoadNPCSceneData(sf.npcData);
+        SpellManagerScript.ins.LoadActiveSpellData(sf.activeSpells);
     }
 
 

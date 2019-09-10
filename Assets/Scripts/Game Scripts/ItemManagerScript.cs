@@ -11,9 +11,9 @@ public class ItemManagerScript : MonoBehaviour {
 
 
     public Item GetItemFromID(int ID) {
-        for(int i = 0; i < allItems.Count; i++) {
-            if(allItems[i].ID == ID) {
-                return Instantiate(allItems[i]);
+        foreach(Item i in allItems) {
+            if(i.ID == ID) {
+                return Instantiate(i);
             }
         }
         return Instantiate(allItems[0]);
@@ -27,7 +27,7 @@ public class ItemManagerScript : MonoBehaviour {
         }else if(ins != this) {
             Destroy(this);
         }
-
+        DontDestroyOnLoad(gameObject);
         allItems = new List<Item>(Resources.LoadAll<Item>("Items"));
 
     }

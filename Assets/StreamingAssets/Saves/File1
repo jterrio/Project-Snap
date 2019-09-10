@@ -10,6 +10,8 @@
       <state>0</state>
       <canMove>false</canMove>
       <inCombat>false</inCombat>
+      <castProgress>0</castProgress>
+      <selectedSpellID>0</selectedSpellID>
       <currentHealth>100</currentHealth>
       <currentStamina>100</currentStamina>
       <merchantMoney>0</merchantMoney>
@@ -47,6 +49,8 @@
       <state>0</state>
       <canMove>false</canMove>
       <inCombat>false</inCombat>
+      <castProgress>0</castProgress>
+      <selectedSpellID>0</selectedSpellID>
       <currentHealth>100</currentHealth>
       <currentStamina>100</currentStamina>
       <merchantMoney>600</merchantMoney>
@@ -84,6 +88,8 @@
       <state>0</state>
       <canMove>false</canMove>
       <inCombat>false</inCombat>
+      <castProgress>0</castProgress>
+      <selectedSpellID>0</selectedSpellID>
       <currentHealth>100</currentHealth>
       <currentStamina>100</currentStamina>
       <merchantMoney>0</merchantMoney>
@@ -121,6 +127,8 @@
       <state>0</state>
       <canMove>false</canMove>
       <inCombat>false</inCombat>
+      <castProgress>0</castProgress>
+      <selectedSpellID>0</selectedSpellID>
       <currentHealth>100</currentHealth>
       <currentStamina>100</currentStamina>
       <merchantMoney>0</merchantMoney>
@@ -152,14 +160,16 @@
     <NPC>
       <id>0</id>
       <active>true</active>
-      <x>0.8011927</x>
-      <y>-3.081016</y>
+      <x>8.338879</x>
+      <y>-4.139871</y>
       <direction>6</direction>
       <state>0</state>
       <canMove>false</canMove>
-      <inCombat>false</inCombat>
+      <inCombat>true</inCombat>
+      <castProgress>0</castProgress>
+      <selectedSpellID>0</selectedSpellID>
       <currentHealth>100</currentHealth>
-      <currentStamina>100</currentStamina>
+      <currentStamina>66.99885</currentStamina>
       <merchantMoney>0</merchantMoney>
       <combatCooldown>false</combatCooldown>
       <cooldown>0</cooldown>
@@ -171,7 +181,7 @@
       <spirituality>1</spirituality>
       <dexterity>10</dexterity>
       <perception>10</perception>
-      <attitude>100</attitude>
+      <attitude>-100</attitude>
       <fear>-89</fear>
       <danger>0</danger>
       <currentLine>0</currentLine>
@@ -180,9 +190,9 @@
       <areaPointX>0</areaPointX>
       <areaPointY>0</areaPointY>
       <hasPatrol>true</hasPatrol>
-      <patrolPointX>1.77</patrolPointX>
-      <patrolPointY>4.49</patrolPointY>
-      <isWaiting>true</isWaiting>
+      <patrolPointX>0.49</patrolPointX>
+      <patrolPointY>-3.54</patrolPointY>
+      <isWaiting>false</isWaiting>
       <Inventory>
         <Slot>
           <id>0</id>
@@ -196,4 +206,17 @@
       <maxSize>50</maxSize>
     </NPC>
   </NPCData>
+  <ActiveSpellsData>
+    <Spell>
+      <dirX>-0.9355938</dirX>
+      <dirY>0.353078157</dirY>
+      <casterID>0</casterID>
+      <isActive>true</isActive>
+      <startLocationX>0</startLocationX>
+      <startLocationY>0</startLocationY>
+      <currentLocationX>5.1314</currentLocationX>
+      <currentLocationY>-2.755678</currentLocationY>
+      <ID>0</ID>
+    </Spell>
+  </ActiveSpellsData>
 </SaveFile>

@@ -24,6 +24,8 @@ public class NPCManagerScript : MonoBehaviour {
 
         public bool canMove;
         public bool inCombat;
+        public int castProgress;
+        public int selectedSpellID;
 
         public float currentHealth;
         public float currentStamina;
@@ -82,6 +84,7 @@ public class NPCManagerScript : MonoBehaviour {
             Destroy(this);
         }
         //allNPCData = new List<NPCData>();
+        DontDestroyOnLoad(gameObject);
     }
 
     // Update is called once per frame
@@ -99,6 +102,7 @@ public class NPCManagerScript : MonoBehaviour {
             NPCInfo a = c.GetComponent<NPCInfo>();
             Stats s = c.GetComponent<Stats>();
             NPCSpeechHolder h = c.GetComponent<NPCSpeechHolder>();
+            CombatScript cs = c.GetComponent<CombatScript>();
 
             temp.x = c.transform.position.x;
             temp.y = c.transform.position.y;
@@ -109,6 +113,8 @@ public class NPCManagerScript : MonoBehaviour {
             temp.active = c.gameObject.activeSelf;
             temp.canMove = a.canMove;
             temp.inCombat = a.inCombat;
+            temp.selectedSpellID = cs.selectedSpell.ID;
+            temp.castProgress = cs.ProgressI;
             temp.currentHealth = a.currentHealth;
             temp.currentStamina = a.currentStamina;
             temp.merchantMoney = a.merchantMoney;
@@ -156,7 +162,8 @@ public class NPCManagerScript : MonoBehaviour {
         return allNPCData;
     }
 
-    public void LoadNPCSceneData() {
+    public void LoadNPCSceneData(List<NPCData> apc) {
+        allNPCData = apc;
         foreach (GameObject c in Resources.FindObjectsOfTypeAll(typeof(GameObject))) {
             if (c.tag.ToString() != "NPC") {
                 continue;
@@ -168,10 +175,15 @@ public class NPCManagerScript : MonoBehaviour {
                     NPCInfo a = c.GetComponent<NPCInfo>();
                     Stats s = c.GetComponent<Stats>();
                     NPCSpeechHolder h = c.GetComponent<NPCSpeechHolder>();
+                    CombatScript cs = c.GetComponent<CombatScript>();
 
                     c.transform.position = new Vector3(data.x, data.y, 0);
                     a.direction = (CharacterInfo.Direction)data.direction;
                     a.state = (CharacterInfo.MovementState)data.state;
+
+
+                    cs.ProgressI = data.castProgress;
+                    cs.selectedSpell = SpellManagerScript.ins.GetSpellFromID(data.selectedSpellID);
 
                     a.id = data.id;
                     a.gameObject.SetActive(data.active);
@@ -250,6 +262,18 @@ public class NPCManagerScript : MonoBehaviour {
             }
         }
         allNPCData.Add(data);
+    }
+
+    public GameObject GetNPCInSceneFromID(uint i) {
+        foreach(GameObject c in Resources.FindObjectsOfTypeAll(typeof(GameObject))) {
+            if (c.tag.ToString() != "NPC" || c.tag.ToString() != "Player") {
+                continue;
+            }
+            if(c.GetComponent<CharacterInfo>().id == i) {
+                return c;
+            }
+        }
+        return GameManagerScript.ins.player;
     }
 
 

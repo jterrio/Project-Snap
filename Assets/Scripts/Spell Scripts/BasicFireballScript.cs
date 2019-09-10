@@ -2,20 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BasicFireballScript : MonoBehaviour {
+public class BasicFireballScript : SpellRecords {
 
-    private bool isActive;
-    private Vector3 startLocation;
-    private GameObject caster;
-    public SpriteRenderer sr;
-    private Projectile spell;
-    public bool IsActive { get; set; }
-    public Vector3 dir;
-    public SpellRecords spellRecords;
+    public Projectile projSpell;
 
-    public void SetSpell(Spell spell, Vector3 location, Vector3 direction, GameObject caster) {
-        this.spell = spell as Projectile;
-        this.spell.dir = direction.normalized;
+    public override void SetSpell(Spell spell, Vector3 location, Vector3 direction, GameObject caster) {
+        this.projSpell = (Projectile)spell;
+
+        this.projSpell.dir = direction.normalized;
         dir = direction.normalized;
 
         sr.sprite = spell.sprite;
@@ -24,19 +18,34 @@ public class BasicFireballScript : MonoBehaviour {
         startLocation = location;
         isActive = true;
 
-        spellRecords.dir = direction.normalized;
-        spellRecords.caster = caster;
+        dir = direction.normalized;
+        this.caster = caster;
     }
 
+    public override void SetSpell(Spell spell, Vector3 location, Vector3 currentLocation, Vector3 direction, GameObject caster) {
+        this.projSpell = (Projectile)spell;
+
+        this.projSpell.dir = direction.normalized;
+        dir = direction.normalized;
+
+        sr.sprite = spell.sprite;
+        this.caster = caster;
+        gameObject.transform.position = currentLocation;
+        startLocation = location;
+        isActive = true;
+
+        dir = direction.normalized;
+        this.caster = caster;
+    }
 
     void Update() {
         if (!isActive) {
             return;
         }
 
-        transform.position += (dir * Time.deltaTime * spell.speed);
-        if(Vector3.Distance(startLocation, gameObject.transform.position) >= spell.distance) {
-            Destroy(gameObject);
+        transform.position += (dir * Time.deltaTime * projSpell.speed);
+        if(Vector3.Distance(startLocation, gameObject.transform.position) >= projSpell.distance) {
+            DestroySpell();
         }
 
     }
@@ -49,13 +58,18 @@ public class BasicFireballScript : MonoBehaviour {
         }
         if(collision.gameObject.layer == 8 || collision.gameObject.layer == 9) { //if the collision is with a player or npc
             //print("Hit");
-            collision.gameObject.GetComponent<CharacterInfo>().LoseHealth(spell.damage);
-            collision.gameObject.GetComponent<CharacterInfo>().TryInsta(spell.killChance);
-            Destroy(gameObject);
+            collision.gameObject.GetComponent<CharacterInfo>().LoseHealth(projSpell.damage);
+            collision.gameObject.GetComponent<CharacterInfo>().TryInsta(projSpell.killChance);
+            DestroySpell();
 
 
         }
     }
 
+
+    public void DestroySpell() {
+        SpellManagerScript.ins.RemoveActiveSpell(this.gameObject);
+        Destroy(gameObject);
+    }
 
 }
