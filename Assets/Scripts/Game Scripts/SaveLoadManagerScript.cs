@@ -24,7 +24,9 @@ public class SaveLoadManagerScript : MonoBehaviour {
 
         [XmlArray("FactionRelationData")]
         [XmlArrayItem("FactionRelation")]
-        public List<FactionManagerScript.FactionRelation> factions; 
+        public List<FactionManagerScript.FactionRelation> factions;
+
+        public NPCManagerScript.PlayerData playerData;
     }
 
     // Start is called before the first frame update
@@ -68,6 +70,7 @@ public class SaveLoadManagerScript : MonoBehaviour {
 
     public void CollectDataToSave() {
         sf.npcData = NPCManagerScript.ins.CollectCurrentData();
+        sf.playerData = NPCManagerScript.ins.GetPlayerData();
         sf.activeSpells = SpellManagerScript.ins.GetActiveSpellData();
         sf.factions = FactionManagerScript.ins.ExportFactionRelations();
     }
@@ -76,12 +79,15 @@ public class SaveLoadManagerScript : MonoBehaviour {
         sf.npcData = null;
         sf.activeSpells = null;
         sf.factions = null;
+        sf.playerData = null;
     }
 
     public void SpreadDataToLoad() {
         NPCManagerScript.ins.LoadNPCSceneData(sf.npcData);
+        NPCManagerScript.ins.LoadPlayerData(sf.playerData);
         SpellManagerScript.ins.LoadActiveSpellData(sf.activeSpells);
         FactionManagerScript.ins.ImportFactionRelations(sf.factions);
+
     }
 
 

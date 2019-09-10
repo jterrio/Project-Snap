@@ -8,17 +8,11 @@
       <y>-5.5</y>
       <direction>0</direction>
       <state>0</state>
+      <currentHealth>100</currentHealth>
+      <currentStamina>100</currentStamina>
       <canMove>false</canMove>
       <inCombat>false</inCombat>
       <castProgress>0</castProgress>
-      <selectedSpellID>-1</selectedSpellID>
-      <combatState>0</combatState>
-      <energyState>0</energyState>
-      <currentHealth>100</currentHealth>
-      <currentStamina>100</currentStamina>
-      <merchantMoney>0</merchantMoney>
-      <combatCooldown>false</combatCooldown>
-      <cooldown>0</cooldown>
       <intuition>8</intuition>
       <intelligence>9</intelligence>
       <strength>2</strength>
@@ -30,6 +24,14 @@
       <attitude>100</attitude>
       <fear>0</fear>
       <danger>0</danger>
+      <Inventory />
+      <maxSize>50</maxSize>
+      <selectedSpellID>-1</selectedSpellID>
+      <combatState>0</combatState>
+      <energyState>0</energyState>
+      <merchantMoney>0</merchantMoney>
+      <combatCooldown>false</combatCooldown>
+      <cooldown>0</cooldown>
       <currentLine>0</currentLine>
       <currentSet>0</currentSet>
       <moveType>2</moveType>
@@ -39,8 +41,6 @@
       <patrolPointX>6.45</patrolPointX>
       <patrolPointY>-3.54</patrolPointY>
       <isWaiting>false</isWaiting>
-      <Inventory />
-      <maxSize>50</maxSize>
     </NPC>
     <NPC>
       <id>2</id>
@@ -49,17 +49,11 @@
       <y>-7</y>
       <direction>0</direction>
       <state>0</state>
+      <currentHealth>100</currentHealth>
+      <currentStamina>100</currentStamina>
       <canMove>false</canMove>
       <inCombat>false</inCombat>
       <castProgress>0</castProgress>
-      <selectedSpellID>-1</selectedSpellID>
-      <combatState>0</combatState>
-      <energyState>0</energyState>
-      <currentHealth>100</currentHealth>
-      <currentStamina>100</currentStamina>
-      <merchantMoney>600</merchantMoney>
-      <combatCooldown>false</combatCooldown>
-      <cooldown>0</cooldown>
       <intuition>1</intuition>
       <intelligence>1</intelligence>
       <strength>1</strength>
@@ -71,6 +65,14 @@
       <attitude>100</attitude>
       <fear>0</fear>
       <danger>0</danger>
+      <Inventory />
+      <maxSize>50</maxSize>
+      <selectedSpellID>-1</selectedSpellID>
+      <combatState>0</combatState>
+      <energyState>0</energyState>
+      <merchantMoney>600</merchantMoney>
+      <combatCooldown>false</combatCooldown>
+      <cooldown>0</cooldown>
       <currentLine>0</currentLine>
       <currentSet>0</currentSet>
       <moveType>0</moveType>
@@ -80,8 +82,6 @@
       <patrolPointX>0</patrolPointX>
       <patrolPointY>0</patrolPointY>
       <isWaiting>false</isWaiting>
-      <Inventory />
-      <maxSize>50</maxSize>
     </NPC>
     <NPC>
       <id>3</id>
@@ -90,17 +90,11 @@
       <y>-1.16</y>
       <direction>0</direction>
       <state>0</state>
+      <currentHealth>100</currentHealth>
+      <currentStamina>100</currentStamina>
       <canMove>false</canMove>
       <inCombat>false</inCombat>
       <castProgress>0</castProgress>
-      <selectedSpellID>-1</selectedSpellID>
-      <combatState>0</combatState>
-      <energyState>0</energyState>
-      <currentHealth>100</currentHealth>
-      <currentStamina>100</currentStamina>
-      <merchantMoney>0</merchantMoney>
-      <combatCooldown>false</combatCooldown>
-      <cooldown>0</cooldown>
       <intuition>8</intuition>
       <intelligence>9</intelligence>
       <strength>2</strength>
@@ -112,6 +106,14 @@
       <attitude>-100</attitude>
       <fear>0</fear>
       <danger>0</danger>
+      <Inventory />
+      <maxSize>50</maxSize>
+      <selectedSpellID>-1</selectedSpellID>
+      <combatState>0</combatState>
+      <energyState>0</energyState>
+      <merchantMoney>0</merchantMoney>
+      <combatCooldown>false</combatCooldown>
+      <cooldown>0</cooldown>
       <currentLine>0</currentLine>
       <currentSet>0</currentSet>
       <moveType>1</moveType>
@@ -121,8 +123,6 @@
       <patrolPointX>6.45</patrolPointX>
       <patrolPointY>-3.54</patrolPointY>
       <isWaiting>false</isWaiting>
-      <Inventory />
-      <maxSize>50</maxSize>
     </NPC>
     <NPC>
       <id>1</id>
@@ -131,17 +131,11 @@
       <y>-1.12</y>
       <direction>0</direction>
       <state>0</state>
+      <currentHealth>100</currentHealth>
+      <currentStamina>100</currentStamina>
       <canMove>false</canMove>
       <inCombat>false</inCombat>
       <castProgress>0</castProgress>
-      <selectedSpellID>-1</selectedSpellID>
-      <combatState>0</combatState>
-      <energyState>0</energyState>
-      <currentHealth>100</currentHealth>
-      <currentStamina>100</currentStamina>
-      <merchantMoney>0</merchantMoney>
-      <combatCooldown>false</combatCooldown>
-      <cooldown>0</cooldown>
       <intuition>8</intuition>
       <intelligence>9</intelligence>
       <strength>2</strength>
@@ -153,6 +147,14 @@
       <attitude>100</attitude>
       <fear>0</fear>
       <danger>0</danger>
+      <Inventory />
+      <maxSize>50</maxSize>
+      <selectedSpellID>-1</selectedSpellID>
+      <combatState>0</combatState>
+      <energyState>0</energyState>
+      <merchantMoney>0</merchantMoney>
+      <combatCooldown>false</combatCooldown>
+      <cooldown>0</cooldown>
       <currentLine>0</currentLine>
       <currentSet>0</currentSet>
       <moveType>0</moveType>
@@ -162,27 +164,19 @@
       <patrolPointX>6.45</patrolPointX>
       <patrolPointY>-3.54</patrolPointY>
       <isWaiting>false</isWaiting>
-      <Inventory />
-      <maxSize>50</maxSize>
     </NPC>
     <NPC>
       <id>0</id>
       <active>true</active>
-      <x>-0.844850361</x>
-      <y>-3.800515</y>
-      <direction>3</direction>
+      <x>2.977</x>
+      <y>0.199</y>
+      <direction>0</direction>
       <state>0</state>
-      <canMove>false</canMove>
-      <inCombat>true</inCombat>
-      <castProgress>0</castProgress>
-      <selectedSpellID>0</selectedSpellID>
-      <combatState>0</combatState>
-      <energyState>0</energyState>
       <currentHealth>100</currentHealth>
-      <currentStamina>73.38689</currentStamina>
-      <merchantMoney>0</merchantMoney>
-      <combatCooldown>false</combatCooldown>
-      <cooldown>0</cooldown>
+      <currentStamina>100</currentStamina>
+      <canMove>false</canMove>
+      <inCombat>false</inCombat>
+      <castProgress>0</castProgress>
       <intuition>8</intuition>
       <intelligence>9</intelligence>
       <strength>2</strength>
@@ -191,18 +185,9 @@
       <spirituality>1</spirituality>
       <dexterity>10</dexterity>
       <perception>10</perception>
-      <attitude>-100</attitude>
+      <attitude>100</attitude>
       <fear>-89</fear>
       <danger>0</danger>
-      <currentLine>0</currentLine>
-      <currentSet>0</currentSet>
-      <moveType>1</moveType>
-      <areaPointX>0</areaPointX>
-      <areaPointY>0</areaPointY>
-      <hasPatrol>true</hasPatrol>
-      <patrolPointX>6.45</patrolPointX>
-      <patrolPointY>2.51</patrolPointY>
-      <isWaiting>false</isWaiting>
       <Inventory>
         <Slot>
           <id>0</id>
@@ -214,32 +199,24 @@
         </Slot>
       </Inventory>
       <maxSize>50</maxSize>
+      <selectedSpellID>-1</selectedSpellID>
+      <combatState>0</combatState>
+      <energyState>0</energyState>
+      <merchantMoney>0</merchantMoney>
+      <combatCooldown>false</combatCooldown>
+      <cooldown>0</cooldown>
+      <currentLine>0</currentLine>
+      <currentSet>0</currentSet>
+      <moveType>1</moveType>
+      <areaPointX>0</areaPointX>
+      <areaPointY>0</areaPointY>
+      <hasPatrol>true</hasPatrol>
+      <patrolPointX>6.45</patrolPointX>
+      <patrolPointY>-3.54</patrolPointY>
+      <isWaiting>true</isWaiting>
     </NPC>
   </NPCData>
-  <ActiveSpellsData>
-    <Spell>
-      <dirX>-0.9754527</dirX>
-      <dirY>-0.220208853</dirY>
-      <casterID>0</casterID>
-      <isActive>true</isActive>
-      <startLocationX>0</startLocationX>
-      <startLocationY>0</startLocationY>
-      <currentLocationX>-4.13671541</currentLocationX>
-      <currentLocationY>-1.98434436</currentLocationY>
-      <ID>0</ID>
-    </Spell>
-    <Spell>
-      <dirX>0.881424546</dirX>
-      <dirY>0.472324818</dirY>
-      <casterID>0</casterID>
-      <isActive>true</isActive>
-      <startLocationX>0</startLocationX>
-      <startLocationY>0</startLocationY>
-      <currentLocationX>1.03229284</currentLocationX>
-      <currentLocationY>-1.41835022</currentLocationY>
-      <ID>0</ID>
-    </Spell>
-  </ActiveSpellsData>
+  <ActiveSpellsData />
   <FactionRelationData>
     <FactionRelation>
       <faction1>EMPIRE</faction1>
@@ -347,4 +324,69 @@
       <opinion>0</opinion>
     </FactionRelation>
   </FactionRelationData>
+  <playerData>
+    <id>0</id>
+    <active>true</active>
+    <x>2.97000027</x>
+    <y>-1.94</y>
+    <direction>0</direction>
+    <state>0</state>
+    <currentHealth>100</currentHealth>
+    <currentStamina>100</currentStamina>
+    <canMove>true</canMove>
+    <inCombat>false</inCombat>
+    <castProgress>0</castProgress>
+    <intuition>1</intuition>
+    <intelligence>1</intelligence>
+    <strength>1</strength>
+    <charisma>1</charisma>
+    <precision>1</precision>
+    <spirituality>1</spirituality>
+    <dexterity>1</dexterity>
+    <perception>10</perception>
+    <attitude>0</attitude>
+    <fear>0</fear>
+    <danger>0</danger>
+    <Inventory>
+      <Slot>
+        <id>1</id>
+        <count>1</count>
+      </Slot>
+      <Slot>
+        <id>1</id>
+        <count>1</count>
+      </Slot>
+      <Slot>
+        <id>1</id>
+        <count>1</count>
+      </Slot>
+      <Slot>
+        <id>1</id>
+        <count>1</count>
+      </Slot>
+      <Slot>
+        <id>1</id>
+        <count>1</count>
+      </Slot>
+      <Slot>
+        <id>1</id>
+        <count>1</count>
+      </Slot>
+      <Slot>
+        <id>1</id>
+        <count>1</count>
+      </Slot>
+      <Slot>
+        <id>1</id>
+        <count>1</count>
+      </Slot>
+      <Slot>
+        <id>1</id>
+        <count>1</count>
+      </Slot>
+    </Inventory>
+    <maxSize>300</maxSize>
+    <charName>mydude</charName>
+    <money>150</money>
+  </playerData>
 </SaveFile>

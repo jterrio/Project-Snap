@@ -27,7 +27,7 @@ public class CharacterInfo : MonoBehaviour {
     public bool inCombat = false;
     public List<CombatHUDAttack.Attack> spellQueue = new List<CombatHUDAttack.Attack>();
     public Coroutine spellCastCoroutine;
-    private int progress = 0;
+    public int progress = 0;
     private float maxRangeForShootPrediction = 90;
 
     [Header("Health & Stamina")]

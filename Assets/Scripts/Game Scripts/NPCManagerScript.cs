@@ -10,9 +10,8 @@ public class NPCManagerScript : MonoBehaviour {
     public static NPCManagerScript ins;
     public List<NPCData> allNPCData = new List<NPCData>();
 
-    [System.Serializable]
-    public class NPCData {
 
+    public class SharedData {
         public uint id;
         public bool active;
 
@@ -22,20 +21,12 @@ public class NPCManagerScript : MonoBehaviour {
         public int direction;
         public int state;
 
-        public bool canMove;
-        public bool inCombat;
-        public int castProgress;
-        public int selectedSpellID;
-        public int combatState;
-        public int energyState;
-
         public float currentHealth;
         public float currentStamina;
 
-        public float merchantMoney;
-
-        public bool combatCooldown;
-        public float cooldown;
+        public bool canMove;
+        public bool inCombat;
+        public int castProgress;
 
         public int intuition;
         public int intelligence;
@@ -48,6 +39,33 @@ public class NPCManagerScript : MonoBehaviour {
         public int attitude;
         public int fear;
         public int danger;
+
+
+        [XmlArray("Inventory")]
+        [XmlArrayItem("Slot")]
+        public List<InventorySlotData> inventory;
+        public int maxSize;
+    }
+
+    public class PlayerData : SharedData{
+
+        public string charName;
+        public float money;
+
+    }
+
+
+    [System.Serializable]
+    public class NPCData : SharedData {
+
+        public int selectedSpellID;
+        public int combatState;
+        public int energyState;
+
+        public float merchantMoney;
+
+        public bool combatCooldown;
+        public float cooldown;
 
         public int currentLine;
         public int currentSet;
@@ -64,10 +82,6 @@ public class NPCManagerScript : MonoBehaviour {
         public bool isWaiting;
 
 
-        [XmlArray("Inventory")]
-        [XmlArrayItem("Slot")]
-        public List<InventorySlotData> inventory;
-        public int maxSize;
 
     }
 
@@ -288,7 +302,89 @@ public class NPCManagerScript : MonoBehaviour {
         return GameManagerScript.ins.player;
     }
 
+    public PlayerData GetPlayerData() {
+        PlayerData pd = new PlayerData();
+        PlayerInfo a = GameManagerScript.ins.playerInfo;
+        Stats s = GameManagerScript.ins.playerInfo.stats;
 
+        pd.charName = a.characterName;
+        pd.x = GameManagerScript.ins.player.transform.position.x;
+        pd.y = GameManagerScript.ins.player.transform.position.y;
+        pd.direction = (int)a.direction;
+        pd.state = (int)a.state;
+
+        pd.id = a.id;
+        pd.active = GameManagerScript.ins.player.activeSelf;
+        pd.canMove = a.canMove;
+        pd.inCombat = a.inCombat;
+
+        pd.castProgress = a.progress;
+        pd.currentHealth = a.currentHealth;
+        pd.currentStamina = a.currentStamina;
+        pd.money = a.money;
+
+        pd.intuition = s.intuition;
+        pd.intelligence = s.intelligence;
+        pd.strength = s.strength;
+        pd.charisma = s.charisma;
+        pd.precision = s.precision;
+        pd.dexterity = s.dexterity;
+        pd.perception = s.perception;
+        pd.attitude = s.attitude;
+        pd.fear = s.fear;
+        pd.danger = s.danger;
+        pd.spirituality = s.spirituality;
+
+        pd.inventory = new List<InventorySlotData>();
+        foreach (Inventory.InventorySlot invSlot in a.inventory.inventory) {
+            InventorySlotData invSlotData = new InventorySlotData();
+            invSlotData.id = invSlot.item.ID;
+            invSlotData.count = invSlot.count;
+            pd.inventory.Add(invSlotData);
+        }
+
+        pd.maxSize = a.inventory.maxSize;
+
+        return pd;
+    }
+
+    public void LoadPlayerData(PlayerData pd) {
+        PlayerInfo a = GameManagerScript.ins.playerInfo;
+        Stats s = GameManagerScript.ins.playerInfo.stats;
+
+        GameManagerScript.ins.player.transform.position = new Vector3(pd.x, pd.y, 0);
+        a.characterName = pd.charName;
+        a.direction = (CharacterInfo.Direction)pd.direction;
+        a.state = (CharacterInfo.MovementState)pd.state;
+        a.id = pd.id;
+        GameManagerScript.ins.player.SetActive(pd.active);
+        a.canMove = pd.canMove;
+        a.inCombat = pd.inCombat;
+
+        a.progress = pd.castProgress;
+        a.currentHealth = pd.currentHealth;
+        a.currentStamina = pd.currentStamina;
+        a.money = pd.money;
+
+        s.intuition = pd.intuition;
+        s.intelligence = pd.intelligence;
+        s.strength = pd.strength;
+        s.charisma = pd.charisma;
+        s.precision = pd.precision;
+        s.dexterity = pd.dexterity;
+        s.perception = pd.perception;
+        s.attitude = pd.attitude;
+        s.fear = pd.fear;
+        s.danger = pd.danger;
+        s.spirituality = pd.spirituality;
+
+        a.inventory.maxSize = pd.maxSize;
+
+        a.inventory.ClearInventory();
+        foreach (InventorySlotData invSlotData in pd.inventory) {
+            a.inventory.AddItemCount(ItemManagerScript.ins.GetItemFromID(invSlotData.id), invSlotData.count);
+        }
+    }
 
 }
 
