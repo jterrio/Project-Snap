@@ -26,6 +26,8 @@ public class NPCManagerScript : MonoBehaviour {
         public bool inCombat;
         public int castProgress;
         public int selectedSpellID;
+        public int combatState;
+        public int energyState;
 
         public float currentHealth;
         public float currentStamina;
@@ -119,6 +121,8 @@ public class NPCManagerScript : MonoBehaviour {
                 temp.selectedSpellID = -1;
             }
             temp.castProgress = cs.ProgressI;
+            temp.combatState = (int)cs.state;
+            temp.energyState = (int)cs.energyState;
             temp.currentHealth = a.currentHealth;
             temp.currentStamina = a.currentStamina;
             temp.merchantMoney = a.merchantMoney;
@@ -190,6 +194,8 @@ public class NPCManagerScript : MonoBehaviour {
                     if (data.selectedSpellID != -1) {
                         cs.selectedSpell = SpellManagerScript.ins.GetSpellFromID(data.selectedSpellID);
                     }
+                    cs.state = (CombatScript.CombatState)data.combatState;
+                    cs.energyState = (CombatScript.EnergyState)data.energyState;
 
                     a.id = data.id;
                     a.gameObject.SetActive(data.active);
