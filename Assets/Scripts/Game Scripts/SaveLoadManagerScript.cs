@@ -21,6 +21,10 @@ public class SaveLoadManagerScript : MonoBehaviour {
         [XmlArray("ActiveSpellsData")]
         [XmlArrayItem("Spell")]
         public List<SpellManagerScript.ActiveSpellData> activeSpells;
+
+        [XmlArray("FactionRelationData")]
+        [XmlArrayItem("FactionRelation")]
+        public List<FactionManagerScript.FactionRelation> factions; 
     }
 
     // Start is called before the first frame update
@@ -65,16 +69,19 @@ public class SaveLoadManagerScript : MonoBehaviour {
     public void CollectDataToSave() {
         sf.npcData = NPCManagerScript.ins.CollectCurrentData();
         sf.activeSpells = SpellManagerScript.ins.GetActiveSpellData();
+        sf.factions = FactionManagerScript.ins.ExportFactionRelations();
     }
 
     public void CleanTempData() {
         sf.npcData = null;
         sf.activeSpells = null;
+        sf.factions = null;
     }
 
     public void SpreadDataToLoad() {
         NPCManagerScript.ins.LoadNPCSceneData(sf.npcData);
         SpellManagerScript.ins.LoadActiveSpellData(sf.activeSpells);
+        FactionManagerScript.ins.ImportFactionRelations(sf.factions);
     }
 
 

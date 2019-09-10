@@ -12,6 +12,8 @@
       <inCombat>false</inCombat>
       <castProgress>0</castProgress>
       <selectedSpellID>-1</selectedSpellID>
+      <combatState>0</combatState>
+      <energyState>0</energyState>
       <currentHealth>100</currentHealth>
       <currentStamina>100</currentStamina>
       <merchantMoney>0</merchantMoney>
@@ -51,6 +53,8 @@
       <inCombat>false</inCombat>
       <castProgress>0</castProgress>
       <selectedSpellID>-1</selectedSpellID>
+      <combatState>0</combatState>
+      <energyState>0</energyState>
       <currentHealth>100</currentHealth>
       <currentStamina>100</currentStamina>
       <merchantMoney>600</merchantMoney>
@@ -90,6 +94,8 @@
       <inCombat>false</inCombat>
       <castProgress>0</castProgress>
       <selectedSpellID>-1</selectedSpellID>
+      <combatState>0</combatState>
+      <energyState>0</energyState>
       <currentHealth>100</currentHealth>
       <currentStamina>100</currentStamina>
       <merchantMoney>0</merchantMoney>
@@ -129,6 +135,8 @@
       <inCombat>false</inCombat>
       <castProgress>0</castProgress>
       <selectedSpellID>-1</selectedSpellID>
+      <combatState>0</combatState>
+      <energyState>0</energyState>
       <currentHealth>100</currentHealth>
       <currentStamina>100</currentStamina>
       <merchantMoney>0</merchantMoney>
@@ -160,16 +168,18 @@
     <NPC>
       <id>0</id>
       <active>true</active>
-      <x>4.053554</x>
-      <y>-2.96019983</y>
-      <direction>6</direction>
+      <x>-0.844850361</x>
+      <y>-3.800515</y>
+      <direction>3</direction>
       <state>0</state>
       <canMove>false</canMove>
-      <inCombat>false</inCombat>
+      <inCombat>true</inCombat>
       <castProgress>0</castProgress>
-      <selectedSpellID>-1</selectedSpellID>
+      <selectedSpellID>0</selectedSpellID>
+      <combatState>0</combatState>
+      <energyState>0</energyState>
       <currentHealth>100</currentHealth>
-      <currentStamina>100</currentStamina>
+      <currentStamina>73.38689</currentStamina>
       <merchantMoney>0</merchantMoney>
       <combatCooldown>false</combatCooldown>
       <cooldown>0</cooldown>
@@ -181,7 +191,7 @@
       <spirituality>1</spirituality>
       <dexterity>10</dexterity>
       <perception>10</perception>
-      <attitude>100</attitude>
+      <attitude>-100</attitude>
       <fear>-89</fear>
       <danger>0</danger>
       <currentLine>0</currentLine>
@@ -190,8 +200,8 @@
       <areaPointX>0</areaPointX>
       <areaPointY>0</areaPointY>
       <hasPatrol>true</hasPatrol>
-      <patrolPointX>0.49</patrolPointX>
-      <patrolPointY>-3.54</patrolPointY>
+      <patrolPointX>6.45</patrolPointX>
+      <patrolPointY>2.51</patrolPointY>
       <isWaiting>false</isWaiting>
       <Inventory>
         <Slot>
@@ -206,5 +216,135 @@
       <maxSize>50</maxSize>
     </NPC>
   </NPCData>
-  <ActiveSpellsData />
+  <ActiveSpellsData>
+    <Spell>
+      <dirX>-0.9754527</dirX>
+      <dirY>-0.220208853</dirY>
+      <casterID>0</casterID>
+      <isActive>true</isActive>
+      <startLocationX>0</startLocationX>
+      <startLocationY>0</startLocationY>
+      <currentLocationX>-4.13671541</currentLocationX>
+      <currentLocationY>-1.98434436</currentLocationY>
+      <ID>0</ID>
+    </Spell>
+    <Spell>
+      <dirX>0.881424546</dirX>
+      <dirY>0.472324818</dirY>
+      <casterID>0</casterID>
+      <isActive>true</isActive>
+      <startLocationX>0</startLocationX>
+      <startLocationY>0</startLocationY>
+      <currentLocationX>1.03229284</currentLocationX>
+      <currentLocationY>-1.41835022</currentLocationY>
+      <ID>0</ID>
+    </Spell>
+  </ActiveSpellsData>
+  <FactionRelationData>
+    <FactionRelation>
+      <faction1>EMPIRE</faction1>
+      <faction2>GANG</faction2>
+      <opinion>-100</opinion>
+    </FactionRelation>
+    <FactionRelation>
+      <faction1>EMPIRE</faction1>
+      <faction2>REBELS</faction2>
+      <opinion>0</opinion>
+    </FactionRelation>
+    <FactionRelation>
+      <faction1>EMPIRE</faction1>
+      <faction2>BLACKROSE</faction2>
+      <opinion>0</opinion>
+    </FactionRelation>
+    <FactionRelation>
+      <faction1>EMPIRE</faction1>
+      <faction2>METRODORA</faction2>
+      <opinion>0</opinion>
+    </FactionRelation>
+    <FactionRelation>
+      <faction1>EMPIRE</faction1>
+      <faction2>CIVILIAN</faction2>
+      <opinion>0</opinion>
+    </FactionRelation>
+    <FactionRelation>
+      <faction1>EMPIRE</faction1>
+      <faction2>ISABEL</faction2>
+      <opinion>0</opinion>
+    </FactionRelation>
+    <FactionRelation>
+      <faction1>REBELS</faction1>
+      <faction2>BLACKROSE</faction2>
+      <opinion>0</opinion>
+    </FactionRelation>
+    <FactionRelation>
+      <faction1>REBELS</faction1>
+      <faction2>METRODORA</faction2>
+      <opinion>0</opinion>
+    </FactionRelation>
+    <FactionRelation>
+      <faction1>REBELS</faction1>
+      <faction2>CIVILIAN</faction2>
+      <opinion>0</opinion>
+    </FactionRelation>
+    <FactionRelation>
+      <faction1>REBELS</faction1>
+      <faction2>GANG</faction2>
+      <opinion>0</opinion>
+    </FactionRelation>
+    <FactionRelation>
+      <faction1>REBELS</faction1>
+      <faction2>ISABEL</faction2>
+      <opinion>0</opinion>
+    </FactionRelation>
+    <FactionRelation>
+      <faction1>BLACKROSE</faction1>
+      <faction2>METRODORA</faction2>
+      <opinion>0</opinion>
+    </FactionRelation>
+    <FactionRelation>
+      <faction1>BLACKROSE</faction1>
+      <faction2>CIVILIAN</faction2>
+      <opinion>0</opinion>
+    </FactionRelation>
+    <FactionRelation>
+      <faction1>BLACKROSE</faction1>
+      <faction2>GANG</faction2>
+      <opinion>0</opinion>
+    </FactionRelation>
+    <FactionRelation>
+      <faction1>BLACKROSE</faction1>
+      <faction2>ISABEL</faction2>
+      <opinion>0</opinion>
+    </FactionRelation>
+    <FactionRelation>
+      <faction1>METRODORA</faction1>
+      <faction2>CIVILIAN</faction2>
+      <opinion>0</opinion>
+    </FactionRelation>
+    <FactionRelation>
+      <faction1>METRODORA</faction1>
+      <faction2>GANG</faction2>
+      <opinion>0</opinion>
+    </FactionRelation>
+    <FactionRelation>
+      <faction1>METRODORA</faction1>
+      <faction2>ISABEL</faction2>
+      <opinion>0</opinion>
+    </FactionRelation>
+    <FactionRelation>
+      <faction1>CIVILIAN</faction1>
+      <faction2>GANG</faction2>
+      <opinion>0</opinion>
+    </FactionRelation>
+    <FactionRelation>
+      <faction1>CIVILIAN</faction1>
+      <faction2>ISABEL</faction2>
+      <opinion>0</opinion>
+    </FactionRelation>
+    <FactionRelation>
+      <faction1>GANG</faction1>
+      <faction2>ISABEL</faction2>
+      <opinion>0</opinion>
+    </FactionRelation>
+  </FactionRelationData>
 </SaveFile>

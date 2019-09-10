@@ -46,7 +46,9 @@ public class FactionManagerScript : MonoBehaviour {
     /// Creates all the faction relations
     /// </summary>
     public void CreateFactionRelations() {
-        //string[] faction = System.Enum.GetNames(typeof(Faction));
+        if(factionRelations.Count >= System.Enum.GetNames(typeof(Faction)).Length) {
+            return;
+        }
 
         foreach (Faction faction in (Faction[])System.Enum.GetValues(typeof(Faction))) {
             foreach (Faction faction2 in (Faction[])System.Enum.GetValues(typeof(Faction))){
@@ -248,4 +250,13 @@ public class FactionManagerScript : MonoBehaviour {
     }   
 
     //End of Relationship Methods
+
+    public List<FactionRelation> ExportFactionRelations() {
+        return factionRelations;
+    }
+
+    public void ImportFactionRelations(List<FactionRelation> frdList) {
+        factionRelations = frdList;
+    }
+
 }
