@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class CharacterInfo : MonoBehaviour {
 
     [Header("Character Info")]
+    public uint id;
     public string characterName;
     public int characterAge;
 

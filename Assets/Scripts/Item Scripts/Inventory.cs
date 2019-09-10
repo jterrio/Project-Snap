@@ -59,11 +59,24 @@ public class Inventory : MonoBehaviour {
     }
 
     public int AddItemCount(Item item, int count) {
-        int c = 0;
-        for(int i = 1; i <= count; i++) {
-            c = AddItem(item);
+        if (size + count > maxSize) {
+            return -1; //throw error to the player
+        } else {
+            size += count;
         }
-        return c;
+        if (item.isStackable) { //if the item is stackable, see if the item exists in inventory so we can stack it
+            foreach (InventorySlot inv in inventory) {
+                if (inv.item == item) {
+                    inv.count += count; //once we find the item to stack, return
+                    return inv.count;
+                }
+            }
+        }
+        //if the item is not stackable or is not in the inventory, create a new slot for it
+        InventorySlot temp = new InventorySlot();
+        temp.CreateItemSlot(item, count);
+        inventory.Add(temp);
+        return count;
     }
 
     /// <summary>
