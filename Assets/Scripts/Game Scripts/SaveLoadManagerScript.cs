@@ -35,14 +35,14 @@ public class SaveLoadManagerScript : MonoBehaviour {
     }
 
     public void LoadData(int i) {
-        if (!System.IO.File.Exists(Application.dataPath + "/StreamingAssets/Saves/" + "File" + i.ToString())) {
+        if (!System.IO.File.Exists(Application.dataPath + "/StreamingAssets/Saves/" + "File" + i.ToString() + ".isa")) {
             //UIManager.ins.LoadFailed();
             print("Load Failed!");
             return;
         }
 
         var serializer = new XmlSerializer(typeof(SaveFile));
-        var stream = new FileStream(Application.dataPath + "/StreamingAssets/Saves/" + "File" + i.ToString(), FileMode.Open);
+        var stream = new FileStream(Application.dataPath + "/StreamingAssets/Saves/" + "File" + i.ToString() + ".isa", FileMode.Open);
         sf = serializer.Deserialize(stream) as SaveFile;
         stream.Close();
 
@@ -53,7 +53,7 @@ public class SaveLoadManagerScript : MonoBehaviour {
 
     public void SaveData(int i) {
         var serializer = new XmlSerializer(typeof(SaveFile));
-        var stream = new FileStream(Application.dataPath + "/StreamingAssets/Saves/" + "File" + i.ToString(), FileMode.Create);
+        var stream = new FileStream(Application.dataPath + "/StreamingAssets/Saves/" + "File" + i.ToString() + ".isa", FileMode.Create);
 
         CollectDataToSave();
         serializer.Serialize(stream, sf);

@@ -113,7 +113,11 @@ public class NPCManagerScript : MonoBehaviour {
             temp.active = c.gameObject.activeSelf;
             temp.canMove = a.canMove;
             temp.inCombat = a.inCombat;
-            temp.selectedSpellID = cs.selectedSpell.ID;
+            if (cs.selectedSpell != null) {
+                temp.selectedSpellID = cs.selectedSpell.ID;
+            } else {
+                temp.selectedSpellID = -1;
+            }
             temp.castProgress = cs.ProgressI;
             temp.currentHealth = a.currentHealth;
             temp.currentStamina = a.currentStamina;
@@ -183,7 +187,9 @@ public class NPCManagerScript : MonoBehaviour {
 
 
                     cs.ProgressI = data.castProgress;
-                    cs.selectedSpell = SpellManagerScript.ins.GetSpellFromID(data.selectedSpellID);
+                    if (data.selectedSpellID != -1) {
+                        cs.selectedSpell = SpellManagerScript.ins.GetSpellFromID(data.selectedSpellID);
+                    }
 
                     a.id = data.id;
                     a.gameObject.SetActive(data.active);
