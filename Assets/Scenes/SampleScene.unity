@@ -172,7 +172,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
@@ -12373,6 +12373,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sf:
     npcData: []
+    factions: []
 --- !u!4 &647735077
 Transform:
   m_ObjectHideFlags: 0
@@ -13186,6 +13187,8 @@ MonoBehaviour:
   difficulty: 3
   state: 0
   energyState: 0
+  selectedSpell: {fileID: 0}
+  progress: 0
   targets:
   - {fileID: 1459207476}
   - {fileID: 1942604905}
@@ -13370,6 +13373,7 @@ MonoBehaviour:
   polyNav: {fileID: 776057291}
   canMove: 0
   inCombat: 0
+  progress: 0
   currentHealth: 100
   maxHealth: 100
   currentStamina: 100
@@ -16219,7 +16223,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
@@ -16919,6 +16923,7 @@ MonoBehaviour:
   polyNav: {fileID: 1114312531}
   canMove: 0
   inCombat: 0
+  progress: 0
   currentHealth: 100
   maxHealth: 100
   currentStamina: 100
@@ -17176,6 +17181,8 @@ MonoBehaviour:
   difficulty: 3
   state: 0
   energyState: 0
+  selectedSpell: {fileID: 0}
+  progress: 0
   targets: []
   movementQueue: []
   debugPoint: {fileID: 0}
@@ -17878,6 +17885,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   allQuests: []
+  existingQuests: []
 --- !u!4 &1223375880
 Transform:
   m_ObjectHideFlags: 0
@@ -17888,8 +17896,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children:
-  - {fileID: 1862112507}
+  m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -18619,6 +18626,7 @@ MonoBehaviour:
   polyNav: {fileID: 1254768297}
   canMove: 0
   inCombat: 0
+  progress: 0
   currentHealth: 100
   maxHealth: 100
   currentStamina: 100
@@ -18812,6 +18820,8 @@ MonoBehaviour:
   difficulty: 3
   state: 0
   energyState: 0
+  selectedSpell: {fileID: 0}
+  progress: 0
   targets:
   - {fileID: 1459207476}
   - {fileID: 1942604905}
@@ -21390,6 +21400,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5643c9380c603694087bf4c8453c35df, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  allSpells: []
+  allSpellPrefabs: []
 --- !u!1 &1504202141
 GameObject:
   m_ObjectHideFlags: 0
@@ -23389,6 +23401,8 @@ MonoBehaviour:
   difficulty: 3
   state: 0
   energyState: 0
+  selectedSpell: {fileID: 0}
+  progress: 0
   targets: []
   movementQueue: []
   debugPoint: {fileID: 1925048698878322, guid: 914e4d09f7a94bb4eb971354635089b8, type: 3}
@@ -23476,34 +23490,8 @@ MonoBehaviour:
   spriteRenderer: {fileID: 0}
   speechSets:
   - dialogue:
-    - speakerName: '[NPCName]'
-      text: Nice to meet you!
-      isChoice: 0
-      myChoices:
-        choices: []
-      openShop: 0
-      givesQuest: 0
-      questID: 0
-      checkQuestCondition: 0
-      setToGoToForComplete: 0
-      setToGoToForInProgress: 0
-      resetSet: 0
-      reset: 0
-    - speakerName: '[PlayerName]'
-      text: Nice to meet you as well.
-      isChoice: 0
-      myChoices:
-        choices: []
-      openShop: 0
-      givesQuest: 0
-      questID: 0
-      checkQuestCondition: 0
-      setToGoToForComplete: 0
-      setToGoToForInProgress: 0
-      resetSet: 0
-      reset: 0
-    - speakerName: '[NPCName]'
-      text: Go away now, please!
+    - speakerName: 
+      text: 
       isChoice: 0
       myChoices:
         choices: []
@@ -23571,6 +23559,7 @@ MonoBehaviour:
   polyNav: {fileID: 1748299858}
   canMove: 0
   inCombat: 0
+  progress: 0
   currentHealth: 100
   maxHealth: 100
   currentStamina: 100
@@ -25014,64 +25003,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1861142786}
   m_CullTransparentMesh: 0
---- !u!1 &1862112506
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1862112507}
-  - component: {fileID: 1862112508}
-  m_Layer: 0
-  m_Name: Quest0
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1862112507
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1862112506}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 1223375880}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1862112508
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1862112506}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 123d11310c0e35d4c845240b5d928262, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  attitudeFactionChangeOnCompletion:
-  - faction1: 0
-    faction2: 6
-    opinion: 20
-  attitudeNPCChangeOnCompletion: 35
-  NPCID: 0
-  questCompletionReward:
-  - {fileID: 11400000, guid: 1c81e9ffabbdd5449b4ae34b229801d9, type: 2}
-  questGoldReward: 1005
-  questObjectives:
-  - subSectionObjectives:
-    - {fileID: 11400000, guid: 99b126caa2ddd3e48b28b8b0aa2cd401, type: 2}
-  questID: 0
-  skillPointsRewards: 0
-  currentObjective: 0
 --- !u!1 &1879560636
 GameObject:
   m_ObjectHideFlags: 0
@@ -25556,6 +25487,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d86621e1618ac364cb1c188d971f6923, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  allItems: []
 --- !u!1 &1942604905
 GameObject:
   m_ObjectHideFlags: 0
@@ -25615,6 +25547,7 @@ MonoBehaviour:
   polyNav: {fileID: 1942604913}
   canMove: 0
   inCombat: 0
+  progress: 0
   currentHealth: 100
   maxHealth: 100
   currentStamina: 100
@@ -25993,6 +25926,8 @@ MonoBehaviour:
   difficulty: 3
   state: 0
   energyState: 0
+  selectedSpell: {fileID: 0}
+  progress: 0
   targets: []
   movementQueue: []
   debugPoint: {fileID: 1925048698878322, guid: 914e4d09f7a94bb4eb971354635089b8, type: 3}

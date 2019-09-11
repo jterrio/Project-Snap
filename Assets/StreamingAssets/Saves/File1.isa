@@ -168,9 +168,9 @@
     <NPC>
       <id>0</id>
       <active>true</active>
-      <x>2.977</x>
-      <y>0.199</y>
-      <direction>0</direction>
+      <x>3.84793472</x>
+      <y>3.91339564</y>
+      <direction>1</direction>
       <state>0</state>
       <currentHealth>100</currentHealth>
       <currentStamina>100</currentStamina>
@@ -206,14 +206,14 @@
       <combatCooldown>false</combatCooldown>
       <cooldown>0</cooldown>
       <currentLine>0</currentLine>
-      <currentSet>0</currentSet>
+      <currentSet>1</currentSet>
       <moveType>1</moveType>
       <areaPointX>0</areaPointX>
       <areaPointY>0</areaPointY>
       <hasPatrol>true</hasPatrol>
       <patrolPointX>6.45</patrolPointX>
-      <patrolPointY>-3.54</patrolPointY>
-      <isWaiting>true</isWaiting>
+      <patrolPointY>2.51</patrolPointY>
+      <isWaiting>false</isWaiting>
     </NPC>
   </NPCData>
   <ActiveSpellsData />
@@ -327,8 +327,8 @@
   <playerData>
     <id>0</id>
     <active>true</active>
-    <x>2.97000027</x>
-    <y>-1.94</y>
+    <x>3.68999958</x>
+    <y>2.25999928</y>
     <direction>0</direction>
     <state>0</state>
     <currentHealth>100</currentHealth>
@@ -384,9 +384,22 @@
         <id>1</id>
         <count>1</count>
       </Slot>
+      <Slot>
+        <id>1</id>
+        <count>1</count>
+      </Slot>
     </Inventory>
     <maxSize>300</maxSize>
     <charName>mydude</charName>
     <money>150</money>
   </playerData>
+  <playerQuestData>
+    <CompletedQuests />
+    <InProgressQuests>
+      <Quest>
+        <ID>0</ID>
+        <currentObjective>0</currentObjective>
+      </Quest>
+    </InProgressQuests>
+  </playerQuestData>
 </SaveFile>

@@ -45,7 +45,7 @@ public class Inventory : MonoBehaviour {
         }
         if (item.isStackable) { //if the item is stackable, see if the item exists in inventory so we can stack it
             foreach (InventorySlot inv in inventory) {
-                if (inv.item == item) {
+                if (inv.item.ID == item.ID) {
                     inv.count += 1; //once we find the item to stack, return
                     return inv.count;
                 }
@@ -66,7 +66,7 @@ public class Inventory : MonoBehaviour {
         }
         if (item.isStackable) { //if the item is stackable, see if the item exists in inventory so we can stack it
             foreach (InventorySlot inv in inventory) {
-                if (inv.item == item) {
+                if (inv.item.ID == item.ID) {
                     inv.count += count; //once we find the item to stack, return
                     return inv.count;
                 }
@@ -92,7 +92,7 @@ public class Inventory : MonoBehaviour {
         }
         if (item.isStackable) {
             foreach (InventorySlot inv in inventory) {
-                if (inv.item == item) { //once we find the item, remove the required amount
+                if (inv.item.ID == item.ID) { //once we find the item, remove the required amount
                     inv.count -= removeCount;
                     if (inv.count <= 0) { //check to see if the item should still exist in the inventory
                         inventory.Remove(inv);
@@ -104,7 +104,7 @@ public class Inventory : MonoBehaviour {
         } else {
             int c = 0;
             foreach (InventorySlot inv in new List<InventorySlot>(inventory)) {
-                if (inv.item == item) { //once we find the item, remove the required amount
+                if (inv.item.ID == item.ID) { //once we find the item, remove the required amount
                     inventory.Remove(inv);
                     c += 1;
                     if(c >= removeCount) {
@@ -125,7 +125,7 @@ public class Inventory : MonoBehaviour {
     public int RemoveAllItem(Item item) {
         int i = 0;
         foreach(InventorySlot inv in inventory) {
-            if(inv.item == item) {
+            if(inv.item.ID == item.ID) {
                 i = inv.count;
                 size -= inv.count;
                 inventory.Remove(inv);
@@ -149,7 +149,7 @@ public class Inventory : MonoBehaviour {
     /// <returns></returns>
     public bool HasItemInInventory(Item item) {
         foreach(InventorySlot inv in inventory) {
-            if(inv.item == item) {
+            if(inv.item.ID == item.ID) {
                 return true;
             }
         }
@@ -186,7 +186,7 @@ public class Inventory : MonoBehaviour {
     public bool HasItemCountInInventory(Item item, int count) {
         if (item.isStackable) {
             foreach (InventorySlot inv in inventory) {
-                if (inv.item == item && inv.count >= count) {
+                if (inv.item.ID == item.ID && inv.count >= count) {
                     return true;
                 }
             }
@@ -194,7 +194,7 @@ public class Inventory : MonoBehaviour {
         } else {
             int c = 0;
             foreach (InventorySlot inv in inventory) {
-                if (inv.item == item) {
+                if (inv.item.ID == item.ID) {
                     c += 1;
                 }
             }

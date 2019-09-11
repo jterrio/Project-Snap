@@ -27,6 +27,8 @@ public class SaveLoadManagerScript : MonoBehaviour {
         public List<FactionManagerScript.FactionRelation> factions;
 
         public NPCManagerScript.PlayerData playerData;
+
+        public QuestManagerScript.PlayerQuestData playerQuestData;
     }
 
     // Start is called before the first frame update
@@ -73,6 +75,7 @@ public class SaveLoadManagerScript : MonoBehaviour {
         sf.playerData = NPCManagerScript.ins.GetPlayerData();
         sf.activeSpells = SpellManagerScript.ins.GetActiveSpellData();
         sf.factions = FactionManagerScript.ins.ExportFactionRelations();
+        sf.playerQuestData = QuestManagerScript.ins.SavePlayerQuestData();
     }
 
     public void CleanTempData() {
@@ -80,6 +83,7 @@ public class SaveLoadManagerScript : MonoBehaviour {
         sf.activeSpells = null;
         sf.factions = null;
         sf.playerData = null;
+        sf.playerQuestData = null;
     }
 
     public void SpreadDataToLoad() {
@@ -87,7 +91,7 @@ public class SaveLoadManagerScript : MonoBehaviour {
         NPCManagerScript.ins.LoadPlayerData(sf.playerData);
         SpellManagerScript.ins.LoadActiveSpellData(sf.activeSpells);
         FactionManagerScript.ins.ImportFactionRelations(sf.factions);
-
+        QuestManagerScript.ins.LoadPlayerQuestData(sf.playerQuestData);
     }
 
 
