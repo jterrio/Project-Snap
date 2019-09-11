@@ -2,16 +2,66 @@
 <SaveFile xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <NPCData>
     <NPC>
-      <id>4</id>
-      <active>false</active>
-      <x>26.38</x>
-      <y>-5.5</y>
-      <direction>0</direction>
+      <id>1</id>
+      <active>true</active>
+      <x>2.977</x>
+      <y>0.199</y>
+      <direction>7</direction>
       <state>0</state>
       <currentHealth>100</currentHealth>
       <currentStamina>100</currentStamina>
       <canMove>false</canMove>
-      <inCombat>false</inCombat>
+      <inCombat>true</inCombat>
+      <castProgress>0</castProgress>
+      <intuition>8</intuition>
+      <intelligence>9</intelligence>
+      <strength>2</strength>
+      <charisma>14</charisma>
+      <precision>3</precision>
+      <spirituality>1</spirituality>
+      <dexterity>10</dexterity>
+      <perception>10</perception>
+      <attitude>100</attitude>
+      <fear>-89</fear>
+      <danger>0</danger>
+      <Inventory>
+        <Slot>
+          <id>0</id>
+          <count>1</count>
+        </Slot>
+        <Slot>
+          <id>1</id>
+          <count>3</count>
+        </Slot>
+      </Inventory>
+      <maxSize>50</maxSize>
+      <selectedSpellID>0</selectedSpellID>
+      <combatState>0</combatState>
+      <energyState>0</energyState>
+      <merchantMoney>0</merchantMoney>
+      <combatCooldown>false</combatCooldown>
+      <cooldown>0</cooldown>
+      <currentLine>0</currentLine>
+      <currentSet>0</currentSet>
+      <moveType>1</moveType>
+      <areaPointX>0</areaPointX>
+      <areaPointY>0</areaPointY>
+      <hasPatrol>true</hasPatrol>
+      <patrolPointX>6.45</patrolPointX>
+      <patrolPointY>-3.54</patrolPointY>
+      <isWaiting>true</isWaiting>
+    </NPC>
+    <NPC>
+      <id>2</id>
+      <active>true</active>
+      <x>0.66</x>
+      <y>-1.11999989</y>
+      <direction>3</direction>
+      <state>0</state>
+      <currentHealth>100</currentHealth>
+      <currentStamina>100</currentStamina>
+      <canMove>false</canMove>
+      <inCombat>true</inCombat>
       <castProgress>0</castProgress>
       <intuition>8</intuition>
       <intelligence>9</intelligence>
@@ -26,7 +76,7 @@
       <danger>0</danger>
       <Inventory />
       <maxSize>50</maxSize>
-      <selectedSpellID>-1</selectedSpellID>
+      <selectedSpellID>0</selectedSpellID>
       <combatState>0</combatState>
       <energyState>0</energyState>
       <merchantMoney>0</merchantMoney>
@@ -34,7 +84,7 @@
       <cooldown>0</cooldown>
       <currentLine>0</currentLine>
       <currentSet>0</currentSet>
-      <moveType>2</moveType>
+      <moveType>0</moveType>
       <areaPointX>0</areaPointX>
       <areaPointY>0</areaPointY>
       <hasPatrol>true</hasPatrol>
@@ -43,7 +93,7 @@
       <isWaiting>false</isWaiting>
     </NPC>
     <NPC>
-      <id>2</id>
+      <id>3</id>
       <active>false</active>
       <x>40.491</x>
       <y>-7</y>
@@ -84,7 +134,7 @@
       <isWaiting>false</isWaiting>
     </NPC>
     <NPC>
-      <id>3</id>
+      <id>4</id>
       <active>false</active>
       <x>1.27</x>
       <y>-1.16</y>
@@ -125,10 +175,10 @@
       <isWaiting>false</isWaiting>
     </NPC>
     <NPC>
-      <id>1</id>
+      <id>5</id>
       <active>false</active>
-      <x>0.66</x>
-      <y>-1.12</y>
+      <x>26.38</x>
+      <y>-5.5</y>
       <direction>0</direction>
       <state>0</state>
       <currentHealth>100</currentHealth>
@@ -157,62 +207,12 @@
       <cooldown>0</cooldown>
       <currentLine>0</currentLine>
       <currentSet>0</currentSet>
-      <moveType>0</moveType>
+      <moveType>2</moveType>
       <areaPointX>0</areaPointX>
       <areaPointY>0</areaPointY>
       <hasPatrol>true</hasPatrol>
       <patrolPointX>6.45</patrolPointX>
       <patrolPointY>-3.54</patrolPointY>
-      <isWaiting>false</isWaiting>
-    </NPC>
-    <NPC>
-      <id>0</id>
-      <active>true</active>
-      <x>3.84793472</x>
-      <y>3.91339564</y>
-      <direction>1</direction>
-      <state>0</state>
-      <currentHealth>100</currentHealth>
-      <currentStamina>100</currentStamina>
-      <canMove>false</canMove>
-      <inCombat>false</inCombat>
-      <castProgress>0</castProgress>
-      <intuition>8</intuition>
-      <intelligence>9</intelligence>
-      <strength>2</strength>
-      <charisma>14</charisma>
-      <precision>3</precision>
-      <spirituality>1</spirituality>
-      <dexterity>10</dexterity>
-      <perception>10</perception>
-      <attitude>100</attitude>
-      <fear>-89</fear>
-      <danger>0</danger>
-      <Inventory>
-        <Slot>
-          <id>0</id>
-          <count>1</count>
-        </Slot>
-        <Slot>
-          <id>1</id>
-          <count>3</count>
-        </Slot>
-      </Inventory>
-      <maxSize>50</maxSize>
-      <selectedSpellID>-1</selectedSpellID>
-      <combatState>0</combatState>
-      <energyState>0</energyState>
-      <merchantMoney>0</merchantMoney>
-      <combatCooldown>false</combatCooldown>
-      <cooldown>0</cooldown>
-      <currentLine>0</currentLine>
-      <currentSet>1</currentSet>
-      <moveType>1</moveType>
-      <areaPointX>0</areaPointX>
-      <areaPointY>0</areaPointY>
-      <hasPatrol>true</hasPatrol>
-      <patrolPointX>6.45</patrolPointX>
-      <patrolPointY>2.51</patrolPointY>
       <isWaiting>false</isWaiting>
     </NPC>
   </NPCData>
@@ -327,14 +327,14 @@
   <playerData>
     <id>0</id>
     <active>true</active>
-    <x>3.68999958</x>
-    <y>2.25999928</y>
+    <x>2.97000027</x>
+    <y>-1.94</y>
     <direction>0</direction>
     <state>0</state>
     <currentHealth>100</currentHealth>
     <currentStamina>100</currentStamina>
-    <canMove>true</canMove>
-    <inCombat>false</inCombat>
+    <canMove>false</canMove>
+    <inCombat>true</inCombat>
     <castProgress>0</castProgress>
     <intuition>1</intuition>
     <intelligence>1</intelligence>
@@ -384,22 +384,57 @@
         <id>1</id>
         <count>1</count>
       </Slot>
-      <Slot>
-        <id>1</id>
-        <count>1</count>
-      </Slot>
     </Inventory>
     <maxSize>300</maxSize>
     <charName>mydude</charName>
     <money>150</money>
+    <polyNavActive>true</polyNavActive>
   </playerData>
   <playerQuestData>
     <CompletedQuests />
-    <InProgressQuests>
-      <Quest>
-        <ID>0</ID>
-        <currentObjective>0</currentObjective>
-      </Quest>
-    </InProgressQuests>
+    <InProgressQuests />
   </playerQuestData>
+  <combatManagerData>
+    <CombatManagerData>
+      <CombatHandlerData>
+        <posX>2.977</posX>
+        <posY>0.199</posY>
+        <charactersInCombat>
+          <unsignedInt>2</unsignedInt>
+          <unsignedInt>1</unsignedInt>
+          <unsignedInt>0</unsignedInt>
+        </charactersInCombat>
+        <currentCharactersTurn>
+          <unsignedInt>0</unsignedInt>
+        </currentCharactersTurn>
+        <charactersChecked />
+        <charactersToCheck>
+          <unsignedInt>2</unsignedInt>
+          <unsignedInt>1</unsignedInt>
+          <unsignedInt>0</unsignedInt>
+        </charactersToCheck>
+        <charactersRemovedFromCombat />
+        <CharactersInfoInCombat>
+          <CharacterInfo>
+            <ID>2</ID>
+            <isReady>false</isReady>
+            <endTurn>false</endTurn>
+            <turnTimeOffset>0</turnTimeOffset>
+          </CharacterInfo>
+          <CharacterInfo>
+            <ID>1</ID>
+            <isReady>false</isReady>
+            <endTurn>false</endTurn>
+            <turnTimeOffset>0</turnTimeOffset>
+          </CharacterInfo>
+          <CharacterInfo>
+            <ID>0</ID>
+            <isReady>false</isReady>
+            <endTurn>false</endTurn>
+            <turnTimeOffset>0.5042596</turnTimeOffset>
+          </CharacterInfo>
+        </CharactersInfoInCombat>
+      </CombatHandlerData>
+    </CombatManagerData>
+  </combatManagerData>
 </SaveFile>

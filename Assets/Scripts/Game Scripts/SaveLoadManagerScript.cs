@@ -29,6 +29,8 @@ public class SaveLoadManagerScript : MonoBehaviour {
         public NPCManagerScript.PlayerData playerData;
 
         public QuestManagerScript.PlayerQuestData playerQuestData;
+
+        public CombatManager.CombatManagerData combatManagerData;
     }
 
     // Start is called before the first frame update
@@ -76,6 +78,7 @@ public class SaveLoadManagerScript : MonoBehaviour {
         sf.activeSpells = SpellManagerScript.ins.GetActiveSpellData();
         sf.factions = FactionManagerScript.ins.ExportFactionRelations();
         sf.playerQuestData = QuestManagerScript.ins.SavePlayerQuestData();
+        sf.combatManagerData = CombatManager.ins.ExportCombatHandlerData();
     }
 
     public void CleanTempData() {
@@ -84,6 +87,7 @@ public class SaveLoadManagerScript : MonoBehaviour {
         sf.factions = null;
         sf.playerData = null;
         sf.playerQuestData = null;
+        sf.combatManagerData = null;
     }
 
     public void SpreadDataToLoad() {
@@ -92,6 +96,7 @@ public class SaveLoadManagerScript : MonoBehaviour {
         SpellManagerScript.ins.LoadActiveSpellData(sf.activeSpells);
         FactionManagerScript.ins.ImportFactionRelations(sf.factions);
         QuestManagerScript.ins.LoadPlayerQuestData(sf.playerQuestData);
+        CombatManager.ins.ImportCombatHandlerData(sf.combatManagerData);
     }
 
 

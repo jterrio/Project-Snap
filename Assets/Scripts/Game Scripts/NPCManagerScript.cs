@@ -9,6 +9,7 @@ public class NPCManagerScript : MonoBehaviour {
 
     public static NPCManagerScript ins;
     public List<NPCData> allNPCData = new List<NPCData>();
+    public List<GameObject> allNPCsInScene = new List<GameObject>();
 
 
     public class SharedData {
@@ -51,6 +52,7 @@ public class NPCManagerScript : MonoBehaviour {
 
         public string charName;
         public float money;
+        public bool polyNavActive;
 
     }
 
@@ -101,6 +103,7 @@ public class NPCManagerScript : MonoBehaviour {
         }
         //allNPCData = new List<NPCData>();
         DontDestroyOnLoad(gameObject);
+        GetAllNPCsInScene();
     }
 
     // Update is called once per frame
@@ -108,8 +111,15 @@ public class NPCManagerScript : MonoBehaviour {
 
     }
 
+    public void GetAllNPCsInScene() {
+        allNPCsInScene.Clear();
+        foreach(Transform child in transform) {
+            allNPCsInScene.Add(child.gameObject);
+        }
+    }
+
     public List<NPCData> CollectCurrentData() {
-        foreach (GameObject c in Resources.FindObjectsOfTypeAll(typeof(GameObject))) {
+        foreach (GameObject c in allNPCsInScene) {
             if(c.tag.ToString() != "NPC") {
                 continue;
             }
@@ -186,7 +196,7 @@ public class NPCManagerScript : MonoBehaviour {
 
     public void LoadNPCSceneData(List<NPCData> apc) {
         allNPCData = apc;
-        foreach (GameObject c in Resources.FindObjectsOfTypeAll(typeof(GameObject))) {
+        foreach (GameObject c in allNPCsInScene) {
             if (c.tag.ToString() != "NPC") {
                 continue;
             }
@@ -207,6 +217,10 @@ public class NPCManagerScript : MonoBehaviour {
                     cs.ProgressI = data.castProgress;
                     if (data.selectedSpellID != -1) {
                         cs.selectedSpell = SpellManagerScript.ins.GetSpellFromID(data.selectedSpellID);
+                    } else {
+                        if (cs.spellCoroutine != null) {
+                            cs.StopCoroutine(cs.spellCoroutine);
+                        }
                     }
                     cs.state = (CombatScript.CombatState)data.combatState;
                     cs.energyState = (CombatScript.EnergyState)data.energyState;
@@ -215,6 +229,7 @@ public class NPCManagerScript : MonoBehaviour {
                     a.gameObject.SetActive(data.active);
                     a.canMove = data.canMove;
                     a.inCombat = data.inCombat;
+                    a.SetStoppingDistance();
                     a.currentHealth = data.currentHealth;
                     a.currentStamina = data.currentStamina;
                     a.merchantMoney = data.merchantMoney;
@@ -260,7 +275,9 @@ public class NPCManagerScript : MonoBehaviour {
                     }
                     if (a.isWaiting) {
                         a.polyNav.Stop();
-                        a.StopCoroutine(a.waitCoroutine);
+                        if(a.waitCoroutine != null) {
+                            a.StopCoroutine(a.waitCoroutine);
+                        }
                         switch (a.movementType) {
                             case NPC.MovementType.AREA:
                                 a.waitCoroutine = a.StartCoroutine(a.StartWaitingArea());
@@ -291,12 +308,11 @@ public class NPCManagerScript : MonoBehaviour {
     }
 
     public GameObject GetNPCInSceneFromID(uint i) {
-        foreach(GameObject c in Resources.FindObjectsOfTypeAll(typeof(GameObject))) {
-            if (c.tag.ToString() != "NPC" || c.tag.ToString() != "Player") {
-                continue;
-            }
-            if(c.GetComponent<CharacterInfo>().id == i) {
-                return c;
+        foreach(GameObject c in allNPCsInScene) {
+            if ((c.tag.ToString() == "NPC" || c.tag.ToString() == "Player")) {
+                if (c.GetComponent<CharacterInfo>().id == i) {
+                    return c;
+                }
             }
         }
         return GameManagerScript.ins.player;
@@ -322,6 +338,7 @@ public class NPCManagerScript : MonoBehaviour {
         pd.currentHealth = a.currentHealth;
         pd.currentStamina = a.currentStamina;
         pd.money = a.money;
+        pd.polyNavActive = a.polyNav.isActiveAndEnabled;
 
         pd.intuition = s.intuition;
         pd.intelligence = s.intelligence;
@@ -365,6 +382,7 @@ public class NPCManagerScript : MonoBehaviour {
         a.currentHealth = pd.currentHealth;
         a.currentStamina = pd.currentStamina;
         a.money = pd.money;
+        a.polyNav.enabled = pd.polyNavActive;
 
         s.intuition = pd.intuition;
         s.intelligence = pd.intelligence;

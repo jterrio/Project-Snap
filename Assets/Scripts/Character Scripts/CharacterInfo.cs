@@ -408,11 +408,11 @@ public class CharacterInfo : MonoBehaviour {
                 return true;
             }
         } else if (other == GameManagerScript.ins.player){
-            if (GetComponent<Stats>().attitude <= -30) {
+            if (gameObject.GetComponent<Stats>().attitude <= -30) {
                 return true;
             }
         } else {
-            if(GetComponent<NPCInfo>().faction != other.GetComponent<NPCInfo>().faction) {
+            if((int)gameObject.GetComponent<NPCInfo>().faction != (int)other.GetComponent<NPCInfo>().faction) {
                 return true;
             }
         }

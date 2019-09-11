@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Xml.Serialization;
 
 public class CombatManager : MonoBehaviour {
 
@@ -24,6 +25,152 @@ public class CombatManager : MonoBehaviour {
     public LayerMask mapTest;
 
     public bool isPlayerTurn = false;
+
+
+    public class CombatManagerData {
+
+        [XmlArray("CombatManagerData")]
+        [XmlArrayItem("CombatHandlerData")]
+        public List<CombatHandlerData> chd;
+
+    }
+
+    public class CombatHandlerData {
+
+        public float posX;
+        public float posY;
+        public List<uint> charactersInCombat; //list of all characters participating, actively
+        public List<uint> currentCharactersTurn; //list of characters who are currently turning
+        public List<uint> charactersChecked; //characters check to join combat
+        public List<uint> charactersToCheck; //characters queued to check to join combat
+        public List<uint> charactersRemovedFromCombat; //characters removed and cannot join back
+
+        [XmlArray("CharactersInfoInCombat")]
+        [XmlArrayItem("CharacterInfo")]
+        public List<CharInfoInCombat> charactersInfoInCombat;
+
+    }
+
+    public class CharInfoInCombat {
+        public uint ID;
+        public bool isReady;
+        public bool endTurn;
+        public float turnTimeOffset;
+    }
+
+    public CombatManagerData ExportCombatHandlerData() {
+        CombatManagerData cmd = new CombatManagerData() {
+            chd = new List<CombatHandlerData>()
+        };
+        foreach(GameObject handler in allCombatHandlers) {
+            CombatHandlerData handlerData = new CombatHandlerData();
+            CombatHandler ch = handler.GetComponent<CombatHandler>();
+
+            handlerData.posX = handler.transform.position.x;
+            handlerData.posY = handler.transform.position.y;
+            handlerData.charactersInCombat = new List<uint>();
+            handlerData.charactersInfoInCombat = new List<CharInfoInCombat>();
+            foreach (GameObject c in ch.charactersInCombat) {
+                CharInfoInCombat charInfo = new CharInfoInCombat();
+                handlerData.charactersInCombat.Add(c.GetComponent<CharacterInfo>().id);
+                charInfo.ID = c.GetComponent<CharacterInfo>().id;
+                charInfo.isReady = c.GetComponent<CombatScript>().isReady;
+                charInfo.endTurn = c.GetComponent<CombatScript>().endTurn;
+                float a = Time.time - c.GetComponent<CombatScript>().turnTimerStart;
+                if (a >= 0) {
+                    charInfo.turnTimeOffset = a;
+                } else {
+                    charInfo.turnTimeOffset = 0;
+                }
+                handlerData.charactersInfoInCombat.Add(charInfo);
+            }
+
+            handlerData.currentCharactersTurn = new List<uint>();
+            foreach (GameObject c in ch.currentCharactersTurn) {
+                handlerData.currentCharactersTurn.Add(c.GetComponent<CharacterInfo>().id);
+            }
+
+            handlerData.charactersChecked = new List<uint>();
+            foreach (GameObject c in ch.charactersChecked) {
+                handlerData.charactersChecked.Add(c.GetComponent<CharacterInfo>().id);
+            }
+
+            handlerData.charactersToCheck = new List<uint>();
+            foreach (GameObject c in ch.charactersToCheck) {
+                handlerData.charactersToCheck.Add(c.GetComponent<CharacterInfo>().id);
+            }
+
+            handlerData.charactersRemovedFromCombat = new List<uint>();
+            foreach (GameObject c in ch.charactersRemovedFromCombat) {
+                handlerData.charactersRemovedFromCombat.Add(c.GetComponent<CharacterInfo>().id);
+            }
+
+            cmd.chd.Add(handlerData);
+        }
+
+
+
+
+        return cmd;
+    }
+
+    public void ImportCombatHandlerData(CombatManagerData cmd) {
+
+        foreach(GameObject h in allCombatHandlers) {
+            Destroy(h);
+        }
+        allCombatHandlers.Clear();
+
+        foreach(CombatHandlerData chd in cmd.chd) {
+            GameObject cHandler = Instantiate(combatHandler);
+            CombatHandler ch = cHandler.GetComponent<CombatHandler>();
+
+            ch.wasLoaded = true;
+            cHandler.transform.position = new Vector3(chd.posX, chd.posY, 0);
+            ch.charactersInCombat = new List<GameObject>();
+
+            ch.currentCharactersTurn = new List<GameObject>();
+            foreach (uint i in chd.currentCharactersTurn) {
+                ch.currentCharactersTurn.Add(NPCManagerScript.ins.GetNPCInSceneFromID(i));
+            }
+
+            foreach (uint i in chd.charactersInCombat) {
+                GameObject npc = NPCManagerScript.ins.GetNPCInSceneFromID(i);
+                foreach(CharInfoInCombat info in chd.charactersInfoInCombat) {
+                    if(info.ID == i) {
+                        CombatScript cs = npc.GetComponent<CombatScript>();
+                        npc.GetComponent<CombatScript>().isReady = info.isReady;
+                        npc.GetComponent<CombatScript>().endTurn = info.endTurn;
+                        if(cs.turnCoroutine != null) {
+                            cs.StopTurnCoroutine();
+                        }
+                        if (!ch.currentCharactersTurn.Contains(npc)) {
+                            npc.GetComponent<CombatScript>().StartWaiting(info.turnTimeOffset);
+                        }
+                        break;
+                    }
+                }
+                ch.charactersInCombat.Add(npc);
+            }
+
+            ch.charactersChecked = new List<GameObject>();
+            foreach (uint i in chd.charactersChecked) {
+                ch.charactersChecked.Add(NPCManagerScript.ins.GetNPCInSceneFromID(i));
+            }
+
+            ch.charactersToCheck = new List<GameObject>();
+            foreach (uint i in chd.charactersToCheck) {
+                ch.charactersToCheck.Add(NPCManagerScript.ins.GetNPCInSceneFromID(i));
+            }
+
+            ch.charactersRemovedFromCombat = new List<GameObject>();
+            foreach (uint i in chd.charactersRemovedFromCombat) {
+                ch.charactersRemovedFromCombat.Add(NPCManagerScript.ins.GetNPCInSceneFromID(i));
+            }
+
+
+        }
+    }
 
 
     // Use this for initialization

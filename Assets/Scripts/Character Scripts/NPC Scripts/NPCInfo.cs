@@ -153,6 +153,14 @@ public class NPCInfo : CharacterInfo {
         }
     }
 
+    public void SetStoppingDistance() {
+        if (inCombat) {
+            polyNav.stoppingDistance = 0f;
+        } else {
+            polyNav.stoppingDistance = 0.1f;
+        }
+    }
+
     public void LeaveCombat() {
         polyNav.Stop();
         polyNav.stoppingDistance = 0.1f;
