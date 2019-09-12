@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cbf963712c09cfa469ed2e0ea70867f0, type: 3}
+  m_Name: New Beam Spell
+  m_EditorClassIdentifier: 
+  energyToCast: 0
+  spellMaterial: 
+  type: 0
+  genre: 0
+  ID: 0
+  icon: {fileID: 0}
+  sprite: {fileID: 0}
+  castTime: 0
+  castSpeed: 0
+  spellObject: {fileID: 0}
+  damage: 0
+  killChance: 0
+  doesExplode: 0
+  explosionDamage: 0
+  width: 0

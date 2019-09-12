@@ -11351,7 +11351,7 @@ MonoBehaviour:
     m_BestFit: 1
     m_MinSize: 5
     m_MaxSize: 50
-    m_Alignment: 0
+    m_Alignment: 3
     m_AlignByGeometry: 0
     m_RichText: 1
     m_HorizontalOverflow: 0
@@ -13311,7 +13311,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Gernerate
+  m_Text: Generate
 --- !u!222 &770709700
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -20143,7 +20143,7 @@ Transform:
   - {fileID: 1716811009}
   - {fileID: 718814840}
   m_Father: {fileID: 1205843079}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1159984737
 GameObject:
@@ -21148,8 +21148,8 @@ RectTransform:
   - {fileID: 767941445}
   - {fileID: 658371735}
   - {fileID: 278041632}
-  - {fileID: 1152170645}
   - {fileID: 1877821675}
+  - {fileID: 1152170645}
   - {fileID: 544600026}
   - {fileID: 541147340}
   - {fileID: 794705729}
@@ -26128,7 +26128,7 @@ MonoBehaviour:
     m_BestFit: 1
     m_MinSize: 5
     m_MaxSize: 50
-    m_Alignment: 0
+    m_Alignment: 3
     m_AlignByGeometry: 0
     m_RichText: 1
     m_HorizontalOverflow: 0
@@ -31651,7 +31651,7 @@ Transform:
   - {fileID: 1384744250}
   - {fileID: 65454959}
   m_Father: {fileID: 1205843079}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1878516250
 GameObject:
