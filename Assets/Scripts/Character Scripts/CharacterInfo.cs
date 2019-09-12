@@ -28,6 +28,7 @@ public class CharacterInfo : MonoBehaviour {
     public List<CombatHUDAttack.Attack> spellQueue = new List<CombatHUDAttack.Attack>();
     public Coroutine spellCastCoroutine;
     public int progress = 0;
+    public bool wasLoaded = false;
     private float maxRangeForShootPrediction = 90;
 
     [Header("Health & Stamina")]
@@ -236,19 +237,37 @@ public class CharacterInfo : MonoBehaviour {
             Slider slider = spellQueue[0].loggedInfo.GetComponentInChildren<Slider>();
             //init
             float angle = 0;
-            for (progress = 0; progress < (spellQueue[0].selectedSpell.castTime * 100); progress++) {
-                //if toggle (move while casting) is on, then move at the speed assigned. If not, then don't move.
-                if (toggle.isOn) {
-                    polyNav.maxSpeed = defaultSpeed;
-                } else {
-                    polyNav.maxSpeed = 0;
-                }
-                
-                yield return new WaitForSeconds(0.01f);
+            if (!wasLoaded) {
+                for (progress = 0; progress < (spellQueue[0].selectedSpell.castTime * 100); progress++) {
+                    //if toggle (move while casting) is on, then move at the speed assigned. If not, then don't move.
+                    if (toggle.isOn) {
+                        polyNav.maxSpeed = defaultSpeed;
+                    } else {
+                        polyNav.maxSpeed = 0;
+                    }
 
-                //show on ui
-                currentStamina -= (spellQueue[0].selectedSpell.energyToCast / (spellQueue[0].selectedSpell.castTime * 100));
-                child.fillAmount = progress / (spellQueue[0].selectedSpell.castTime * 100);
+                    yield return new WaitForSeconds(0.01f);
+
+                    //show on ui
+                    currentStamina -= (spellQueue[0].selectedSpell.energyToCast / (spellQueue[0].selectedSpell.castTime * 100));
+                    child.fillAmount = progress / (spellQueue[0].selectedSpell.castTime * 100);
+                }
+            } else {
+                wasLoaded = false;
+                for (progress = progress; progress < (spellQueue[0].selectedSpell.castTime * 100); progress++) {
+                    //if toggle (move while casting) is on, then move at the speed assigned. If not, then don't move.
+                    if (toggle.isOn) {
+                        polyNav.maxSpeed = defaultSpeed;
+                    } else {
+                        polyNav.maxSpeed = 0;
+                    }
+
+                    yield return new WaitForSeconds(0.01f);
+
+                    //show on ui
+                    currentStamina -= (spellQueue[0].selectedSpell.energyToCast / (spellQueue[0].selectedSpell.castTime * 100));
+                    child.fillAmount = progress / (spellQueue[0].selectedSpell.castTime * 100);
+                }
             }
             //Cast and Reset
             child.fillAmount = 1;
@@ -289,6 +308,17 @@ public class CharacterInfo : MonoBehaviour {
         if (spellQueue.Count > 0) {
             spellQueue.Remove(a);
         }
+    }
+
+    public void CancelAllSpells() {
+        if (spellCastCoroutine != null) {
+            StopCoroutine(spellCastCoroutine);
+            spellCastCoroutine = null;
+        }
+        foreach(CombatHUDAttack.Attack a in spellQueue) {
+            CombatManager.ins.combatHUDAttack.RemoveAttackFromLayout(a);
+        }
+        spellQueue.Clear();
     }
 
     public void RecoverStamina() {
@@ -438,7 +468,6 @@ public class CharacterInfo : MonoBehaviour {
                 } else {
                     direction = FaceDirection(gameObject.transform.position + spellQueue[0].attackDirection);
                 }
-                return;
             }
             if (CombatManager.ins.combatHUDLog.IsEmpty) {
                 polyNav.Stop();

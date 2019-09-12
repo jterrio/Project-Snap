@@ -33,7 +33,7 @@ public class SpellManagerScript : MonoBehaviour {
     /// <param name="caster"></param>
     public void CastSpell(CombatHUDAttack.Attack a, GameObject caster, float angle) {
         foreach (GameObject c in allSpellPrefabs) {
-            if (c.GetComponent<SpellRecords>().spell == a.selectedSpell) {
+            if (c.GetComponent<SpellRecords>().spell.ID == a.selectedSpell.ID) {
                 GameObject s = Instantiate(c);
                 switch (a.fireMode) {
                     case CombatHUDAttack.FireMode.FREE:

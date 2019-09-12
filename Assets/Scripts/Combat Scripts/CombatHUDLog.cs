@@ -27,6 +27,8 @@ public class CombatHUDLog : MonoBehaviour {
             Attack
         }
     }
+
+    [System.Serializable]
     public class Movement : Move {
         public Vector3[] destination;
         public GameObject path;

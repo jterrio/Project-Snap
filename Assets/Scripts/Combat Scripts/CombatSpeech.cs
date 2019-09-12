@@ -16,7 +16,8 @@ public class CombatSpeech : MonoBehaviour {
     public GameObject gridlayoutItem;
     public List<GivenOrder> givenOrders;
     private Coroutine speechCoroutine;
-    private int progress;
+    public int progress;
+    public bool wasLoaded;
     public GameObject watchAreaPrefab, guardAreaPrefab;
     public RectTransform bribePrefab;
     public RectTransform bribePanel, bribeGridLayout, bribeText;
@@ -77,10 +78,19 @@ public class CombatSpeech : MonoBehaviour {
         Image child = givenOrders[0].child.GetComponentInChildren<Image>();
 
         //1 second
-        for (progress = 0; progress < 100; progress++) {
+        if (!wasLoaded) {
+            for (progress = 0; progress < 100; progress++) {
 
-            yield return new WaitForSeconds(0.01f);
-            child.fillAmount = (float)progress / 100f;
+                yield return new WaitForSeconds(0.01f);
+                child.fillAmount = (float)progress / 100f;
+            }
+        } else {
+            wasLoaded = false;
+            for (progress = progress; progress < 100; progress++) {
+
+                yield return new WaitForSeconds(0.01f);
+                child.fillAmount = (float)progress / 100f;
+            }
         }
         //Cast and Reset
         child.fillAmount = 1;

@@ -162,7 +162,11 @@ public class CombatHUDAttack : MonoBehaviour {
         if (a.fireMode != FireMode.TARGET) {
             a.loggedInfo.GetComponentInChildren<Slider>().gameObject.SetActive(false);
         }
-        loggedAttacks.Add(a);
+        if (!a.isCasting) {
+            loggedAttacks.Add(a);
+        } else {
+            GameManagerScript.ins.playerInfo.spellQueue.Add(a);
+        }
     }
 
     /// <summary>
@@ -172,8 +176,12 @@ public class CombatHUDAttack : MonoBehaviour {
     public void RemoveAttackFromLayout(Attack a) {
         foreach(Transform child in combatHUDLog.gridlayout) {
             if(child == a.loggedInfo.transform) {
-                Destroy(a.attackObject.gameObject);
-                Destroy(a.loggedInfo.gameObject);
+                if (a.attackObject != null) {
+                    Destroy(a.attackObject.gameObject);
+                }
+                if (a.loggedInfo != null) {
+                    Destroy(a.loggedInfo.gameObject);
+                }
                 loggedAttacks.Remove(a);
                 return;
             }

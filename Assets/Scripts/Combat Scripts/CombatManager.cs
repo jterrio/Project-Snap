@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Xml.Serialization;
+using UnityEngine.UI;
 
 public class CombatManager : MonoBehaviour {
 
@@ -50,6 +51,8 @@ public class CombatManager : MonoBehaviour {
         [XmlArray("PlayerCombatOrderData")]
         [XmlArrayItem("PlayerCombatOrder")]
         public List<PlayerCombatOrderData> pcod;
+
+        public PlayerCombatQueueData pcqd;
     }
 
     public class PlayerCombatMovementData {
@@ -88,6 +91,16 @@ public class CombatManager : MonoBehaviour {
         public float watchAreaPosY;
     }
 
+    public class PlayerCombatQueueData {
+        //attack-spell
+        public int spellProgress;
+        //order
+        public int orderProgress;
+
+        //attack-memory
+        public List<MemoryData> memoryData;
+    }
+
     public class CombatHandlerData {
 
         public float posX;
@@ -111,6 +124,12 @@ public class CombatManager : MonoBehaviour {
         public float turnTimeOffset;
     }
 
+    public class MemoryData {
+        public uint npcID;
+        public float posX;
+        public float posY;
+    }
+
     PlayerCombatData ExportPlayerCombatData() {
         PlayerCombatData playerCD = new PlayerCombatData();
 
@@ -128,8 +147,29 @@ public class CombatManager : MonoBehaviour {
             }
             playerCD.pcmd.Add(playerCMD);
         }
-        //Attack Data
+        //Attack Data - Spell Queue
         playerCD.pcad = new List<PlayerCombatAttackData>();
+        foreach (CombatHUDAttack.Attack a in GameManagerScript.ins.playerInfo.spellQueue) {
+            PlayerCombatAttackData playerCAD = new PlayerCombatAttackData();
+            playerCAD.selectedSpellID = a.selectedSpell.ID;
+            playerCAD.selfCast = a.selfCast;
+            playerCAD.isCasting = a.isCasting;
+            playerCAD.fm = a.fireMode;
+            playerCAD.hash = a.hash;
+            if (a.attackTarget != null) {
+                playerCAD.attackTarget = a.attackTarget.GetComponent<CharacterInfo>().id;
+            } else {
+                playerCAD.attackTarget = 0;
+            }
+            playerCAD.attackPointPosX = a.attackPoint.x;
+            playerCAD.attackPointPosY = a.attackPoint.y;
+            playerCAD.attackPointModePosX = a.attackPointModePoint.x;
+            playerCAD.attackPointModePosY = a.attackPointModePoint.y;
+            playerCAD.attackDirectionX = a.attackDirection.x;
+            playerCAD.attackDirectionY = a.attackDirection.y;
+            playerCD.pcad.Add(playerCAD);
+        }
+        //Attack Data - On Line
         foreach (CombatHUDAttack.Attack a in combatHUDAttack.loggedAttacks) {
             PlayerCombatAttackData playerCAD = new PlayerCombatAttackData();
             playerCAD.selectedSpellID = a.selectedSpell.ID;
@@ -166,7 +206,18 @@ public class CombatManager : MonoBehaviour {
             }
             playerCD.pcod.Add(playerCOD);
         }
-
+        //Progress Data
+        playerCD.pcqd = new PlayerCombatQueueData();
+        playerCD.pcqd.orderProgress = combatSpeech.progress;
+        playerCD.pcqd.spellProgress = GameManagerScript.ins.playerInfo.progress;
+        playerCD.pcqd.memoryData = new List<MemoryData>();
+        foreach(GameObject g in combatHUDAttack.memory.Keys) {
+            MemoryData md = new MemoryData();
+            md.npcID = g.GetComponent<CharacterInfo>().id;
+            md.posX = g.transform.position.x;
+            md.posY = g.transform.position.y;
+            playerCD.pcqd.memoryData.Add(md);
+        }
 
         return playerCD;
     }
@@ -182,9 +233,13 @@ public class CombatManager : MonoBehaviour {
             }
             combatHUDLog.LogMovePosition(des, playerCMD.hash);
         }
+        if(combatHUDLog.loggedMoves.Count == 0) {
+            GameManagerScript.ins.playerInfo.polyNav.Stop();
+        }
 
         //Import Attack Data
         combatHUDAttack.RemoveAllAttacks();
+        GameManagerScript.ins.playerInfo.CancelAllSpells();
         foreach (PlayerCombatAttackData playerCAD in playerCD.pcad) {
             CombatHUDAttack.Attack a = new CombatHUDAttack.Attack();
             a.selectedSpell = SpellManagerScript.ins.GetSpellFromID(playerCAD.selectedSpellID);
@@ -205,6 +260,20 @@ public class CombatManager : MonoBehaviour {
         combatSpeech.RemoveAllOrders();
         foreach (PlayerCombatOrderData playerCOD in playerCD.pcod) {
             combatSpeech.ImportOrderData(playerCOD.npcID, playerCOD.o, new Vector3(playerCOD.standAreaPosX, playerCOD.standAreaPosY, 0), new Vector3(playerCOD.watchAreaPosX, playerCOD.watchAreaPosY, 0));
+        }
+
+        //Import Progress Data
+        combatHUDAttack.memory.Clear();
+        GameManagerScript.ins.playerInfo.progress = playerCD.pcqd.spellProgress;
+        GameManagerScript.ins.playerInfo.wasLoaded = true;
+        
+        if(GameManagerScript.ins.playerInfo.spellQueue.Count > 0) {
+            GameManagerScript.ins.playerInfo.spellQueue[0].loggedInfo.GetComponentInChildren<Image>().fillAmount = playerCD.pcqd.spellProgress / (GameManagerScript.ins.playerInfo.spellQueue[0].selectedSpell.castTime * 100);
+        }
+        combatSpeech.progress = playerCD.pcqd.orderProgress;
+        combatSpeech.wasLoaded = true;
+        foreach(MemoryData md in playerCD.pcqd.memoryData) {
+            combatHUDAttack.memory.Add(NPCManagerScript.ins.GetNPCInSceneFromID(md.npcID), new Vector3(md.posX, md.posY)); 
         }
 
     }
