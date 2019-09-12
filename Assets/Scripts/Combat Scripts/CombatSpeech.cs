@@ -102,6 +102,8 @@ public class CombatSpeech : MonoBehaviour {
                     speechCoroutine = null;
                 }
                 givenOrders.Remove(go);
+                Destroy(go.standArea);
+                Destroy(go.watchArea);
                 Destroy(r.gameObject);
                 return;
             }
@@ -132,6 +134,19 @@ public class CombatSpeech : MonoBehaviour {
             }
         }
 
+    }
+
+    public void RemoveAllOrders() {
+        foreach(GivenOrder o in givenOrders) {
+            Destroy(o.child.gameObject);
+            if(o.standArea != null) {
+                Destroy(o.standArea);
+            }
+            if(o.watchArea != null) {
+                Destroy(o.watchArea);
+            }
+        }
+        givenOrders.Clear();
     }
 
     void ClickCheck() {
@@ -299,6 +314,24 @@ public class CombatSpeech : MonoBehaviour {
         givenOrders.Add(go);
         go.child.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = GetChoiceText(i);
         CombatManager.ins.combatDrawMovePosition.ChangeSpeechValue();
+    }
+
+    public void ImportOrderData(uint ID, CombatSpeech.Order o, Vector3 standAreaPos, Vector3 watchAreaPos) {
+        GivenOrder go = new GivenOrder();
+        go.npc = NPCManagerScript.ins.GetNPCInSceneFromID(ID);
+        go.o = o;
+        GameObject c = Instantiate(gridlayoutItem, gridlayoutGivenOrders);
+        go.child = c;
+        CreateObjects(go);
+        if (go.standArea != null) {
+            go.standArea.transform.position = standAreaPos;
+        }
+        if (go.watchArea != null) {
+            go.watchArea.transform.position = watchAreaPos;
+        }
+        UpdateColliders(go);
+        givenOrders.Add(go);
+        go.child.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = GetChoiceText((int)o);
     }
 
     public void UpdateColliders(GivenOrder go) {

@@ -4,12 +4,12 @@
     <NPC>
       <id>1</id>
       <active>true</active>
-      <x>2.977</x>
-      <y>0.199</y>
-      <direction>7</direction>
+      <x>0.787830353</x>
+      <y>-3.07742786</y>
+      <direction>4</direction>
       <state>0</state>
       <currentHealth>100</currentHealth>
-      <currentStamina>100</currentStamina>
+      <currentStamina>95.8875</currentStamina>
       <canMove>false</canMove>
       <inCombat>true</inCombat>
       <castProgress>0</castProgress>
@@ -47,8 +47,8 @@
       <areaPointX>0</areaPointX>
       <areaPointY>0</areaPointY>
       <hasPatrol>true</hasPatrol>
-      <patrolPointX>6.45</patrolPointX>
-      <patrolPointY>-3.54</patrolPointY>
+      <patrolPointX>1.77</patrolPointX>
+      <patrolPointY>4.49</patrolPointY>
       <isWaiting>true</isWaiting>
     </NPC>
     <NPC>
@@ -56,10 +56,10 @@
       <active>true</active>
       <x>0.66</x>
       <y>-1.11999989</y>
-      <direction>3</direction>
+      <direction>0</direction>
       <state>0</state>
       <currentHealth>100</currentHealth>
-      <currentStamina>100</currentStamina>
+      <currentStamina>95.8875</currentStamina>
       <canMove>false</canMove>
       <inCombat>true</inCombat>
       <castProgress>0</castProgress>
@@ -329,7 +329,7 @@
     <active>true</active>
     <x>2.97000027</x>
     <y>-1.94</y>
-    <direction>0</direction>
+    <direction>1</direction>
     <state>0</state>
     <currentHealth>100</currentHealth>
     <currentStamina>100</currentStamina>
@@ -397,8 +397,8 @@
   <combatManagerData>
     <CombatManagerData>
       <CombatHandlerData>
-        <posX>2.977</posX>
-        <posY>0.199</posY>
+        <posX>0.787830353</posX>
+        <posY>-3.07742786</posY>
         <charactersInCombat>
           <unsignedInt>2</unsignedInt>
           <unsignedInt>1</unsignedInt>
@@ -431,10 +431,110 @@
             <ID>0</ID>
             <isReady>false</isReady>
             <endTurn>false</endTurn>
-            <turnTimeOffset>0.5042596</turnTimeOffset>
+            <turnTimeOffset>4.30525</turnTimeOffset>
           </CharacterInfo>
         </CharactersInfoInCombat>
       </CombatHandlerData>
     </CombatManagerData>
+    <pcd>
+      <PlayerCombatMovementData>
+        <PlayerCombatMovement>
+          <PlayerCombatMovementDestination>
+            <PlayerCombatMovementDestinationSingle>
+              <posX>2.97000027</posX>
+              <posY>-2.39</posY>
+            </PlayerCombatMovementDestinationSingle>
+            <PlayerCombatMovementDestinationSingle>
+              <posX>7.18875027</posX>
+              <posY>-3.66656256</posY>
+            </PlayerCombatMovementDestinationSingle>
+          </PlayerCombatMovementDestination>
+          <hash>192212</hash>
+        </PlayerCombatMovement>
+        <PlayerCombatMovement>
+          <PlayerCombatMovementDestination>
+            <PlayerCombatMovementDestinationSingle>
+              <posX>7.18875027</posX>
+              <posY>-3.66656256</posY>
+            </PlayerCombatMovementDestinationSingle>
+            <PlayerCombatMovementDestinationSingle>
+              <posX>8.149951</posX>
+              <posY>-2.14999986</posY>
+            </PlayerCombatMovementDestinationSingle>
+            <PlayerCombatMovementDestinationSingle>
+              <posX>8.149951</posX>
+              <posY>-0.8500074</posY>
+            </PlayerCombatMovementDestinationSingle>
+            <PlayerCombatMovementDestinationSingle>
+              <posX>6.29641676</posX>
+              <posY>4.20929241</posY>
+            </PlayerCombatMovementDestinationSingle>
+          </PlayerCombatMovementDestination>
+          <hash>31451</hash>
+        </PlayerCombatMovement>
+      </PlayerCombatMovementData>
+      <PlayerCombatAttackData>
+        <PlayerCombatAttack>
+          <selectedSpellID>0</selectedSpellID>
+          <selfCast>false</selfCast>
+          <isCasting>false</isCasting>
+          <fm>FREE</fm>
+          <hash>31451</hash>
+          <attackTarget>0</attackTarget>
+          <attackPointPosX>7.02090645</attackPointPosX>
+          <attackPointPosY>2.231768</attackPointPosY>
+          <attackPointModePosX>0</attackPointModePosX>
+          <attackPointModePosY>0</attackPointModePosY>
+          <attackDirectionX>0.437774032</attackDirectionX>
+          <attackDirectionY>-0.8990851</attackDirectionY>
+        </PlayerCombatAttack>
+        <PlayerCombatAttack>
+          <selectedSpellID>0</selectedSpellID>
+          <selfCast>false</selfCast>
+          <isCasting>false</isCasting>
+          <fm>FREE</fm>
+          <hash>31451</hash>
+          <attackTarget>0</attackTarget>
+          <attackPointPosX>7.52875948</attackPointPosX>
+          <attackPointPosY>0.845561147</attackPointPosY>
+          <attackPointModePosX>0</attackPointModePosX>
+          <attackPointModePosY>0</attackPointModePosY>
+          <attackDirectionX>0.9998076</attackDirectionX>
+          <attackDirectionY>-0.0196148418</attackDirectionY>
+        </PlayerCombatAttack>
+        <PlayerCombatAttack>
+          <selectedSpellID>0</selectedSpellID>
+          <selfCast>false</selfCast>
+          <isCasting>false</isCasting>
+          <fm>FREE</fm>
+          <hash>31451</hash>
+          <attackTarget>0</attackTarget>
+          <attackPointPosX>7.913472</attackPointPosX>
+          <attackPointPosY>-0.204528749</attackPointPosY>
+          <attackPointModePosX>0</attackPointModePosX>
+          <attackPointModePosY>0</attackPointModePosY>
+          <attackDirectionX>-0.9222976</attackDirectionX>
+          <attackDirectionY>0.38648054</attackDirectionY>
+        </PlayerCombatAttack>
+      </PlayerCombatAttackData>
+      <PlayerCombatOrderData>
+        <PlayerCombatOrder>
+          <npcID>2</npcID>
+          <o>GUARD</o>
+          <standAreaPosX>1.934844</standAreaPosX>
+          <standAreaPosY>0.5892968</standAreaPosY>
+          <watchAreaPosX>0</watchAreaPosX>
+          <watchAreaPosY>0</watchAreaPosY>
+        </PlayerCombatOrder>
+        <PlayerCombatOrder>
+          <npcID>1</npcID>
+          <o>SENTRY</o>
+          <standAreaPosX>2.97000027</standAreaPosX>
+          <standAreaPosY>-3.981016</standAreaPosY>
+          <watchAreaPosX>-1.033906</watchAreaPosX>
+          <watchAreaPosY>2.01507831</watchAreaPosY>
+        </PlayerCombatOrder>
+      </PlayerCombatOrderData>
+    </pcd>
   </combatManagerData>
 </SaveFile>

@@ -16,6 +16,7 @@ public class CombatHUDAttack : MonoBehaviour {
     public GameObject attackOnLinePrefab;
     public GameObject attackDirectionalPrefab;
     private GameObject tempAttack;
+    public GameObject TempAttack { get; }
     private GameObject tempAttackDirectional;
     private GameObject spellObject;
     private Spell spell;
@@ -152,6 +153,16 @@ public class CombatHUDAttack : MonoBehaviour {
             a.loggedInfo.GetComponentInChildren<Slider>().gameObject.SetActive(false);
         }
         SortAttackLayout();
+    }
+
+    public void LoadAttackToLayout(Attack a) {
+        a.loggedInfo = (RectTransform)Instantiate(combatHUDLog.logPrefab, combatHUDLog.gridlayout);
+        a.loggedInfo.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = a.ReturnMsg();
+        a.loggedInfo.GetComponentInChildren<CancelSpellScript>().parent = a;
+        if (a.fireMode != FireMode.TARGET) {
+            a.loggedInfo.GetComponentInChildren<Slider>().gameObject.SetActive(false);
+        }
+        loggedAttacks.Add(a);
     }
 
     /// <summary>

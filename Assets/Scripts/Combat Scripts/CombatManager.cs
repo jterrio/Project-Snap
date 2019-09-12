@@ -33,6 +33,59 @@ public class CombatManager : MonoBehaviour {
         [XmlArrayItem("CombatHandlerData")]
         public List<CombatHandlerData> chd;
 
+        public PlayerCombatData pcd;
+
+    }
+
+    public class PlayerCombatData {
+
+        [XmlArray("PlayerCombatMovementData")]
+        [XmlArrayItem("PlayerCombatMovement")]
+        public List<PlayerCombatMovementData> pcmd;
+
+        [XmlArray("PlayerCombatAttackData")]
+        [XmlArrayItem("PlayerCombatAttack")]
+        public List<PlayerCombatAttackData> pcad;
+
+        [XmlArray("PlayerCombatOrderData")]
+        [XmlArrayItem("PlayerCombatOrder")]
+        public List<PlayerCombatOrderData> pcod;
+    }
+
+    public class PlayerCombatMovementData {
+        [XmlArray("PlayerCombatMovementDestination")]
+        [XmlArrayItem("PlayerCombatMovementDestinationSingle")]
+        public List<PlayerCombatMovementDestination> destination;
+        public int hash;
+    }
+
+    public class PlayerCombatMovementDestination {
+        public float posX;
+        public float posY;
+    }
+
+    public class PlayerCombatAttackData {
+        public int selectedSpellID;
+        public bool selfCast;
+        public bool isCasting;
+        public CombatHUDAttack.FireMode fm;
+        public int hash;
+        public uint attackTarget;
+        public float attackPointPosX;
+        public float attackPointPosY;
+        public float attackPointModePosX;
+        public float attackPointModePosY;
+        public float attackDirectionX;
+        public float attackDirectionY;
+    }
+
+    public class PlayerCombatOrderData {
+        public uint npcID;
+        public CombatSpeech.Order o;
+        public float standAreaPosX;
+        public float standAreaPosY;
+        public float watchAreaPosX;
+        public float watchAreaPosY;
     }
 
     public class CombatHandlerData {
@@ -58,11 +111,110 @@ public class CombatManager : MonoBehaviour {
         public float turnTimeOffset;
     }
 
+    PlayerCombatData ExportPlayerCombatData() {
+        PlayerCombatData playerCD = new PlayerCombatData();
+
+        //Movement Data
+        playerCD.pcmd = new List<PlayerCombatMovementData>();
+        foreach(CombatHUDLog.Movement m in combatHUDLog.loggedMoves) {
+            PlayerCombatMovementData playerCMD = new PlayerCombatMovementData();
+            playerCMD.hash = m.hash;
+            playerCMD.destination = new List<PlayerCombatMovementDestination>();
+            foreach(Vector3 v in m.destination) {
+                PlayerCombatMovementDestination playerCMDestination = new PlayerCombatMovementDestination();
+                playerCMDestination.posX = v.x;
+                playerCMDestination.posY = v.y;
+                playerCMD.destination.Add(playerCMDestination);
+            }
+            playerCD.pcmd.Add(playerCMD);
+        }
+        //Attack Data
+        playerCD.pcad = new List<PlayerCombatAttackData>();
+        foreach (CombatHUDAttack.Attack a in combatHUDAttack.loggedAttacks) {
+            PlayerCombatAttackData playerCAD = new PlayerCombatAttackData();
+            playerCAD.selectedSpellID = a.selectedSpell.ID;
+            playerCAD.selfCast = a.selfCast;
+            playerCAD.isCasting = a.isCasting;
+            playerCAD.fm = a.fireMode;
+            playerCAD.hash = a.hash;
+            if (a.attackTarget != null) {
+                playerCAD.attackTarget = a.attackTarget.GetComponent<CharacterInfo>().id;
+            } else {
+                playerCAD.attackTarget = 0;
+            }
+            playerCAD.attackPointPosX = a.attackPoint.x;
+            playerCAD.attackPointPosY = a.attackPoint.y;
+            playerCAD.attackPointModePosX = a.attackPointModePoint.x;
+            playerCAD.attackPointModePosY = a.attackPointModePoint.y;
+            playerCAD.attackDirectionX = a.attackDirection.x;
+            playerCAD.attackDirectionY = a.attackDirection.y;
+            playerCD.pcad.Add(playerCAD);
+        }
+        //Order Data
+        playerCD.pcod = new List<PlayerCombatOrderData>();
+        foreach(CombatSpeech.GivenOrder go in combatSpeech.givenOrders) {
+            PlayerCombatOrderData playerCOD = new PlayerCombatOrderData();
+            playerCOD.npcID = go.npc.GetComponent<CharacterInfo>().id;
+            playerCOD.o = go.o;
+            if (go.standArea != null) {
+                playerCOD.standAreaPosX = go.standArea.transform.position.x;
+                playerCOD.standAreaPosY = go.standArea.transform.position.y;
+            }
+            if (go.watchArea != null) {
+                playerCOD.watchAreaPosX = go.watchArea.transform.position.x;
+                playerCOD.watchAreaPosY = go.watchArea.transform.position.y;
+            }
+            playerCD.pcod.Add(playerCOD);
+        }
+
+
+        return playerCD;
+    }
+
+    void ImportPlayerCombatData(PlayerCombatData playerCD) {
+
+        //Import Movement Data
+        combatHUDLog.RemoveAllMovement();
+        foreach (PlayerCombatMovementData playerCMD in playerCD.pcmd) {
+            List<Vector3> des = new List<Vector3>();
+            foreach (PlayerCombatMovementDestination vec in playerCMD.destination) {
+                des.Add(new Vector3(vec.posX, vec.posY, 0));
+            }
+            combatHUDLog.LogMovePosition(des, playerCMD.hash);
+        }
+
+        //Import Attack Data
+        combatHUDAttack.RemoveAllAttacks();
+        foreach (PlayerCombatAttackData playerCAD in playerCD.pcad) {
+            CombatHUDAttack.Attack a = new CombatHUDAttack.Attack();
+            a.selectedSpell = SpellManagerScript.ins.GetSpellFromID(playerCAD.selectedSpellID);
+            a.selfCast = playerCAD.selfCast;
+            a.isCasting = playerCAD.isCasting;
+            a.fireMode = playerCAD.fm;
+            a.attackPoint = new Vector3(playerCAD.attackPointPosX, playerCAD.attackPointPosY, 0);
+            a.attackDirection = new Vector3(playerCAD.attackDirectionX, playerCAD.attackDirectionY, 0);
+            a.attackPointModePoint = new Vector3(playerCAD.attackPointModePosX, playerCAD.attackPointModePosY, 0);
+            a.hash = playerCAD.hash;
+            a.attackTarget = NPCManagerScript.ins.GetNPCInSceneFromID(playerCAD.attackTarget);
+            combatHUDAttack.LoadAttackToLayout(a);
+        }
+        combatHUDAttack.DrawAttackPositions();
+        combatHUDAttack.SortAttackLayout();
+
+        //Import Order Data
+        combatSpeech.RemoveAllOrders();
+        foreach (PlayerCombatOrderData playerCOD in playerCD.pcod) {
+            combatSpeech.ImportOrderData(playerCOD.npcID, playerCOD.o, new Vector3(playerCOD.standAreaPosX, playerCOD.standAreaPosY, 0), new Vector3(playerCOD.watchAreaPosX, playerCOD.watchAreaPosY, 0));
+        }
+
+    }
+
     public CombatManagerData ExportCombatHandlerData() {
         CombatManagerData cmd = new CombatManagerData() {
             chd = new List<CombatHandlerData>()
         };
-        foreach(GameObject handler in allCombatHandlers) {
+        cmd.pcd = ExportPlayerCombatData();
+        foreach (GameObject handler in allCombatHandlers) {
             CombatHandlerData handlerData = new CombatHandlerData();
             CombatHandler ch = handler.GetComponent<CombatHandler>();
 
@@ -170,6 +322,8 @@ public class CombatManager : MonoBehaviour {
 
 
         }
+
+        ImportPlayerCombatData(cmd.pcd);
     }
 
 
