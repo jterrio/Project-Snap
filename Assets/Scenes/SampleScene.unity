@@ -6651,7 +6651,7 @@ Camera:
   far clip plane: 1000
   field of view: 87.7
   orthographic: 1
-  orthographic size: 4.171875
+  orthographic size: 4.15625
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -13375,6 +13375,7 @@ MonoBehaviour:
   canMove: 0
   inCombat: 0
   progress: 0
+  wasLoaded: 0
   currentHealth: 100
   maxHealth: 100
   currentStamina: 100
@@ -16925,6 +16926,7 @@ MonoBehaviour:
   canMove: 0
   inCombat: 0
   progress: 0
+  wasLoaded: 0
   currentHealth: 100
   maxHealth: 100
   currentStamina: 100
@@ -18629,6 +18631,7 @@ MonoBehaviour:
   canMove: 0
   inCombat: 0
   progress: 0
+  wasLoaded: 0
   currentHealth: 100
   maxHealth: 100
   currentStamina: 100
@@ -22653,6 +22656,7 @@ MonoBehaviour:
     type: 3}
   gridlayout: {fileID: 101852369}
   pathPrefab: {fileID: 1497566707263150, guid: 0f720c11e25364b4dbb860ba08ccc86c, type: 3}
+  loggedMoves: []
 --- !u!114 &1619709821
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -22696,6 +22700,8 @@ MonoBehaviour:
   gridlayoutGivenOrders: {fileID: 1399942044}
   gridlayoutItem: {fileID: 1570704352082434, guid: bbc6b4ae0d33aed4cba3fdaf667007f4,
     type: 3}
+  progress: 0
+  wasLoaded: 0
   watchAreaPrefab: {fileID: 1497566707263150, guid: 17945d56b5fc5964baf18afd78d9278b,
     type: 3}
   guardAreaPrefab: {fileID: 1497566707263150, guid: 2c294f4f5210ea94b874a63381adcec1,
@@ -23577,6 +23583,7 @@ MonoBehaviour:
   canMove: 0
   inCombat: 0
   progress: 0
+  wasLoaded: 0
   currentHealth: 100
   maxHealth: 100
   currentStamina: 100
@@ -25565,6 +25572,7 @@ MonoBehaviour:
   canMove: 0
   inCombat: 0
   progress: 0
+  wasLoaded: 0
   currentHealth: 100
   maxHealth: 100
   currentStamina: 100

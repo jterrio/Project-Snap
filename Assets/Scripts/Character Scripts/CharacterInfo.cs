@@ -460,6 +460,9 @@ public class CharacterInfo : MonoBehaviour {
     public void SetDirection() {
         //player
         if (gameObject == GameManagerScript.ins.player) {
+            if (CombatManager.ins.combatHUDLog.IsEmpty) {
+                polyNav.Stop();
+            }
             if (spellQueue.Count != 0) {
                 if (spellQueue[0].fireMode == CombatHUDAttack.FireMode.TARGET) {
                     direction = FaceDirection(CombatManager.ins.combatHUDAttack.memory[spellQueue[0].attackTarget]);
@@ -468,10 +471,9 @@ public class CharacterInfo : MonoBehaviour {
                 } else {
                     direction = FaceDirection(gameObject.transform.position + spellQueue[0].attackDirection);
                 }
+                return;
             }
-            if (CombatManager.ins.combatHUDLog.IsEmpty) {
-                polyNav.Stop();
-            }
+
         }
 
         //player movement and npc movement
