@@ -8,7 +8,7 @@ public class CombatScript : MonoBehaviour {
     [Header("NPC Info")]
     private NPCInfo npcInfo; //ai info
     private CharacterInfo charInfo; //ai and player info
-    private Coroutine turnCoroutine; //ai's turn coroutine
+    public Coroutine turnCoroutine; //ai's turn coroutine
     public Stats myStats; //ai stats
     private FieldOfVisionScript fov; //ai fov
 
@@ -30,9 +30,10 @@ public class CombatScript : MonoBehaviour {
 
 
     [Header("Spell Variables")]
-    private Spell selectedSpell; //spell that is being casted (or attempted to)
-    private Coroutine spellCoroutine; //coroutine for casting spell
-    private float progress = 0; //progress from 0 to 1 of the spell being cast
+    public Spell selectedSpell; //spell that is being casted (or attempted to)
+    public Coroutine spellCoroutine; //coroutine for casting spell
+    public float progress = 0; //progress from 0 to 1 of the spell being cast
+    private int progressI = 0;
     private float spellMemoryCooldown = 0.25f;
     
 
@@ -65,6 +66,7 @@ public class CombatScript : MonoBehaviour {
 
     [Header("Turn Variables")]
     public bool isReady = false; //ready means that combat handler should give us a turn
+    public float turnTimerStart; //time since last end turn
     public bool endTurn = false; //send to combat handler to know that we are done
 
     [Header("Commands/Orders")]
@@ -382,6 +384,7 @@ public class CombatScript : MonoBehaviour {
     /// <returns></returns>
     IEnumerator TurnCoroutine() {
         float s = (0.75f - (myStats.perception * 0.025f)); //get the seconds to wait based on stats
+        turnTimerStart = Time.time;
         //print(gameObject + " wait time is " + s);
         yield return new WaitForSeconds(s); //wait for seconds
         isReady = true; //ready the unit up so the combat handler knows it should be their turn
@@ -389,11 +392,31 @@ public class CombatScript : MonoBehaviour {
         //print(gameObject + " has stopped waiting!");
     }
 
+    public void StartWaiting(float a) {
+        endTurn = false;
+        turnCoroutine = StartCoroutine(TurnCoroutine(a));
+    }
+
+    public void StopTurnCoroutine() {
+        StopCoroutine(turnCoroutine);
+    }
+
+    IEnumerator TurnCoroutine(float a) {
+        float s = (0.75f - (myStats.perception * 0.025f)); //get the seconds to wait based on stats
+        s -= a;
+        //print(gameObject + " wait time is " + s);
+        if (s > 0) {
+            yield return new WaitForSeconds(s); //wait for seconds
+            isReady = true; //ready the unit up so the combat handler knows it should be their turn
+            turnCoroutine = null; //reset the turnCoroutine
+        }
+        //print(gameObject + " has stopped waiting!");
+    }
+
     /// <summary>
     /// Ends the unit's turn
     /// </summary>
     public void EndTurn() {
-        //print(gameObject + " has ended their turn at " + Time.time);
         endTurn = true; //combat handler will handle the rest
     }
 
@@ -450,8 +473,8 @@ public class CombatScript : MonoBehaviour {
     /// </summary>
     /// <returns></returns>
     IEnumerator SpellEnumerator() {
-        for (int i = 0; i < (selectedSpell.castTime * 100); i++) { //run for loop based on seconds (* 100 to get precision)
-            progress = (i / (selectedSpell.castTime * 100)); //update progress
+        for (progressI = 0; progressI < (selectedSpell.castTime * 100); progressI++) { //run for loop based on seconds (* 100 to get precision)
+            progress = (progressI / (selectedSpell.castTime * 100)); //update progress
             SpellStaminaCheck(); //check stamina
 
             npcInfo.DrainStamina( ((selectedSpell.energyToCast - (selectedSpell.energyToCast * 0.25f)) / (selectedSpell.castTime * 100))); //drain stamina
@@ -1526,6 +1549,18 @@ public class CombatScript : MonoBehaviour {
         }
         if (go.watchArea != null) {
             watchArea = go.watchArea.gameObject.transform.position;
+        }
+    }
+
+    public int ProgressI {
+        get {
+            return progressI;
+        }
+        set {
+            progressI = value;
+            if (selectedSpell != null) {
+                progress = (progressI / (selectedSpell.castTime * 100));
+            }
         }
     }
 

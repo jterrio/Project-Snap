@@ -27,6 +27,8 @@ public class CombatHUDLog : MonoBehaviour {
             Attack
         }
     }
+
+    [System.Serializable]
     public class Movement : Move {
         public Vector3[] destination;
         public GameObject path;
@@ -225,6 +227,10 @@ public class CombatHUDLog : MonoBehaviour {
         LogMovePosition(temp);
     }
 
+    /// <summary>
+    /// Used by AI pathfinding
+    /// </summary>
+    /// <param name="des"></param>
     public void LogMovePosition(Vector2[] des) {
         List<Vector3> temp = new List<Vector3>();
         foreach(Vector2 p in des) {
@@ -258,6 +264,33 @@ public class CombatHUDLog : MonoBehaviour {
         isEmpty = false;
     }
 
+    /// <summary>
+    /// Used for manually loading path and hash
+    /// </summary>
+    /// <param name="des"></param>
+    /// <param name="hash"></param>
+    public void LogMovePosition(List<Vector3> des, int hash) {
+        Movement mvmt = new Movement();
+        mvmt.SetDest(des.ToArray());
+        mvmt.path = Instantiate(pathPrefab);
+        mvmt.path.transform.position = des[des.Count - 1];
+        mvmt.pathLR = mvmt.path.GetComponentInChildren<LineRenderer>();
+        mvmt.pathLR.startWidth = 0.05f;
+        mvmt.pathLR.endWidth = 0.05f;
+        mvmt.pathLR.positionCount = des.Count;
+        mvmt.pathLR.SetPositions(des.ToArray());
+
+        //re-evaluate position of collider while timescale is 0
+        mvmt.path.GetComponent<BoxCollider2D>().isTrigger = false;
+        mvmt.path.GetComponent<BoxCollider2D>().isTrigger = true;
+        mvmt.hash = hash;
+        randomHashList.Add(hash);
+
+        loggedMoves.Add(mvmt);
+        mvmt.queuePos = loggedMoves.IndexOf(mvmt);
+        isEmpty = false;
+    }
+
     public void RemoveLastLogMovementPosition() {
         Movement mvmt = null;
         foreach(Movement m in loggedMoves) {
@@ -265,6 +298,7 @@ public class CombatHUDLog : MonoBehaviour {
         }
         if(mvmt != null) {
             loggedMoves.Remove(mvmt);
+            randomHashList.Remove(mvmt.hash);
             Destroy(mvmt.path.gameObject);
         }
         if(loggedMoves.Count == 0) {
@@ -276,6 +310,7 @@ public class CombatHUDLog : MonoBehaviour {
 
     public void RemoveAllMovement() {
         foreach(Movement m in loggedMoves) {
+            randomHashList.Remove(m.hash);
             Destroy(m.path.gameObject);
         }
         loggedMoves.Clear();
@@ -284,6 +319,7 @@ public class CombatHUDLog : MonoBehaviour {
 
     public void RemoveFirstLogMovementPosition() {
         Destroy(loggedMoves[0].path.gameObject);
+        randomHashList.Remove(loggedMoves[0].hash);
         loggedMoves.RemoveAt(0);
         if (loggedMoves.Count == 0) {
             isEmpty = true;

@@ -46,7 +46,9 @@ public class FactionManagerScript : MonoBehaviour {
     /// Creates all the faction relations
     /// </summary>
     public void CreateFactionRelations() {
-        //string[] faction = System.Enum.GetNames(typeof(Faction));
+        if(factionRelations.Count >= System.Enum.GetNames(typeof(Faction)).Length) {
+            return;
+        }
 
         foreach (Faction faction in (Faction[])System.Enum.GetValues(typeof(Faction))) {
             foreach (Faction faction2 in (Faction[])System.Enum.GetValues(typeof(Faction))){
@@ -76,7 +78,7 @@ public class FactionManagerScript : MonoBehaviour {
     /// <param name="b"></param>
     public void CreateFactionRelation(Faction a, Faction b) {
         
-        if (a != b) {
+        if ((int)a != (int)b) {
             if (!DoesFactionRelationExist(a, b)) {
                 FactionRelation fr = new FactionRelation();
                 fr.faction1 = a;
@@ -92,11 +94,11 @@ public class FactionManagerScript : MonoBehaviour {
     /// <param name="b"></param>
     /// <param name="newRelation"></param>
     public void SetFactionRelation(Faction a,Faction b, float newRelation) {
-        if (a == b) {
+        if ((int)a == (int)b) {
             return;
         }
         foreach (FactionRelation fr in factionRelations) {
-            if ((a == fr.faction1 || a == fr.faction2) && (b == fr.faction1 || b == fr.faction2)) {
+            if (((int)a == (int)fr.faction1 || (int)a == (int)fr.faction2) && ((int)b == (int)fr.faction1 || (int)b == (int)fr.faction2)) {
                 fr.opinion = newRelation;
                 Validate(fr);
                 return;
@@ -124,11 +126,11 @@ public class FactionManagerScript : MonoBehaviour {
     /// <param name="b"></param>
     /// <returns></returns>
     public float GetFactionRelation(Faction a,Faction b) {
-        if (a == b) {
+        if ((int)a == (int)b) {
             return 0;
         }
         foreach (FactionRelation fr in factionRelations) {
-            if ((a == fr.faction1 || a == fr.faction2) && (b == fr.faction1 || b == fr.faction2)) {
+            if (((int)a == (int)fr.faction1 || (int)a == (int)fr.faction2) && ((int)b == (int)fr.faction1 || (int)b == (int)fr.faction2)) {
                 return fr.opinion;
             }
         }
@@ -143,11 +145,11 @@ public class FactionManagerScript : MonoBehaviour {
     /// <param name="addedValue"></param>
     /// <returns></returns>
     public float AddToFactionRelation(Faction a, Faction b, float addedValue) { 
-        if (a == b) {
+        if ((int)a == (int)b) {
             return 0;
         }
         foreach (FactionRelation fr in factionRelations) {
-            if ((a == fr.faction1 || a == fr.faction2) && (b == fr.faction1 || b == fr.faction2)) {
+            if (((int)a == (int)fr.faction1 || (int)a == (int)fr.faction2) && ((int)b == (int)fr.faction1 || (int)b == (int)fr.faction2)) {
                 return (fr.opinion += addedValue);
             }
         }
@@ -164,11 +166,11 @@ public class FactionManagerScript : MonoBehaviour {
     /// <param name="b"></param>
     /// <returns></returns>
     public bool DoesHate(Faction a, Faction b) {
-        if (a == b) {
+        if ((int)a == (int)b) {
             return false;
         }
         foreach (FactionRelation fr in factionRelations) {
-            if ((a == fr.faction1 || a == fr.faction2) && (b == fr.faction1 || b == fr.faction2)) {
+            if (((int)a == (int)fr.faction1 || (int)a == (int)fr.faction2) && ((int)b == (int)fr.faction1 || (int)b == (int)fr.faction2)) {
                 return (fr.opinion < doesHateUpperBound);
             }
         }
@@ -182,11 +184,11 @@ public class FactionManagerScript : MonoBehaviour {
     /// <param name="b"></param>
     /// <returns></returns>
     public bool DoesDislike(Faction a, Faction b) {
-        if (a == b) {
+        if ((int)a == (int)b) {
             return false;
         }
         foreach (FactionRelation fr in factionRelations) {
-            if ((a == fr.faction1 || a == fr.faction2) && (b == fr.faction1 || b == fr.faction2)) { 
+            if (((int)a == (int)fr.faction1 || (int)a == (int)fr.faction2) && ((int)b == (int)fr.faction1 || (int)b == (int)fr.faction2)) { 
                 return (fr.opinion < doesDislikeUpperBound);
             }
         }
@@ -200,11 +202,11 @@ public class FactionManagerScript : MonoBehaviour {
     /// <param name="b"></param>
     /// <returns></returns>
     public bool IsNeutral(Faction a, Faction b) {
-        if (a == b) {
+        if ((int)a == (int)b) {
             return false;
         }
         foreach (FactionRelation fr in factionRelations) {
-            if ((a == fr.faction1 || a == fr.faction2) && (b == fr.faction1 || b == fr.faction2)) {
+            if (((int)a == (int)fr.faction1 || (int)a == (int)fr.faction2) && ((int)b == (int)fr.faction1 || (int)b == (int)fr.faction2)) {
                 return ((fr.opinion >= isNeutralLowerBound) && (fr.opinion <= isNeutralUpperBound));
             }
         }
@@ -218,11 +220,11 @@ public class FactionManagerScript : MonoBehaviour {
     /// <param name="b"></param>
     /// <returns></returns>
     public bool DoesLike(Faction a, Faction b) {
-        if (a == b) {
+        if ((int)a == (int)b) {
             return false;
         }
         foreach (FactionRelation fr in factionRelations) {
-            if ((a == fr.faction1 || a == fr.faction2) && (b == fr.faction1 || b == fr.faction2)) {
+            if (((int)a == (int)fr.faction1 || (int)a == (int)fr.faction2) && ((int)b == (int)fr.faction1 || (int)b == (int)fr.faction2)) {
                 return (fr.opinion > doesLikeLowerBound);
             }
         }
@@ -240,7 +242,7 @@ public class FactionManagerScript : MonoBehaviour {
             return false;
         }
         foreach (FactionRelation fr in factionRelations) {
-            if ((a == fr.faction1 || a == fr.faction2) && (b == fr.faction1 || b == fr.faction2)) {
+            if (((int)a == (int)fr.faction1 || (int)a == (int)fr.faction2) && ((int)b == (int)fr.faction1 || (int)b == (int)fr.faction2)) {
                 return (fr.opinion > doesLoveLowerBound);
             }
         }
@@ -248,4 +250,13 @@ public class FactionManagerScript : MonoBehaviour {
     }   
 
     //End of Relationship Methods
+
+    public List<FactionRelation> ExportFactionRelations() {
+        return factionRelations;
+    }
+
+    public void ImportFactionRelations(List<FactionRelation> frdList) {
+        factionRelations = frdList;
+    }
+
 }

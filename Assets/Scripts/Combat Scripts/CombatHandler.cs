@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class CombatHandler : MonoBehaviour {
 
+    public bool wasLoaded = false;
+
     public List<GameObject> charactersInCombat; //list of all characters participating, actively
     public List<GameObject> currentCharactersTurn; //list of characters who are currently turning
     public List<GameObject> charactersChecked; //characters check to join combat
@@ -27,12 +29,15 @@ public class CombatHandler : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
-
+        CombatManager.ins.allCombatHandlers.Add(this.gameObject);
+        this.gameObject.transform.SetParent(CombatManager.ins.transform);
+        if (wasLoaded) {
+            return;
+        }
         //search for players to add to combat
         Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, CombatManager.ins.joinDistance, CombatManager.ins.characterTest); //player is 9, npc is 8
         CheckCollider(colliders);
         //CheckCharacters();
-        CombatManager.ins.allCombatHandlers.Add(this.gameObject);
         StartWaiting();
 	}
 
@@ -224,7 +229,7 @@ public class CombatHandler : MonoBehaviour {
             }
             if (c.gameObject.layer == 8) { //npc
                 NPCInfo npcInfo = c.gameObject.GetComponent<NPCInfo>();
-                if (!npcInfo.inCombat || !npcInfo.combatCooldown) {
+                if (!(npcInfo.inCombat || npcInfo.combatCooldown)) {
                     //have them join combat and determine later if they will run
                     if (!charactersRemovedFromCombat.Contains(c.gameObject)) {
                         npcInfo.EnterCombat();

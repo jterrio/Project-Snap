@@ -16,7 +16,8 @@ public class CombatSpeech : MonoBehaviour {
     public GameObject gridlayoutItem;
     public List<GivenOrder> givenOrders;
     private Coroutine speechCoroutine;
-    private int progress;
+    public int progress;
+    public bool wasLoaded;
     public GameObject watchAreaPrefab, guardAreaPrefab;
     public RectTransform bribePrefab;
     public RectTransform bribePanel, bribeGridLayout, bribeText;
@@ -77,10 +78,19 @@ public class CombatSpeech : MonoBehaviour {
         Image child = givenOrders[0].child.GetComponentInChildren<Image>();
 
         //1 second
-        for (progress = 0; progress < 100; progress++) {
+        if (!wasLoaded) {
+            for (progress = 0; progress < 100; progress++) {
 
-            yield return new WaitForSeconds(0.01f);
-            child.fillAmount = (float)progress / 100f;
+                yield return new WaitForSeconds(0.01f);
+                child.fillAmount = (float)progress / 100f;
+            }
+        } else {
+            wasLoaded = false;
+            for (progress = progress; progress < 100; progress++) {
+
+                yield return new WaitForSeconds(0.01f);
+                child.fillAmount = (float)progress / 100f;
+            }
         }
         //Cast and Reset
         child.fillAmount = 1;
@@ -102,6 +112,8 @@ public class CombatSpeech : MonoBehaviour {
                     speechCoroutine = null;
                 }
                 givenOrders.Remove(go);
+                Destroy(go.standArea);
+                Destroy(go.watchArea);
                 Destroy(r.gameObject);
                 return;
             }
@@ -132,6 +144,19 @@ public class CombatSpeech : MonoBehaviour {
             }
         }
 
+    }
+
+    public void RemoveAllOrders() {
+        foreach(GivenOrder o in givenOrders) {
+            Destroy(o.child.gameObject);
+            if(o.standArea != null) {
+                Destroy(o.standArea);
+            }
+            if(o.watchArea != null) {
+                Destroy(o.watchArea);
+            }
+        }
+        givenOrders.Clear();
     }
 
     void ClickCheck() {
@@ -299,6 +324,24 @@ public class CombatSpeech : MonoBehaviour {
         givenOrders.Add(go);
         go.child.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = GetChoiceText(i);
         CombatManager.ins.combatDrawMovePosition.ChangeSpeechValue();
+    }
+
+    public void ImportOrderData(uint ID, CombatSpeech.Order o, Vector3 standAreaPos, Vector3 watchAreaPos) {
+        GivenOrder go = new GivenOrder();
+        go.npc = NPCManagerScript.ins.GetNPCInSceneFromID(ID);
+        go.o = o;
+        GameObject c = Instantiate(gridlayoutItem, gridlayoutGivenOrders);
+        go.child = c;
+        CreateObjects(go);
+        if (go.standArea != null) {
+            go.standArea.transform.position = standAreaPos;
+        }
+        if (go.watchArea != null) {
+            go.watchArea.transform.position = watchAreaPos;
+        }
+        UpdateColliders(go);
+        givenOrders.Add(go);
+        go.child.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = GetChoiceText((int)o);
     }
 
     public void UpdateColliders(GivenOrder go) {
