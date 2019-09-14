@@ -156,6 +156,7 @@ public class NPCInfo : CharacterInfo {
     public void SetStoppingDistance() {
         if (inCombat) {
             polyNav.stoppingDistance = 0f;
+            //polyNav.maxSpeed = defaultSpeed;
         } else {
             polyNav.stoppingDistance = 0.1f;
         }

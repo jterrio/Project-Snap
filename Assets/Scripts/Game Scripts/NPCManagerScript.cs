@@ -230,6 +230,11 @@ public class NPCManagerScript : MonoBehaviour {
                     a.id = data.id;
                     a.gameObject.SetActive(data.active);
                     a.canMove = data.canMove;
+                    if (a.inCombat) {
+                        cs.AIEndCombat();
+                    } else {
+                        a.EnterCombat();
+                    }
                     a.inCombat = data.inCombat;
                     a.SetStoppingDistance();
                     a.currentHealth = data.currentHealth;

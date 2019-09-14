@@ -4,15 +4,15 @@
     <NPC>
       <id>1</id>
       <active>true</active>
-      <x>3.51014</x>
-      <y>0.4235617</y>
+      <x>2.977</x>
+      <y>0.199</y>
       <direction>7</direction>
       <state>0</state>
       <currentHealth>100</currentHealth>
-      <currentStamina>96.3999</currentStamina>
+      <currentStamina>100</currentStamina>
       <canMove>false</canMove>
       <inCombat>true</inCombat>
-      <castProgress>32</castProgress>
+      <castProgress>0</castProgress>
       <intuition>8</intuition>
       <intelligence>9</intelligence>
       <strength>2</strength>
@@ -55,15 +55,15 @@
     <NPC>
       <id>2</id>
       <active>true</active>
-      <x>-0.316178679</x>
-      <y>-1.92053843</y>
+      <x>0.66</x>
+      <y>-1.11999989</y>
       <direction>3</direction>
       <state>0</state>
       <currentHealth>100</currentHealth>
-      <currentStamina>96.3999</currentStamina>
+      <currentStamina>95.8875</currentStamina>
       <canMove>false</canMove>
       <inCombat>true</inCombat>
-      <castProgress>32</castProgress>
+      <castProgress>0</castProgress>
       <intuition>8</intuition>
       <intelligence>9</intelligence>
       <strength>2</strength>
@@ -332,9 +332,9 @@
   <playerData>
     <id>0</id>
     <active>true</active>
-    <x>3.538558</x>
-    <y>-1.95095658</y>
-    <direction>2</direction>
+    <x>2.97000027</x>
+    <y>-1.94</y>
+    <direction>0</direction>
     <state>0</state>
     <currentHealth>100</currentHealth>
     <currentStamina>100</currentStamina>
@@ -436,27 +436,13 @@
             <ID>0</ID>
             <isReady>false</isReady>
             <endTurn>false</endTurn>
-            <turnTimeOffset>0.5022745</turnTimeOffset>
+            <turnTimeOffset>0.5047902</turnTimeOffset>
           </CharacterInfo>
         </CharactersInfoInCombat>
       </CombatHandlerData>
     </CombatManagerData>
     <pcd>
-      <PlayerCombatMovementData>
-        <PlayerCombatMovement>
-          <PlayerCombatMovementDestination>
-            <PlayerCombatMovementDestinationSingle>
-              <posX>3.538558</posX>
-              <posY>-2.40095663</posY>
-            </PlayerCombatMovementDestinationSingle>
-            <PlayerCombatMovementDestinationSingle>
-              <posX>9.390899</posX>
-              <posY>-2.51373076</posY>
-            </PlayerCombatMovementDestinationSingle>
-          </PlayerCombatMovementDestination>
-          <hash>144938</hash>
-        </PlayerCombatMovement>
-      </PlayerCombatMovementData>
+      <PlayerCombatMovementData />
       <PlayerCombatAttackData />
       <PlayerCombatOrderData />
       <pcqd>
