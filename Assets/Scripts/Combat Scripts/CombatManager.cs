@@ -36,6 +36,8 @@ public class CombatManager : MonoBehaviour {
 
         public PlayerCombatData pcd;
 
+        public float timeScale;
+
     }
 
     public class PlayerCombatData {
@@ -329,7 +331,7 @@ public class CombatManager : MonoBehaviour {
             cmd.chd.Add(handlerData);
         }
 
-
+        cmd.timeScale = Time.timeScale;
 
 
         return cmd;
@@ -393,6 +395,7 @@ public class CombatManager : MonoBehaviour {
         }
 
         ImportPlayerCombatData(cmd.pcd);
+        Time.timeScale = cmd.timeScale;
     }
 
 

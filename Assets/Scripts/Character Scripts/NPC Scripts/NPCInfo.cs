@@ -201,11 +201,12 @@ public class NPCInfo : CharacterInfo {
         isWaiting = true;
         yield return new WaitForSeconds(waitTime);
         if (!isTalking) {
-            isWaiting = false;
             float x = Random.Range(areaPoint.transform.position.x - radiusOfArea, areaPoint.transform.position.x + radiusOfArea);
             float y = Random.Range(areaPoint.transform.position.y - radiusOfArea, areaPoint.transform.position.y + radiusOfArea);
             isMoving = true;
             polyNav.SetDestination(new Vector2(x, y));
+            isWaiting = false;
+            waitCoroutine = null;
         }
         //StopCoroutine(waitCoroutine);
     }
@@ -214,9 +215,10 @@ public class NPCInfo : CharacterInfo {
         isWaiting = true;
         yield return new WaitForSeconds(waitTime);
         if (!isTalking) {
-            isWaiting = false;
             isMoving = true;
             polyNav.SetDestination(patrolPoints[0].transform.position);
+            isWaiting = false;
+            waitCoroutine = null;
         }
         //StopCoroutine(waitCoroutine);
     }

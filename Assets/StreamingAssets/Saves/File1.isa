@@ -4,15 +4,15 @@
     <NPC>
       <id>1</id>
       <active>true</active>
-      <x>4.85223</x>
-      <y>-1.33128786</y>
-      <direction>4</direction>
+      <x>3.51014</x>
+      <y>0.4235617</y>
+      <direction>7</direction>
       <state>0</state>
-      <currentHealth>85</currentHealth>
-      <currentStamina>84.8622</currentStamina>
+      <currentHealth>100</currentHealth>
+      <currentStamina>96.3999</currentStamina>
       <canMove>false</canMove>
       <inCombat>true</inCombat>
-      <castProgress>100</castProgress>
+      <castProgress>32</castProgress>
       <intuition>8</intuition>
       <intelligence>9</intelligence>
       <strength>2</strength>
@@ -35,8 +35,8 @@
         </Slot>
       </Inventory>
       <maxSize>50</maxSize>
-      <selectedSpellID>-1</selectedSpellID>
-      <combatState>3</combatState>
+      <selectedSpellID>0</selectedSpellID>
+      <combatState>0</combatState>
       <energyState>0</energyState>
       <merchantMoney>0</merchantMoney>
       <combatCooldown>false</combatCooldown>
@@ -49,20 +49,21 @@
       <hasPatrol>true</hasPatrol>
       <patrolPointX>6.45</patrolPointX>
       <patrolPointY>-3.54</patrolPointY>
-      <isWaiting>false</isWaiting>
+      <isWaiting>true</isWaiting>
+      <isMoving>false</isMoving>
     </NPC>
     <NPC>
       <id>2</id>
       <active>true</active>
-      <x>-0.366084725</x>
-      <y>1.63121414</y>
-      <direction>1</direction>
+      <x>-0.316178679</x>
+      <y>-1.92053843</y>
+      <direction>3</direction>
       <state>0</state>
       <currentHealth>100</currentHealth>
-      <currentStamina>84.7496948</currentStamina>
+      <currentStamina>96.3999</currentStamina>
       <canMove>false</canMove>
       <inCombat>true</inCombat>
-      <castProgress>0</castProgress>
+      <castProgress>32</castProgress>
       <intuition>8</intuition>
       <intelligence>9</intelligence>
       <strength>2</strength>
@@ -91,6 +92,7 @@
       <patrolPointX>6.45</patrolPointX>
       <patrolPointY>-3.54</patrolPointY>
       <isWaiting>false</isWaiting>
+      <isMoving>false</isMoving>
     </NPC>
     <NPC>
       <id>3</id>
@@ -132,6 +134,7 @@
       <patrolPointX>0</patrolPointX>
       <patrolPointY>0</patrolPointY>
       <isWaiting>false</isWaiting>
+      <isMoving>false</isMoving>
     </NPC>
     <NPC>
       <id>4</id>
@@ -173,6 +176,7 @@
       <patrolPointX>6.45</patrolPointX>
       <patrolPointY>-3.54</patrolPointY>
       <isWaiting>false</isWaiting>
+      <isMoving>false</isMoving>
     </NPC>
     <NPC>
       <id>5</id>
@@ -214,21 +218,10 @@
       <patrolPointX>6.45</patrolPointX>
       <patrolPointY>-3.54</patrolPointY>
       <isWaiting>false</isWaiting>
+      <isMoving>false</isMoving>
     </NPC>
   </NPCData>
-  <ActiveSpellsData>
-    <Spell>
-      <dirX>0.8874148</dirX>
-      <dirY>-0.460971773</dirY>
-      <casterID>2</casterID>
-      <isActive>true</isActive>
-      <startLocationX>0</startLocationX>
-      <startLocationY>0</startLocationY>
-      <currentLocationX>1.87341988</currentLocationX>
-      <currentLocationY>-0.9686293</currentLocationY>
-      <ID>0</ID>
-    </Spell>
-  </ActiveSpellsData>
+  <ActiveSpellsData />
   <FactionRelationData>
     <FactionRelation>
       <faction1>EMPIRE</faction1>
@@ -339,15 +332,15 @@
   <playerData>
     <id>0</id>
     <active>true</active>
-    <x>2.97000027</x>
-    <y>-1.94</y>
+    <x>3.538558</x>
+    <y>-1.95095658</y>
     <direction>2</direction>
     <state>0</state>
-    <currentHealth>85</currentHealth>
-    <currentStamina>90.99985</currentStamina>
+    <currentHealth>100</currentHealth>
+    <currentStamina>100</currentStamina>
     <canMove>false</canMove>
     <inCombat>true</inCombat>
-    <castProgress>100</castProgress>
+    <castProgress>0</castProgress>
     <intuition>1</intuition>
     <intelligence>1</intelligence>
     <strength>1</strength>
@@ -409,11 +402,11 @@
   <combatManagerData>
     <CombatManagerData>
       <CombatHandlerData>
-        <posX>0.66</posX>
-        <posY>-1.12</posY>
+        <posX>2.977</posX>
+        <posY>0.199</posY>
         <charactersInCombat>
-          <unsignedInt>1</unsignedInt>
           <unsignedInt>2</unsignedInt>
+          <unsignedInt>1</unsignedInt>
           <unsignedInt>0</unsignedInt>
         </charactersInCombat>
         <currentCharactersTurn>
@@ -421,20 +414,20 @@
         </currentCharactersTurn>
         <charactersChecked />
         <charactersToCheck>
-          <unsignedInt>1</unsignedInt>
           <unsignedInt>2</unsignedInt>
+          <unsignedInt>1</unsignedInt>
           <unsignedInt>0</unsignedInt>
         </charactersToCheck>
         <charactersRemovedFromCombat />
         <CharactersInfoInCombat>
           <CharacterInfo>
-            <ID>1</ID>
+            <ID>2</ID>
             <isReady>false</isReady>
             <endTurn>false</endTurn>
             <turnTimeOffset>0</turnTimeOffset>
           </CharacterInfo>
           <CharacterInfo>
-            <ID>2</ID>
+            <ID>1</ID>
             <isReady>false</isReady>
             <endTurn>false</endTurn>
             <turnTimeOffset>0</turnTimeOffset>
@@ -443,26 +436,35 @@
             <ID>0</ID>
             <isReady>false</isReady>
             <endTurn>false</endTurn>
-            <turnTimeOffset>0.500388145</turnTimeOffset>
+            <turnTimeOffset>0.5022745</turnTimeOffset>
           </CharacterInfo>
         </CharactersInfoInCombat>
       </CombatHandlerData>
     </CombatManagerData>
     <pcd>
-      <PlayerCombatMovementData />
+      <PlayerCombatMovementData>
+        <PlayerCombatMovement>
+          <PlayerCombatMovementDestination>
+            <PlayerCombatMovementDestinationSingle>
+              <posX>3.538558</posX>
+              <posY>-2.40095663</posY>
+            </PlayerCombatMovementDestinationSingle>
+            <PlayerCombatMovementDestinationSingle>
+              <posX>9.390899</posX>
+              <posY>-2.51373076</posY>
+            </PlayerCombatMovementDestinationSingle>
+          </PlayerCombatMovementDestination>
+          <hash>144938</hash>
+        </PlayerCombatMovement>
+      </PlayerCombatMovementData>
       <PlayerCombatAttackData />
       <PlayerCombatOrderData />
       <pcqd>
-        <spellProgress>100</spellProgress>
+        <spellProgress>0</spellProgress>
         <orderProgress>0</orderProgress>
-        <memoryData>
-          <MemoryData>
-            <npcID>1</npcID>
-            <posX>4.85223</posX>
-            <posY>-1.33128786</posY>
-          </MemoryData>
-        </memoryData>
+        <memoryData />
       </pcqd>
     </pcd>
+    <timeScale>0</timeScale>
   </combatManagerData>
 </SaveFile>

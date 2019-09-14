@@ -82,6 +82,7 @@ public class NPCManagerScript : MonoBehaviour {
         public float patrolPointY;
 
         public bool isWaiting;
+        public bool isMoving;
 
 
 
@@ -169,6 +170,7 @@ public class NPCManagerScript : MonoBehaviour {
             temp.areaPointX = a.destination.x;
             temp.areaPointY = a.destination.y;
             temp.isWaiting = a.isWaiting;
+            temp.isMoving = a.isMoving;
             if (a.patrolPoints.Count > 0) {
                 temp.hasPatrol = true;
                 temp.patrolPointX = a.patrolPoints[0].transform.position.x;
@@ -259,7 +261,7 @@ public class NPCManagerScript : MonoBehaviour {
                     }
 
                     a.movementType = (NPC.MovementType)data.moveType;
-                    a.isWaiting = data.isWaiting;
+
                     a.destination = new Vector3(data.areaPointX, data.areaPointY, 0);
 
                     foreach (GameObject p in new List<GameObject>(a.patrolPoints)) {
@@ -268,16 +270,23 @@ public class NPCManagerScript : MonoBehaviour {
                             a.patrolPoints.Add(p);
                         } else {
                             if (!a.inCombat) {
-                                a.polyNav.SetDestination(a.patrolPoints[0].transform.position);
+                                if (a.movementType == NPC.MovementType.PATROL) {
+                                    a.polyNav.SetDestination(a.patrolPoints[0].transform.position);
+                                }
                             }
                             break;
                         }
                     }
                     if (a.isWaiting) {
-                        a.polyNav.Stop();
+                        //a.polyNav.Stop();
                         if(a.waitCoroutine != null) {
                             a.StopCoroutine(a.waitCoroutine);
                         }
+                    }
+                    a.isWaiting = data.isWaiting;
+                    a.isMoving = data.isMoving;
+                    if (a.isWaiting) {
+                        a.polyNav.Stop();
                         switch (a.movementType) {
                             case NPC.MovementType.AREA:
                                 a.waitCoroutine = a.StartCoroutine(a.StartWaitingArea());
@@ -287,10 +296,9 @@ public class NPCManagerScript : MonoBehaviour {
                                 break;
                             default:
                                 break;
-
                         }
-                    }
 
+                    }
                     break;
                 }
             }
