@@ -22,6 +22,7 @@ public class CombatHUDAttack : MonoBehaviour {
     private Spell spell;
     private int tempHash;
     private int count = -1;
+    private float percentageOnLine;
     public FireMode fireMode = FireMode.FREE;
     private GameObject fireModePointObject;
     private GameObject selectedNPC;
@@ -47,11 +48,15 @@ public class CombatHUDAttack : MonoBehaviour {
         public FireMode fireMode; //fire mode of the spell
         public bool selfCast = false; //if the spell is cast from self
         public bool isCasting = false; //if the spell is currently in spell queue
+        public float percentageOnLine = 0; //where the point exists on the line
 
         void Start() {
             mt = MoveType.Attack;
         }
         public string ReturnMsg() {
+            if (selectedSpell.name.EndsWith("(Clone)")){
+                return "Cast " + selectedSpell.name.Remove(selectedSpell.name.Length - 7);
+            }
             return "Cast " + selectedSpell.name;
         }
     }
@@ -275,7 +280,7 @@ public class CombatHUDAttack : MonoBehaviour {
         float a = Vector3.Dot(startToTest, startToEnd);
         float b = (testP.x - startP.x) * (testP.x - startP.x) + (testP.y - startP.y) * (testP.y - startP.y);
 
-        if ((Vector3.SqrMagnitude(Vector3.Cross(startToEnd, testToEnd)) < 0.1f) && (a >= 0) && (a >= (b - 0.1f))) {
+        if ((Vector3.SqrMagnitude(Vector3.Cross(startToEnd, testToEnd)) < 0.01f) && (a >= 0) && (a >= (b - 0.01f))) {
             toReturn = true;
         }
         return toReturn;
@@ -297,9 +302,11 @@ public class CombatHUDAttack : MonoBehaviour {
                 att.selfCast = true;
             }
             att.hash = tempHash;
+            att.percentageOnLine = percentageOnLine;
             loggedAttacks.Add(att);
             tempAttack = null;
             tempHash = -1;
+            percentageOnLine = 0;
             UIManager.ins.ShowAttackPanel();
         }
     }
@@ -529,6 +536,8 @@ public class CombatHUDAttack : MonoBehaviour {
                 x += 1;
                 Vector3 startPoint = Vector3.zero;
                 Vector3 endPoint = Vector3.zero;
+
+                //Calculate in segment percentage
                 for (int i = 0; i < combatHUDLog.loggedMoves[x].destination.Length - 1; i++) {
                     startPoint = combatHUDLog.loggedMoves[x].destination[i];
                     endPoint = combatHUDLog.loggedMoves[x].destination[i + 1];
@@ -537,10 +546,27 @@ public class CombatHUDAttack : MonoBehaviour {
                     Vector3 mouseStartDir = (mousePosition - startPoint);
                     float a = Vector3.Dot(mouseStartDir, lineDir);
                     float b = (mousePosition.x - startPoint.x) * (mousePosition.x - startPoint.x) + (mousePosition.y - startPoint.y) * (mousePosition.y - startPoint.y);
-                    
+
                     if ((Vector3.SqrMagnitude(Vector3.Cross(lineDir, mouseEndDir)) < 0.5f) && (a >= 0) && (a >= (b - 0.1f))) {
+
+                        float totalLineDir = 0;
+                        float localLineDir = 0;
+                        //Calculate total length for percentage
+                        for (int t = 0; t < combatHUDLog.loggedMoves[x].destination.Length - 1; t++) {
+                            totalLineDir += Vector3.Distance(combatHUDLog.loggedMoves[x].destination[t], combatHUDLog.loggedMoves[x].destination[t + 1]);
+                        }
+                        for (int t = 0; t < combatHUDLog.loggedMoves[x].destination.Length - 1; t++) {
+                            if (t != i) {
+                                localLineDir += Vector3.Distance(combatHUDLog.loggedMoves[x].destination[t], combatHUDLog.loggedMoves[x].destination[t + 1]);
+                                continue;
+                            }
+                            localLineDir += Vector3.Distance(mousePosition, startPoint);
+                            break;
+                        }
+
                         selectedSelf = false;
                         float percentage = mouseStartDir.magnitude / lineDir.magnitude;
+                        percentageOnLine = localLineDir / totalLineDir;
                         if (tempAttack == null) {
                             tempAttack = Instantiate(attackOnLinePrefab);
                         }
@@ -553,9 +579,11 @@ public class CombatHUDAttack : MonoBehaviour {
                         } else {
                             tempAttack.transform.position = ((1 - percentage) * startPoint) + (percentage * endPoint);
                         }
+
+                        
                         tempHash = combatHUDLog.loggedMoves[x].hash;
                         return tempAttack.transform.position;
-                    } else {
+                    } else { //self cast
                         Vector2 mouse2D = new Vector2(Camera.main.ScreenToWorldPoint(Input.mousePosition).x, Camera.main.ScreenToWorldPoint(Input.mousePosition).y);
                         RaycastHit2D hit = Physics2D.Raycast(mouse2D, Vector2.zero, Mathf.Infinity, CombatManager.ins.characterTest);
                         if (hit.collider != null) {
@@ -696,25 +724,36 @@ public class CombatHUDAttack : MonoBehaviour {
             foreach (Attack a in loggedAttacks) {
                 //its on the line/path
                 if (a.hash == m.hash && !spellQueue.Contains(a)) {
-                    toVerify.Add(a);
-                }
-            }
-            Vector3 lastPosition = GameManagerScript.ins.player.transform.position;
-            bool onLine = false;
-            foreach (Attack b in new List<Attack>(toVerify)) {
-                foreach (Vector3 v in m.destination) {
-                    if (IsPointOnLine(lastPosition, v, b.attackPoint)) {
-                        onLine = true;
+                    bool onLine = false;
+                    Vector3 lastPosition = GameManagerScript.ins.player.transform.position;
+                    foreach (Vector3 v in m.destination) {
+                        if (IsPointOnLine(lastPosition, v, a.attackPoint)) {
+                            onLine = true;
+                            break;
+                        }
+                        lastPosition = v;
                     }
-                    lastPosition = v;
-                }
-                lastPosition = GameManagerScript.ins.player.transform.position;
-                if (!onLine) {
-                    toVerify.Remove(b);
-                    RemoveAttackFromLayout(b);
+                    if (!onLine) {
+                        print("Needs to move to " + a.percentageOnLine);
+                        float totalLineDir = 0;
+                        float localLineDir = 0;
+                        float localLineDirMag = 0;
+                        float currentPercentage = 0;
+                        //Calculate total length for percentage
+                        for (int t = 0; t < m.destination.Length - 1; t++) {
+                            totalLineDir += Vector3.Distance(m.destination[t],m.destination[t + 1]);
+                        }
+                        for (int t = 0; t < m.destination.Length - 1; t++) {
+                            localLineDir += Vector3.Distance(m.destination[t], m.destination[t + 1]);
+                            currentPercentage = localLineDir / totalLineDir;
+                            if (currentPercentage >= a.percentageOnLine) {
+                                a.attackPoint = (((currentPercentage - a.percentageOnLine)) * m.destination[t]) + ((1 - (currentPercentage - a.percentageOnLine)) * m.destination[t + 1]);
+                                a.attackObject.transform.position = a.attackPoint;
+                            }
+                        }
+                    }
                 }
             }
-
         }
     }
 
