@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemName: 'Key Item #287'
   itemDesc: Find all 300 hundred.
-  ID: 0
+  ID: 2
   isSellable: 1
   isStackable: 1
   itemType: 5

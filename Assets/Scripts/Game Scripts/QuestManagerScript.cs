@@ -1,11 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Xml.Serialization;
 
 public class QuestManagerScript : MonoBehaviour {
 
     public static QuestManagerScript ins;
     public List<Quest> allQuests;
+    public List<Quest> existingQuests;
 
     // Use this for initialization
     void Start() {
@@ -19,19 +21,104 @@ public class QuestManagerScript : MonoBehaviour {
         }
         DontDestroyOnLoad(gameObject);
         AddAllQuests();
-
-
     }
 
-    public Quest GetQuest(int i) {
-        return allQuests[i];
+
+    public class PlayerQuestData {
+
+        [XmlArray("CompletedQuests")]
+        [XmlArrayItem("Quest")]
+        public List<QuestData> completedQuests;
+
+        [XmlArray("InProgressQuests")]
+        [XmlArrayItem("Quest")]
+        public List<QuestData> inProgressQuests;
+    }
+
+    public class QuestData {
+        public int ID;
+        public int currentObjective;
+    }
+
+    public PlayerQuestData SavePlayerQuestData() {
+        PlayerQuestData pqd = new PlayerQuestData();
+        pqd.inProgressQuests = new List<QuestData>();
+        pqd.completedQuests = new List<QuestData>();
+        foreach(Quest q in GameManagerScript.ins.playerQuests.completedQuests) {
+            QuestData qd = new QuestData();
+            qd.ID = q.questID;
+            qd.currentObjective = q.currentObjective;
+            pqd.completedQuests.Add(qd);
+        }
+        foreach (Quest q in GameManagerScript.ins.playerQuests.inProgressQuests) {
+            QuestData qd = new QuestData();
+            qd.ID = q.questID;
+            qd.currentObjective = q.currentObjective;
+            pqd.inProgressQuests.Add(qd);
+        }
+
+        return pqd;
+    }
+
+    public void LoadPlayerQuestData(PlayerQuestData pqd) {
+        GameManagerScript.ins.playerQuests.completedQuests.Clear();
+        GameManagerScript.ins.playerQuests.inProgressQuests.Clear();
+        DestroyAllExistingQuests();
+        foreach (QuestData qd in pqd.completedQuests) {
+            Quest q = CreateQuestFromID(qd.ID);
+            q.currentObjective = qd.currentObjective;
+            GameManagerScript.ins.playerQuests.completedQuests.Add(q);
+        }
+        foreach (QuestData qd in pqd.inProgressQuests) {
+            Quest q = CreateQuestFromID(qd.ID);
+            q.currentObjective = qd.currentObjective;
+            GameManagerScript.ins.playerQuests.inProgressQuests.Add(q);
+        }
+    }
+
+    
+
+    public Quest CreateQuestFromID(int i) {
+        foreach(Quest q in allQuests) {
+            if(q.questID == i) {
+                Quest quest = Instantiate(q);
+                quest.gameObject.transform.SetParent(this.gameObject.transform);
+                existingQuests.Add(quest);
+                return quest;
+            }
+        }
+        return allQuests[0];
+    }
+
+    public void DestroyAllExistingQuests() {
+        foreach(Quest q in new List<Quest>(existingQuests)) {
+            existingQuests.Remove(q);
+            Destroy(q.gameObject);
+        }
+    }
+
+    public Quest GetExistingQuestFromID(int i) {
+        foreach(Quest q in existingQuests) {
+            if(q.questID == i) {
+                return q;
+            }
+        }
+        return existingQuests[0];
+    }
+
+    public bool DoesQuestExist(int i) {
+        foreach(Quest q in existingQuests) {
+            if(q.questID == i) {
+                return true;
+            }
+        }
+        return false;
     }
 	
     public void AddAllQuests() {
-        foreach(Transform child in transform) {
-            allQuests.Add(child.GetComponent<Quest>());
-        }
+        allQuests = new List<Quest>(Resources.LoadAll<Quest>("Quests"));
     }
+
 
     //
     // ESCORT

@@ -142,16 +142,16 @@ public class SpeechManager : MonoBehaviour {
     }
 
     bool GiveQuest(NPCSpeechHolder.Dialogue dialogue) {
-        if (dialogue.givesQuest) {
-            GameManagerScript.ins.playerQuests.AddQuest(QuestManagerScript.ins.GetQuest(dialogue.questID));
+        if (dialogue.givesQuest && !QuestManagerScript.ins.DoesQuestExist(dialogue.questID)) {
+            GameManagerScript.ins.playerQuests.AddQuest(QuestManagerScript.ins.CreateQuestFromID(dialogue.questID));
             return true;
         }
         return false;
     }
 
     bool CheckQuest(NPCSpeechHolder.Dialogue dialogue) {
-        if (QuestManagerScript.ins.GetQuest(dialogue.questID).HasCompletedCurrentObjective()) {
-            QuestManagerScript.ins.GetQuest(dialogue.questID).CompleteObjective();
+        if (QuestManagerScript.ins.GetExistingQuestFromID(dialogue.questID).HasCompletedCurrentObjective()) {
+            QuestManagerScript.ins.GetExistingQuestFromID(dialogue.questID).CompleteObjective();
             return true;
         }
         return false;

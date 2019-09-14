@@ -44,6 +44,7 @@ public class PlayerInfo : CharacterInfo {
         CombatManager.ins.combatHUDLog.RemoveAllMovement();
         if (spellCastCoroutine != null) {
             StopCoroutine(spellCastCoroutine);
+            CancelAllSpells();
         }
         UIManager.ins.DisableCombatHUD();
     }

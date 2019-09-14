@@ -49,7 +49,7 @@ public class NPCSpeechHolder : MonoBehaviour {
         public int setToGoToForInProgress;
 
         [Header("Reset")]
-        public int resetSet; //set to reset to beginning
+        public int resetSet = -1; //set to reset to beginning
         public bool reset; //if it should reset
     }
 
@@ -102,7 +102,11 @@ public class NPCSpeechHolder : MonoBehaviour {
     /// if we reset, the set should have a set number to reset to, which we set the current set to
     /// </summary>
     public void ResetSetNumber() {
-        SetDialogueSet(speechSets[currentSet].dialogue[currentLine].resetSet);
+        if (speechSets[currentSet].dialogue[currentLine].reset) {
+            SetDialogueSet(speechSets[currentSet].dialogue[currentLine].resetSet);
+        } else {
+            SetDialogueSet(currentSet);
+        }
 
     }
 

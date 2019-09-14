@@ -12,7 +12,7 @@ public abstract class Quest : MonoBehaviour {
     public List<QuestObjectives> questObjectives;
     public int questID;
     public int skillPointsRewards;
-    [HideInInspector]
+
     public int currentObjective = 0;
 
     [System.Serializable]

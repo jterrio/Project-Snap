@@ -20,7 +20,7 @@ public class NPCInfo : CharacterInfo {
     [HideInInspector] public FactionManagerScript.Faction faction; //access via NPC class
     public NPC.MovementType movementType;
     private NPC.MovementType movementTypeOld;
-    private Coroutine waitCoroutine;
+    public Coroutine waitCoroutine;
 
     [Header("Movement - Area")]
     public GameObject areaPoint; //for the movementtype.area
@@ -153,6 +153,14 @@ public class NPCInfo : CharacterInfo {
         }
     }
 
+    public void SetStoppingDistance() {
+        if (inCombat) {
+            polyNav.stoppingDistance = 0f;
+        } else {
+            polyNav.stoppingDistance = 0.1f;
+        }
+    }
+
     public void LeaveCombat() {
         polyNav.Stop();
         polyNav.stoppingDistance = 0.1f;
@@ -189,7 +197,7 @@ public class NPCInfo : CharacterInfo {
         waitCoroutine = StartCoroutine(StartWaitingArea());
     }
 
-    IEnumerator StartWaitingArea() {
+    public IEnumerator StartWaitingArea() {
         isWaiting = true;
         yield return new WaitForSeconds(waitTime);
         if (!isTalking) {
@@ -202,7 +210,7 @@ public class NPCInfo : CharacterInfo {
         //StopCoroutine(waitCoroutine);
     }
 
-    IEnumerator StartWaitingPatrol() {
+    public IEnumerator StartWaitingPatrol() {
         isWaiting = true;
         yield return new WaitForSeconds(waitTime);
         if (!isTalking) {
@@ -234,7 +242,7 @@ public class NPCInfo : CharacterInfo {
     /// <summary>
     /// Begin waiting
     /// </summary>
-    void GetNextPatrolPoint() {
+    public void GetNextPatrolPoint() {
         isMoving = false;
         waitCoroutine = StartCoroutine(StartWaitingPatrol());
     }
