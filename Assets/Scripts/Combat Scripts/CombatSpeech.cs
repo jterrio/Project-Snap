@@ -161,6 +161,10 @@ public class CombatSpeech : MonoBehaviour {
             }
         }
         givenOrders.Clear();
+        if(speechCoroutine != null) {
+            StopCoroutine(speechCoroutine);
+            speechCoroutine = null;
+        }
     }
 
     void ClickCheck() {
