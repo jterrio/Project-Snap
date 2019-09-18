@@ -12373,7 +12373,54 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sf:
     npcData: []
+    activeSpells: []
     factions: []
+    playerData:
+      id: 0
+      active: 0
+      x: 0
+      y: 0
+      direction: 0
+      state: 0
+      currentHealth: 0
+      currentStamina: 0
+      canMove: 0
+      inCombat: 0
+      castProgress: 0
+      intuition: 0
+      intelligence: 0
+      strength: 0
+      charisma: 0
+      precision: 0
+      spirituality: 0
+      dexterity: 0
+      perception: 0
+      attitude: 0
+      fear: 0
+      danger: 0
+      inventory: []
+      maxSize: 0
+      charName: 
+      money: 0
+      polyNavActive: 0
+    playerQuestData:
+      completedQuests: []
+      inProgressQuests: []
+    combatManagerData:
+      chd: []
+      pcd:
+        pcmd: []
+        pcad: []
+        pcod: []
+        pcqd:
+          spellProgress: 0
+          orderProgress: 0
+          memoryData: []
+      timeScale: 0
+    uiData:
+      invPanelActive: 0
+      healthStaminaActive: 0
+      combatHUDPanelActive: 0
 --- !u!4 &647735077
 Transform:
   m_ObjectHideFlags: 0
@@ -15163,7 +15210,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1659930725}
   m_HandleRect: {fileID: 1659930723}
   m_Direction: 2
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:

@@ -11,7 +11,7 @@ public class NPCManagerScript : MonoBehaviour {
     public List<NPCData> allNPCData = new List<NPCData>();
     public List<GameObject> allNPCsInScene = new List<GameObject>();
 
-
+    [System.Serializable]
     public class SharedData {
         public uint id;
         public bool active;
@@ -48,6 +48,7 @@ public class NPCManagerScript : MonoBehaviour {
         public int maxSize;
     }
 
+    [System.Serializable]
     public class PlayerData : SharedData{
 
         public string charName;
@@ -88,6 +89,7 @@ public class NPCManagerScript : MonoBehaviour {
 
     }
 
+    [System.Serializable]
     public class InventorySlotData {
         public int id;
         public int count;

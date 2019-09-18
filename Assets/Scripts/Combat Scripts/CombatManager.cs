@@ -27,7 +27,7 @@ public class CombatManager : MonoBehaviour {
 
     public bool isPlayerTurn = false;
 
-
+    [System.Serializable]
     public class CombatManagerData {
 
         [XmlArray("CombatManagerData")]
@@ -40,6 +40,7 @@ public class CombatManager : MonoBehaviour {
 
     }
 
+    [System.Serializable]
     public class PlayerCombatData {
 
         [XmlArray("PlayerCombatMovementData")]
@@ -57,6 +58,7 @@ public class CombatManager : MonoBehaviour {
         public PlayerCombatQueueData pcqd;
     }
 
+    [System.Serializable]
     public class PlayerCombatMovementData {
         [XmlArray("PlayerCombatMovementDestination")]
         [XmlArrayItem("PlayerCombatMovementDestinationSingle")]
@@ -64,11 +66,13 @@ public class CombatManager : MonoBehaviour {
         public int hash;
     }
 
+    [System.Serializable]
     public class PlayerCombatMovementDestination {
         public float posX;
         public float posY;
     }
 
+    [System.Serializable]
     public class PlayerCombatAttackData {
         public int selectedSpellID;
         public bool selfCast;
@@ -84,6 +88,7 @@ public class CombatManager : MonoBehaviour {
         public float attackDirectionY;
     }
 
+    [System.Serializable]
     public class PlayerCombatOrderData {
         public uint npcID;
         public CombatSpeech.Order o;
@@ -93,6 +98,7 @@ public class CombatManager : MonoBehaviour {
         public float watchAreaPosY;
     }
 
+    [System.Serializable]
     public class PlayerCombatQueueData {
         //attack-spell
         public int spellProgress;
@@ -103,6 +109,7 @@ public class CombatManager : MonoBehaviour {
         public List<MemoryData> memoryData;
     }
 
+    [System.Serializable]
     public class CombatHandlerData {
 
         public float posX;
@@ -119,6 +126,7 @@ public class CombatManager : MonoBehaviour {
 
     }
 
+    [System.Serializable]
     public class CharInfoInCombat {
         public uint ID;
         public bool isReady;
@@ -126,6 +134,7 @@ public class CombatManager : MonoBehaviour {
         public float turnTimeOffset;
     }
 
+    [System.Serializable]
     public class MemoryData {
         public uint npcID;
         public float posX;
@@ -390,8 +399,12 @@ public class CombatManager : MonoBehaviour {
             foreach (uint i in chd.charactersRemovedFromCombat) {
                 ch.charactersRemovedFromCombat.Add(NPCManagerScript.ins.GetNPCInSceneFromID(i));
             }
+            if (ch.charactersInCombat.Contains(GameManagerScript.ins.player)) {
+                playerCombatHandler = cHandler;
+            }
 
 
+            allCombatHandlers.Add(cHandler);
         }
 
         ImportPlayerCombatData(cmd.pcd);
@@ -428,6 +441,9 @@ public class CombatManager : MonoBehaviour {
             if(handler == null) {
                 allCombatHandlers.Remove(handler);
             }
+        }
+        if(allCombatHandlers.Count == 0 || playerCombatHandler == null) {
+            Time.timeScale = 1f;
         }
     }
 

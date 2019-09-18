@@ -124,7 +124,11 @@ public class CombatSpeech : MonoBehaviour {
         //Remove from UI
         //Remove from queue and reset the coroutine to know that it is finished
         RemoveFromOrders(givenOrders[0]);
-        speechCoroutine = null;
+        if(speechCoroutine != null) {
+            StopCoroutine(speechCoroutine);
+            speechCoroutine = null;
+        }
+        
     }
 
 

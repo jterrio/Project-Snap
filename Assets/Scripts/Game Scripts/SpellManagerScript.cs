@@ -127,7 +127,7 @@ public class SpellManagerScript : MonoBehaviour {
     }
 
 
-
+    [System.Serializable]
     public class ActiveSpellData {
         public float dirX;
         public float dirY;
