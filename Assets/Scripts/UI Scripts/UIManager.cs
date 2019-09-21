@@ -38,6 +38,27 @@ public class UIManager : MonoBehaviour {
     public GameObject targetChest;
     private PlayerMovementScript playerMovement;
 
+    [System.Serializable]
+    public class UIData {
+        public bool invPanelActive;
+        public bool healthStaminaActive;
+        public bool combatHUDPanelActive;
+    }
+
+    public UIData ExportUIData() {
+        UIData uiData = new UIData();
+        uiData.invPanelActive = ins.InvPanel.gameObject.activeInHierarchy;
+        uiData.healthStaminaActive = ins.HealthandStaminaPanel.gameObject.activeInHierarchy;
+        uiData.combatHUDPanelActive = ins.CombatHUDPanel.gameObject.activeInHierarchy;
+        return uiData;
+}
+
+    public void ImportUIData(UIData uiData) {
+        InvPanel.gameObject.SetActive(uiData.invPanelActive);
+        HealthandStaminaPanel.gameObject.SetActive(uiData.healthStaminaActive);
+        CombatHUDPanel.gameObject.SetActive(uiData.combatHUDPanelActive);
+    }
+
 
     void Start() {
 
