@@ -121,7 +121,6 @@ public class CombatHandler : MonoBehaviour {
         foreach(GameObject c in charactersInCombat) {
             RemoveFromCombat(c);
         }
-        Time.timeScale = 1f;
         Destroy(this.gameObject);
     }
 

@@ -23,7 +23,7 @@ public class QuestManagerScript : MonoBehaviour {
         AddAllQuests();
     }
 
-
+    [System.Serializable]
     public class PlayerQuestData {
 
         [XmlArray("CompletedQuests")]
@@ -35,6 +35,7 @@ public class QuestManagerScript : MonoBehaviour {
         public List<QuestData> inProgressQuests;
     }
 
+    [System.Serializable]
     public class QuestData {
         public int ID;
         public int currentObjective;

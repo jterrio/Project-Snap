@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Xml.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
 using UnityEngine.UI;
 
@@ -31,6 +32,8 @@ public class SaveLoadManagerScript : MonoBehaviour {
         public QuestManagerScript.PlayerQuestData playerQuestData;
 
         public CombatManager.CombatManagerData combatManagerData;
+
+        public UIManager.UIData uiData;
     }
 
     // Start is called before the first frame update
@@ -79,6 +82,7 @@ public class SaveLoadManagerScript : MonoBehaviour {
         sf.factions = FactionManagerScript.ins.ExportFactionRelations();
         sf.playerQuestData = QuestManagerScript.ins.SavePlayerQuestData();
         sf.combatManagerData = CombatManager.ins.ExportCombatHandlerData();
+        sf.uiData = UIManager.ins.ExportUIData();
     }
 
     public void CleanTempData() {
@@ -88,6 +92,7 @@ public class SaveLoadManagerScript : MonoBehaviour {
         sf.playerData = null;
         sf.playerQuestData = null;
         sf.combatManagerData = null;
+        sf.uiData = null;
     }
 
     public void SpreadDataToLoad() {
@@ -97,6 +102,7 @@ public class SaveLoadManagerScript : MonoBehaviour {
         FactionManagerScript.ins.ImportFactionRelations(sf.factions);
         QuestManagerScript.ins.LoadPlayerQuestData(sf.playerQuestData);
         CombatManager.ins.ImportCombatHandlerData(sf.combatManagerData);
+        UIManager.ins.ImportUIData(sf.uiData);
     }
 
 

@@ -734,10 +734,8 @@ public class CombatHUDAttack : MonoBehaviour {
                         lastPosition = v;
                     }
                     if (!onLine) {
-                        print("Needs to move to " + a.percentageOnLine);
                         float totalLineDir = 0;
                         float localLineDir = 0;
-                        float localLineDirMag = 0;
                         float currentPercentage = 0;
                         //Calculate total length for percentage
                         for (int t = 0; t < m.destination.Length - 1; t++) {

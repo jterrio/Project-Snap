@@ -53,6 +53,9 @@ public class CombatSpeech : MonoBehaviour {
     // Update is called once per frame
     void Update() {
         ContinueSpeechQueue();
+        foreach(GivenOrder go in givenOrders) {
+            UpdateColliders(go);
+        }
         if (!isSelected) {
             return;
         }
@@ -124,7 +127,11 @@ public class CombatSpeech : MonoBehaviour {
         //Remove from UI
         //Remove from queue and reset the coroutine to know that it is finished
         RemoveFromOrders(givenOrders[0]);
-        speechCoroutine = null;
+        if(speechCoroutine != null) {
+            StopCoroutine(speechCoroutine);
+            speechCoroutine = null;
+        }
+        
     }
 
 
@@ -157,6 +164,10 @@ public class CombatSpeech : MonoBehaviour {
             }
         }
         givenOrders.Clear();
+        if(speechCoroutine != null) {
+            StopCoroutine(speechCoroutine);
+            speechCoroutine = null;
+        }
     }
 
     void ClickCheck() {

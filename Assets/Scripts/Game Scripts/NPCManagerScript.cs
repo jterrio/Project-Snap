@@ -11,7 +11,7 @@ public class NPCManagerScript : MonoBehaviour {
     public List<NPCData> allNPCData = new List<NPCData>();
     public List<GameObject> allNPCsInScene = new List<GameObject>();
 
-
+    [System.Serializable]
     public class SharedData {
         public uint id;
         public bool active;
@@ -48,6 +48,7 @@ public class NPCManagerScript : MonoBehaviour {
         public int maxSize;
     }
 
+    [System.Serializable]
     public class PlayerData : SharedData{
 
         public string charName;
@@ -82,11 +83,13 @@ public class NPCManagerScript : MonoBehaviour {
         public float patrolPointY;
 
         public bool isWaiting;
+        public bool isMoving;
 
 
 
     }
 
+    [System.Serializable]
     public class InventorySlotData {
         public int id;
         public int count;
@@ -169,6 +172,7 @@ public class NPCManagerScript : MonoBehaviour {
             temp.areaPointX = a.destination.x;
             temp.areaPointY = a.destination.y;
             temp.isWaiting = a.isWaiting;
+            temp.isMoving = a.isMoving;
             if (a.patrolPoints.Count > 0) {
                 temp.hasPatrol = true;
                 temp.patrolPointX = a.patrolPoints[0].transform.position.x;
@@ -210,6 +214,7 @@ public class NPCManagerScript : MonoBehaviour {
                     CombatScript cs = c.GetComponent<CombatScript>();
 
                     c.transform.position = new Vector3(data.x, data.y, 0);
+                    a.UpdateColliders();
                     a.direction = (CharacterInfo.Direction)data.direction;
                     a.state = (CharacterInfo.MovementState)data.state;
 
@@ -228,6 +233,11 @@ public class NPCManagerScript : MonoBehaviour {
                     a.id = data.id;
                     a.gameObject.SetActive(data.active);
                     a.canMove = data.canMove;
+                    if (a.inCombat) {
+                        cs.AIEndCombat();
+                    } else {
+                        a.EnterCombat();
+                    }
                     a.inCombat = data.inCombat;
                     a.SetStoppingDistance();
                     a.currentHealth = data.currentHealth;
@@ -259,7 +269,7 @@ public class NPCManagerScript : MonoBehaviour {
                     }
 
                     a.movementType = (NPC.MovementType)data.moveType;
-                    a.isWaiting = data.isWaiting;
+
                     a.destination = new Vector3(data.areaPointX, data.areaPointY, 0);
 
                     foreach (GameObject p in new List<GameObject>(a.patrolPoints)) {
@@ -268,16 +278,23 @@ public class NPCManagerScript : MonoBehaviour {
                             a.patrolPoints.Add(p);
                         } else {
                             if (!a.inCombat) {
-                                a.polyNav.SetDestination(a.patrolPoints[0].transform.position);
+                                if (a.movementType == NPC.MovementType.PATROL) {
+                                    a.polyNav.SetDestination(a.patrolPoints[0].transform.position);
+                                }
                             }
                             break;
                         }
                     }
                     if (a.isWaiting) {
-                        a.polyNav.Stop();
+                        //a.polyNav.Stop();
                         if(a.waitCoroutine != null) {
                             a.StopCoroutine(a.waitCoroutine);
                         }
+                    }
+                    a.isWaiting = data.isWaiting;
+                    a.isMoving = data.isMoving;
+                    if (a.isWaiting) {
+                        a.polyNav.Stop();
                         switch (a.movementType) {
                             case NPC.MovementType.AREA:
                                 a.waitCoroutine = a.StartCoroutine(a.StartWaitingArea());
@@ -287,10 +304,9 @@ public class NPCManagerScript : MonoBehaviour {
                                 break;
                             default:
                                 break;
-
                         }
-                    }
 
+                    }
                     break;
                 }
             }
@@ -370,6 +386,7 @@ public class NPCManagerScript : MonoBehaviour {
         Stats s = GameManagerScript.ins.playerInfo.stats;
 
         GameManagerScript.ins.player.transform.position = new Vector3(pd.x, pd.y, 0);
+        a.UpdateColliders();
         a.characterName = pd.charName;
         a.direction = (CharacterInfo.Direction)pd.direction;
         a.state = (CharacterInfo.MovementState)pd.state;
