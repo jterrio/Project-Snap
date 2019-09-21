@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 212250479080547722}
   - component: {fileID: -5211918195769746635}
   - component: {fileID: 5270890621707194051}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: WatchArea
   m_TagString: Untagged
   m_Icon: {fileID: 0}

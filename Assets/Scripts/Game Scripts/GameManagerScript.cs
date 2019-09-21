@@ -56,5 +56,14 @@ public class GameManagerScript : MonoBehaviour {
     public Vector3 GetPlayerFeetPosition() {
         return new Vector3(player.transform.position.x, player.transform.position.y - 0.45f, 0);
     }
-	
+
+    public void DebugRaycast() {
+        RaycastHit2D[] hits = Physics2D.RaycastAll(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero, Mathf.Infinity);
+        print("START:");
+        foreach (RaycastHit2D h in hits) {
+            print(h.collider);
+        }
+        print("END!");
+    }
+
 }

@@ -139,12 +139,12 @@
     <NPC>
       <id>4</id>
       <active>true</active>
-      <x>1.27</x>
-      <y>-1.16</y>
+      <x>-1.00678</x>
+      <y>0.166560739</y>
       <direction>1</direction>
       <state>0</state>
       <currentHealth>100</currentHealth>
-      <currentStamina>96.7496948</currentStamina>
+      <currentStamina>100</currentStamina>
       <canMove>false</canMove>
       <inCombat>true</inCombat>
       <castProgress>0</castProgress>
@@ -337,7 +337,7 @@
     <direction>5</direction>
     <state>0</state>
     <currentHealth>85</currentHealth>
-    <currentStamina>95.04995</currentStamina>
+    <currentStamina>100</currentStamina>
     <canMove>false</canMove>
     <inCombat>true</inCombat>
     <castProgress>33</castProgress>
@@ -424,7 +424,46 @@
             <ID>0</ID>
             <isReady>false</isReady>
             <endTurn>false</endTurn>
-            <turnTimeOffset>0.506897</turnTimeOffset>
+            <turnTimeOffset>0.506855</turnTimeOffset>
+          </CharacterInfo>
+          <CharacterInfo>
+            <ID>1</ID>
+            <isReady>false</isReady>
+            <endTurn>false</endTurn>
+            <turnTimeOffset>0</turnTimeOffset>
+          </CharacterInfo>
+          <CharacterInfo>
+            <ID>4</ID>
+            <isReady>false</isReady>
+            <endTurn>false</endTurn>
+            <turnTimeOffset>0</turnTimeOffset>
+          </CharacterInfo>
+        </CharactersInfoInCombat>
+      </CombatHandlerData>
+      <CombatHandlerData>
+        <posX>1.27</posX>
+        <posY>-1.16</posY>
+        <charactersInCombat>
+          <unsignedInt>0</unsignedInt>
+          <unsignedInt>1</unsignedInt>
+          <unsignedInt>4</unsignedInt>
+        </charactersInCombat>
+        <currentCharactersTurn>
+          <unsignedInt>0</unsignedInt>
+        </currentCharactersTurn>
+        <charactersChecked />
+        <charactersToCheck>
+          <unsignedInt>0</unsignedInt>
+          <unsignedInt>1</unsignedInt>
+          <unsignedInt>4</unsignedInt>
+        </charactersToCheck>
+        <charactersRemovedFromCombat />
+        <CharactersInfoInCombat>
+          <CharacterInfo>
+            <ID>0</ID>
+            <isReady>false</isReady>
+            <endTurn>false</endTurn>
+            <turnTimeOffset>0.506855</turnTimeOffset>
           </CharacterInfo>
           <CharacterInfo>
             <ID>1</ID>
@@ -443,22 +482,7 @@
     </CombatManagerData>
     <pcd>
       <PlayerCombatMovementData />
-      <PlayerCombatAttackData>
-        <PlayerCombatAttack>
-          <selectedSpellID>0</selectedSpellID>
-          <selfCast>true</selfCast>
-          <isCasting>true</isCasting>
-          <fm>FREE</fm>
-          <hash>0</hash>
-          <attackTarget>0</attackTarget>
-          <attackPointPosX>2.37000084</attackPointPosX>
-          <attackPointPosY>-2.29999971</attackPointPosY>
-          <attackPointModePosX>0</attackPointModePosX>
-          <attackPointModePosY>0</attackPointModePosY>
-          <attackDirectionX>-0.7445001</attackDirectionX>
-          <attackDirectionY>0.6676223</attackDirectionY>
-        </PlayerCombatAttack>
-      </PlayerCombatAttackData>
+      <PlayerCombatAttackData />
       <PlayerCombatOrderData>
         <PlayerCombatOrder>
           <npcID>4</npcID>

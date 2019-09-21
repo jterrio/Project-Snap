@@ -214,6 +214,7 @@ public class NPCManagerScript : MonoBehaviour {
                     CombatScript cs = c.GetComponent<CombatScript>();
 
                     c.transform.position = new Vector3(data.x, data.y, 0);
+                    a.UpdateColliders();
                     a.direction = (CharacterInfo.Direction)data.direction;
                     a.state = (CharacterInfo.MovementState)data.state;
 
@@ -385,6 +386,7 @@ public class NPCManagerScript : MonoBehaviour {
         Stats s = GameManagerScript.ins.playerInfo.stats;
 
         GameManagerScript.ins.player.transform.position = new Vector3(pd.x, pd.y, 0);
+        a.UpdateColliders();
         a.characterName = pd.charName;
         a.direction = (CharacterInfo.Direction)pd.direction;
         a.state = (CharacterInfo.MovementState)pd.state;

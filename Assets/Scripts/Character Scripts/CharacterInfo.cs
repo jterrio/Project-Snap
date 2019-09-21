@@ -778,4 +778,9 @@ public class CharacterInfo : MonoBehaviour {
         return false;
     }
 
+    public void UpdateColliders() {
+        Rigidbody2D rb = gameObject.GetComponent<Rigidbody2D>();
+        rb.position = gameObject.transform.position;
+    }
+
 }

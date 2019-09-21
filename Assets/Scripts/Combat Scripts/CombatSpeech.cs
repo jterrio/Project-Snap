@@ -53,6 +53,9 @@ public class CombatSpeech : MonoBehaviour {
     // Update is called once per frame
     void Update() {
         ContinueSpeechQueue();
+        foreach(GivenOrder go in givenOrders) {
+            UpdateColliders(go);
+        }
         if (!isSelected) {
             return;
         }
