@@ -34,6 +34,8 @@ public class SaveLoadManagerScript : MonoBehaviour {
         public CombatManager.CombatManagerData combatManagerData;
 
         public UIManager.UIData uiData;
+
+        public ItemManagerScript.ItemManagerData itemData;
     }
 
     // Start is called before the first frame update
@@ -83,6 +85,7 @@ public class SaveLoadManagerScript : MonoBehaviour {
         sf.playerQuestData = QuestManagerScript.ins.SavePlayerQuestData();
         sf.combatManagerData = CombatManager.ins.ExportCombatHandlerData();
         sf.uiData = UIManager.ins.ExportUIData();
+        sf.itemData = ItemManagerScript.ins.ExportItemManagerData();
     }
 
     public void CleanTempData() {
@@ -93,6 +96,7 @@ public class SaveLoadManagerScript : MonoBehaviour {
         sf.playerQuestData = null;
         sf.combatManagerData = null;
         sf.uiData = null;
+        sf.itemData = null;
     }
 
     public void SpreadDataToLoad() {
@@ -103,6 +107,7 @@ public class SaveLoadManagerScript : MonoBehaviour {
         QuestManagerScript.ins.LoadPlayerQuestData(sf.playerQuestData);
         CombatManager.ins.ImportCombatHandlerData(sf.combatManagerData);
         UIManager.ins.ImportUIData(sf.uiData);
+        ItemManagerScript.ins.SpreadItemManagerData(sf.itemData);
     }
 
 

@@ -8,6 +8,7 @@ public class ChestScript : MonoBehaviour {
     public Sprite[] stateSprite;
     public Inventory chestInventory;
     public bool isOpen = false;
+    public uint id;
     public bool isLocked;
     public Item key;
 

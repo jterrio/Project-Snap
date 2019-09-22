@@ -26,7 +26,7 @@ public class PlayerPickUpItemScript : MonoBehaviour {
                 targetItem = target.GetComponent<WorldItemScript>().item;
                 //add item to inventory
                 transform.parent.GetComponent<PlayerInfo>().inventory.AddItem(targetItem);
-                Destroy(target.gameObject); //delete item from world space
+                target.SetActive(false); //delete item from world space
             }
             if (!hasPickedUp) { //if we were unable to pick up the item, return
                 return;

@@ -44,7 +44,7 @@ public class NPCManagerScript : MonoBehaviour {
 
         [XmlArray("Inventory")]
         [XmlArrayItem("Slot")]
-        public List<InventorySlotData> inventory;
+        public List<ItemManagerScript.InventorySlotData> inventory;
         public int maxSize;
     }
 
@@ -89,19 +89,18 @@ public class NPCManagerScript : MonoBehaviour {
 
     }
 
-    [System.Serializable]
-    public class InventorySlotData {
-        public int id;
-        public int count;
-    }
 
 
     // Start is called before the first frame update
-    void Start() {
+    void Awake() {
         //singleton
         if (ins == null) {
             ins = this;
         } else if (ins != this) {
+            foreach(Transform child in transform) {
+                child.SetParent(ins.transform);
+            }
+            ins.GetAllNPCsInScene();
             Destroy(this);
         }
         //allNPCData = new List<NPCData>();
@@ -129,6 +128,13 @@ public class NPCManagerScript : MonoBehaviour {
 
             NPCData temp = new NPCData();
             NPCInfo a = c.GetComponent<NPCInfo>();
+            foreach (NPCData npcd in allNPCData) {
+                if (npcd.id == a.id) {
+                    allNPCData.Remove(npcd);
+                    break;
+                }
+            }
+
             Stats s = c.GetComponent<Stats>();
             NPCSpeechHolder h = c.GetComponent<NPCSpeechHolder>();
             CombatScript cs = c.GetComponent<CombatScript>();
@@ -183,9 +189,9 @@ public class NPCManagerScript : MonoBehaviour {
                 temp.patrolPointY = 0;
             }
 
-            temp.inventory = new List<InventorySlotData>();
+            temp.inventory = new List<ItemManagerScript.InventorySlotData>();
             foreach(Inventory.InventorySlot invSlot in a.merchantInventory.inventory) {
-                InventorySlotData invSlotData = new InventorySlotData();
+                ItemManagerScript.InventorySlotData invSlotData = new ItemManagerScript.InventorySlotData();
                 invSlotData.id = invSlot.item.ID;
                 invSlotData.count = invSlot.count;
                 temp.inventory.Add(invSlotData);
@@ -204,8 +210,6 @@ public class NPCManagerScript : MonoBehaviour {
             if (c.tag.ToString() != "NPC") {
                 continue;
             }
-
-
             foreach (NPCData data in allNPCData) {
                 if(c.GetComponent<NPCInfo>().id == data.id) {
                     NPCInfo a = c.GetComponent<NPCInfo>();
@@ -264,7 +268,7 @@ public class NPCManagerScript : MonoBehaviour {
                     a.merchantInventory.maxSize = data.maxSize;
 
                     a.merchantInventory.ClearInventory();
-                    foreach (InventorySlotData invSlotData in data.inventory) {
+                    foreach (ItemManagerScript.InventorySlotData invSlotData in data.inventory) {
                         a.merchantInventory.AddItemCount(ItemManagerScript.ins.GetItemFromID(invSlotData.id), invSlotData.count);
                     }
 
@@ -368,9 +372,9 @@ public class NPCManagerScript : MonoBehaviour {
         pd.danger = s.danger;
         pd.spirituality = s.spirituality;
 
-        pd.inventory = new List<InventorySlotData>();
+        pd.inventory = new List<ItemManagerScript.InventorySlotData>();
         foreach (Inventory.InventorySlot invSlot in a.inventory.inventory) {
-            InventorySlotData invSlotData = new InventorySlotData();
+            ItemManagerScript.InventorySlotData invSlotData = new ItemManagerScript.InventorySlotData();
             invSlotData.id = invSlot.item.ID;
             invSlotData.count = invSlot.count;
             pd.inventory.Add(invSlotData);
@@ -416,7 +420,7 @@ public class NPCManagerScript : MonoBehaviour {
         a.inventory.maxSize = pd.maxSize;
 
         a.inventory.ClearInventory();
-        foreach (InventorySlotData invSlotData in pd.inventory) {
+        foreach (ItemManagerScript.InventorySlotData invSlotData in pd.inventory) {
             a.inventory.AddItemCount(ItemManagerScript.ins.GetItemFromID(invSlotData.id), invSlotData.count);
         }
     }
