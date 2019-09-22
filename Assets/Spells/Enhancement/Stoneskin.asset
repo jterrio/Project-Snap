@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 151bb2ac609a4de44a515aa49acedd2d, type: 3}
-  m_Name: New Utility Spell
+  m_Name: Stoneskin
   m_EditorClassIdentifier: 
   energyToCast: 0
   spellMaterial: 
