@@ -574,7 +574,7 @@ public class CombatHUDAttack : MonoBehaviour {
                         tempAttack.GetComponent<SpriteRenderer>().enabled = true;
                         if (percentage >= 0.975) {
                             tempAttack.transform.position = endPoint;
-                        } else if (percentage <= 0.025) {
+                        } else if (percentage <= 0.025 && x != 0) {
                             tempAttack.transform.position = startPoint;
                         } else {
                             tempAttack.transform.position = ((1 - percentage) * startPoint) + (percentage * endPoint);
